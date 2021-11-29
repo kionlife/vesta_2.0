@@ -113,9 +113,28 @@
 
                                                 <div class="content">
                                                     <div class="row">
-                                                        <div class="col-md-10">
-                                                            <p class="balanceService">Баланс: <span>{{ $service['balance'] }} грн</span>
-                                                            </p>
+                                                        <div class="col-md- text-left">
+                                                                <div class="form-body">
+                                                                        <div class="form-group">
+                                                                            <label class="col-sm-4 control-label">Номер
+                                                                                договору</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input name="name" type="text"
+                                                                                       class="form-control"
+                                                                                       placeholder="Номер договору"
+                                                                                       value="{{ $service['contracts'][0]['title'] }}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="col-sm-4 control-label">Дата заключення</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input name="address" type="date"
+                                                                                       class="form-control"
+                                                                                       placeholder="Дата заключення"
+                                                                                       value="{{ $service['contracts'][0]['date'] }}">
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
@@ -132,6 +151,9 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+
+
+
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
@@ -323,50 +345,36 @@
 
                 <h2 class="inner-tittle">Квитанції</h2>
                 <div class="grid-1">
-                    <div class="col-md-6">
-                        <div class="form-body">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 class="tableTitle">Перелік квитанцій</h2>
+                            <div class="overflowBlock">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Дата формування</th>
+                                        <th>Статус</th>
+                                        <th>Автор</th>
+                                        <th>Остання зміна</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($abonent['receipts'] as $receipt)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($receipt['created_at'])->format('d.m.Y H:i:s') }}</td>
+                                            <td>{{ $receipt['status_id'] }}</td>
+                                            <td>{{ $receipt['author_id'] }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($receipt['updated_at'])->format('d.m.Y H:i:s') }}</td>
+                                            <td><a href="/receipts/{{ $receipt['id'] }}"><i class="fa fa-eye"></i></a></td>
+                                        </tr>
+                                    @endforeach
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-body">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">ПІБ</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="ПІБ"></div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="clearfix"></div>

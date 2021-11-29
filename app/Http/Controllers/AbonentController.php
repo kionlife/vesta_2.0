@@ -190,7 +190,9 @@ class AbonentController extends Controller
                 );
                 array_push($contractsNew, $contracts);
             }
-		}
+            $service['contracts'] = $contractsNew;
+
+        }
 
         $meters = Meters::where('abonent_id', $id)->where('title', '!=', 'virtual')->get();
         $abonent['meters'] = array();
@@ -232,7 +234,7 @@ class AbonentController extends Controller
         $payments = Payment::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
-
+        $abonent['receipts'] = $abonent->receipt;
         if (is_null($abonent)) {
             return $this->sendError('Abonent not found.');
         }
