@@ -44,6 +44,7 @@ use App\Models\Abonent;
 /* Роути для дій з абонентами */
 
 Route::middleware('auth:web')->get('/abonents', [AbonentController::class, 'index']);         // список абонентів
+Route::middleware('auth:web')->get('/abonents/add', [AbonentController::class, 'storePage']);         // список абонентів
 Route::middleware('auth:api')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
 Route::middleware('auth:api')->get('/abonents/types', [AbonentController::class, 'types']);   // типи абонента
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
@@ -128,4 +129,4 @@ Route::get('/invoice-pdf', [InvoiceController::class, 'createPdf']);
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

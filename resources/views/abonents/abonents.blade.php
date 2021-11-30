@@ -11,7 +11,16 @@
                 </ol>
             </div>
             <div class="graph-visual tables-main">
-                <h3 class="inner-tittle two">Абоненти</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="inner-tittle two">Абоненти</h3>
+                    </div>
+
+                    <div class="col-md-6 text-right">
+                        <a class="btn btn-primary" href="/abonents/create"><i class="fa fa-user"></i><span> Додати абонента</span></a>
+                    </div>
+                </div>
+
                 <div class="graph">
                     <div class="tables">
 

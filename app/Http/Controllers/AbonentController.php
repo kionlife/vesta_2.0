@@ -85,6 +85,16 @@ class AbonentController extends Controller
         ]);
     }
 
+    public function storePage() {
+        $data = '';
+
+
+
+        return view('abonents/add', [
+            'data' => $data
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

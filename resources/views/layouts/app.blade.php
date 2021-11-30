@@ -16,6 +16,7 @@
           type='text/css'>
     <link rel="stylesheet" href="{{ asset('public/css/icon-font.min.css') }}" type='text/css'/>
     <script src="{{ asset('public/js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ asset('public/js/main.js') }}"></script>
 
 
     <!-- Fonts -->
@@ -32,7 +33,7 @@
     </div>
     <div class="sidebar-menu">
         <header class="logo">
-            <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="/home"> <span id="logo"> <h1>Vesta</h1></span>
+            <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="/"> <span id="logo"> <h1>Vesta</h1></span>
                 <!--<img id="logo" src="" alt="Logo"/>-->
             </a>
         </header>
@@ -51,12 +52,12 @@
         <!--//down-->
         <div class="menu">
             <ul id="menu" >
-                <li><a href="/home"><i class="fa fa-home"></i> <span>Головна</span></a></li>
+                <li><a href="/"><i class="fa fa-home"></i> <span>Головна</span></a></li>
                 <li><a href="/counters"><i class="fa fa-tachometer"></i> <span>Показники</span></a></li>
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
-                <li><a href="/home"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
-                <li><a href="/home"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
-                <li><a href="/home"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
+                <li><a href="/"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
+                <li><a href="/"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
+                <li><a href="/"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 
             </ul>
         </div>

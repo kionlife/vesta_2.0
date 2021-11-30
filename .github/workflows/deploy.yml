@@ -15,7 +15,14 @@ jobs:
           cd /var/www/dev.vesta.org.ua/
           sudo rm -rf *
           git clone https://github.com/kionlife/vesta_2.0.git --branch dev
-          mv -v vesta_2.0/* /var/www/dev.vesta.org.ua/
+          cd vesta_2.0
+          mv -v * /var/www/dev.vesta.org.ua/
+          cd ..
+          mkdir storage
+          cd storage/
+          mkdir -p framework/{sessions,views,cache}
+          chmod -R 644 framework
+          chown -R www-data:www-data framework
           composer install
           cp /var/www/env_storage/back/dev.env /var/www/dev.vesta.org.ua/.env
           php artisan key:generate
