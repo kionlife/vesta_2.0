@@ -1,0 +1,30 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cd /var/www/dev.vesta.org.ua/
+          sudo rm -rf *
+          git clone https://github.com/kionlife/vesta_2.0.git --branch dev
+          mv -v vesta_2.0/* /var/www/api.dev.vesta.org.ua/
+          composer install
+          cp /var/www/env_storage/back/dev.env /var/www/dev.vesta.org.ua/.env
+          php artisan key:generate
+          php artisan passport:install
+          php artisan storage:link
+          php artisan config:clear
+          sudo chown -R www-data:groupgit /var/www/dev.vesta.org.ua
+
+        host: 31.131.17.142
+        user: git
+        key: ${{ secrets.GITKEY }}
+

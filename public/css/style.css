@@ -8374,5 +8374,28 @@ h2.tableTitle {
 
 .overflowBlock {
     max-height: 450px;
+    min-height: 200px;
     overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.table .tooltips .fa {
+    font-size: 20px;
+}
+
+tr.income td, tr.outcome td {
+    color: #fff !important;
+    border-bottom: 3px solid;
+}
+
+tr.income {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+tr.outcome {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
 }

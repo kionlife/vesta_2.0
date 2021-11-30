@@ -37,9 +37,7 @@ class Abonent extends Model
 
 	public function service()
     {
-        return $this->hasMany(Balance::class)->withDefault(function ($user, $post) {
-			$user->service_id = $post->service_id;
-		});
+        return $this->hasMany(Balance::class);
     }
 
     public function type() {

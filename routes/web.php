@@ -43,12 +43,12 @@ use App\Models\Abonent;
 
 /* Роути для дій з абонентами */
 
-Route::get('/abonents', [AbonentController::class, 'index']);         // список абонентів
+Route::middleware('auth:web')->get('/abonents', [AbonentController::class, 'index']);         // список абонентів
 Route::middleware('auth:api')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
 Route::middleware('auth:api')->get('/abonents/types', [AbonentController::class, 'types']);   // типи абонента
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
-Route::middleware('auth:api')->post('/abonents', [AbonentController::class, 'store']);       // створення абонента
-Route::middleware('auth:api')->put('/abonents/{id}', [AbonentController::class, 'update']);   // редагування картки абонента
+Route::middleware('auth:web')->post('/abonents', [AbonentController::class, 'store']);       // створення абонента
+Route::middleware('auth:web')->post('/abonents/{id}', [AbonentController::class, 'update']);   // редагування картки абонента
 Route::middleware('auth:api')->delete('/abonents/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
 Route::middleware('auth:api')->get('/abonents/{id}/counters', [CounterController::class, 'show']);     // показники абонента
 Route::middleware('auth:api')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента

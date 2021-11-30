@@ -13,8 +13,8 @@
             </div>
 
 
-            <div class="forms-main">
-
+            <form action="/abonents/{{ $abonent['id'] }}" method="post" class="forms-main">
+                @csrf
                 <h2 class="inner-tittle">Основна інформація</h2>
                 <div class="grid-1">
                     <div class="col-md-5">
@@ -44,7 +44,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">О/Р</label>
                                     <div class="col-sm-9">
-                                        <input name="phone" type="tel" class="form-control"
+                                        <input name="personal_account" type="tel" class="form-control"
                                                placeholder="Особовий рахунок"
                                                value="{{ $abonent['personal_account'] }}">
                                     </div>
@@ -84,6 +84,15 @@
                                                value="{{ $abonent['peoples'] }}">
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="living" class="col-sm-4 control-label">Не проживає</label>
+                                    <div class="col-sm-8">
+                                        <input id="living" name="status" type="checkbox"
+                                               @if ($abonent['status'] == 1) checked @endif
+                                               value="{{ $abonent['status'] }}">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -113,36 +122,19 @@
 
                                                 <div class="content">
                                                     <div class="row">
-                                                        <div class="col-md- text-left">
-                                                                <div class="form-body">
-                                                                        <div class="form-group">
-                                                                            <label class="col-sm-4 control-label">Номер
-                                                                                договору</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input name="name" type="text"
-                                                                                       class="form-control"
-                                                                                       placeholder="Номер договору"
-                                                                                       value="{{ $service['contracts'][0]['title'] }}">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label class="col-sm-4 control-label">Дата заключення</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input name="address" type="date"
-                                                                                       class="form-control"
-                                                                                       placeholder="Дата заключення"
-                                                                                       value="{{ $service['contracts'][0]['date'] }}">
-                                                                            </div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
+
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
                                                                 <div class="onoffswitch">
-                                                                    <input type="checkbox" name="onoffswitch"
+                                                                    <input type="hidden"
+                                                                           name="services[{{ $service['id'] }}][id]"
+                                                                           value="{{ $service['id'] }}">
+                                                                    <input type="checkbox"
+                                                                           name="services[{{ $service['id'] }}][status]"
                                                                            class="onoffswitch-checkbox"
                                                                            id="myonoffswitch-{{ $service['id'] }}"
-                                                                           @if ( $service['status'] == 1) checked @endif>
+                                                                           @if ( $service['status'] == 1) checked
+                                                                           @endif value="{{ $service['status'] }}">
                                                                     <label class="onoffswitch-label"
                                                                            for="myonoffswitch-{{ $service['id'] }}">
                                                                         <span class="onoffswitch-inner"></span>
@@ -151,7 +143,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
 
 
                                                     </div>
@@ -170,7 +161,7 @@
                                                                     </thead>
                                                                     <tbody>
                                                                     @foreach($abonent['history'][$service['id']] as $item)
-                                                                        <tr>
+                                                                        <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
                                                                             <td>{{ $item['created_at'] }}</td>
                                                                             <td>{{ $item['title'] }}</td>
                                                                             <td>{{ $item['value'] }}</td>
@@ -187,12 +178,66 @@
                                             </div>
                                         @endforeach
                                     </div>
+
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
+                    <div class="clearfix"></div>
+                </div>
+
+                <h2 class="inner-tittle">Договори</h2>
+                <div class="grid-1">
+                    <div class="col-md-12">
+                        <div class="form-body">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        @foreach($abonent['contracts'] as $contract)
+                                            <input type="hidden" name="contracts[{{ $contract['provider_id'] }}][provider_id]" value="{{ $contract['provider_id'] }}">
+                                        <div class="row">
+                                            <h3 class="text-center">{{ $contract['provider_name'] }}</h3>
+                                            <hr>
+                                            <div class="col-md-6 text-left">
+                                                <div class="form-body">
+                                                    <div class="form-group">
+                                                        <label class="col-sm-4 control-label">Номер
+                                                            договору</label>
+                                                        <div class="col-sm-8">
+                                                            <input name="contracts[{{ $contract['provider_id'] }}][title]"
+                                                                   type="text"
+                                                                   class="form-control"
+                                                                   placeholder="Номер договору"
+                                                                   value="{{ $contract['title'] }}">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 text-left">
+                                                <div class="form-body">
+                                                    <div class="form-group">
+                                                        <label class="col-sm-4 control-label">Дата заключення</label>
+                                                        <div class="col-sm-8">
+                                                            <input name="contracts[{{ $contract['provider_id'] }}][date]"
+                                                                   type="date"
+                                                                   class="form-control"
+                                                                   placeholder="Дата заключення"
+                                                                   value="{{ $contract['date'] }}">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
 
@@ -204,6 +249,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         @foreach($abonent['meters'] as $meter)
+                                            <input type="hidden" value="{{ $meter['meter_id'] }}" name="meters[{{ $meter['meter_id'] }}][meter_id]">
                                             <div
                                                 class="servicesTabs wrap-{{ $meter['meter_id'] }} @if ( $meter['archived'] == 1) notActive @endif">
                                                 <input class="hidden" type="radio" id="tab-{{ $meter['meter_id'] }}"
@@ -225,30 +271,36 @@
                                                                         <label class="col-sm-4 control-label">Номер
                                                                             лічильника</label>
                                                                         <div class="col-sm-8">
-                                                                            <input name="name" type="text"
-                                                                                   class="form-control"
-                                                                                   placeholder="Номер лічильника"
-                                                                                   value="{{ $meter['code'] }}">
+                                                                            <input
+                                                                                name="meters[{{ $meter['meter_id'] }}][code]"
+                                                                                type="text"
+                                                                                class="form-control"
+                                                                                placeholder="Номер лічильника"
+                                                                                value="{{ $meter['code'] }}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="col-sm-4 control-label">Код
                                                                             пломби</label>
                                                                         <div class="col-sm-8">
-                                                                            <input name="address" type="text"
-                                                                                   class="form-control"
-                                                                                   placeholder="Код пломби"
-                                                                                   value="{{ $meter['code_plomb'] }}">
+                                                                            <input
+                                                                                name="meters[{{ $meter['meter_id'] }}][code_plomb]"
+                                                                                type="text"
+                                                                                class="form-control"
+                                                                                placeholder="Код пломби"
+                                                                                value="{{ $meter['code_plomb'] }}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label class="col-sm-4 control-label">Розташування
                                                                             лічильника</label>
                                                                         <div class="col-sm-8">
-                                                                            <input name="phone" type="tel"
-                                                                                   class="form-control"
-                                                                                   placeholder="Розташування лічильника"
-                                                                                   value="{{ $meter['title'] }}">
+                                                                            <input
+                                                                                name="meters[{{ $meter['meter_id'] }}][title]"
+                                                                                type="tel"
+                                                                                class="form-control"
+                                                                                placeholder="Розташування лічильника"
+                                                                                value="{{ $meter['title'] }}">
                                                                         </div>
                                                                     </div>
 
@@ -263,10 +315,12 @@
                                                                         <label class="col-sm-4 control-label">Дата
                                                                             останньої повірки</label>
                                                                         <div class="col-sm-8">
-                                                                            <input name="phone" type="date"
-                                                                                   class="form-control"
-                                                                                   placeholder="Дата останньої повірки"
-                                                                                   value="{{ $meter['last_check'] }}">
+                                                                            <input
+                                                                                name="meters[{{ $meter['meter_id'] }}][last_check]"
+                                                                                type="date"
+                                                                                class="form-control"
+                                                                                placeholder="Дата останньої повірки"
+                                                                                value="{{ $meter['last_check'] }}">
                                                                         </div>
                                                                     </div>
 
@@ -274,10 +328,12 @@
                                                                         <label class="col-sm-4 control-label">Дата
                                                                             наступної повірки</label>
                                                                         <div class="col-sm-8">
-                                                                            <input name="phone" type="date"
-                                                                                   class="form-control"
-                                                                                   placeholder="Дата наступної повірки"
-                                                                                   value="{{ $meter['next_check'] }}">
+                                                                            <input
+                                                                                name="meters[{{ $meter['meter_id'] }}][next_check]"
+                                                                                type="date"
+                                                                                class="form-control"
+                                                                                placeholder="Дата наступної повірки"
+                                                                                value="{{ $meter['next_check'] }}">
                                                                         </div>
                                                                     </div>
 
@@ -287,13 +343,40 @@
                                                                         <div class="col-sm-8">
                                                                             @foreach($meter['services'] as $m_service)
                                                                                 <div class="meter_service">
-                                                                                    <input type="checkbox"
-                                                                                           id="m_service_{{ $m_service['service_id'] }}"
-                                                                                           value="{{ $m_service['service_id'] }}">
+                                                                                    <input
+                                                                                        name="meters[{{ $meter['meter_id'] }}][services][{{ $m_service->pivot->service_id }}][service_id]"
+                                                                                        type="hidden"
+                                                                                        value="{{ $m_service->pivot->service_id }}">
+                                                                                    <input
+                                                                                        name="meters[{{ $meter['meter_id'] }}][services][{{ $m_service->pivot->service_id }}][status]"
+                                                                                        type="hidden"
+                                                                                        value="0">
+                                                                                    <input
+                                                                                        name="meters[{{ $meter['meter_id'] }}][services][{{ $m_service->pivot->service_id }}][status]"
+                                                                                        type="checkbox"
+                                                                                        id="m_service_{{ $m_service->pivot->service_id }}_{{ $meter['meter_id'] }}"
+                                                                                        value="1" @if ($m_service->pivot->status == 1) checked @endif>
                                                                                     <label
-                                                                                        for="m_service_{{ $m_service['service_id'] }}">{{ $m_service['name'] }}</label>
+                                                                                        for="m_service_{{ $m_service->pivot->service_id }}_{{ $meter['meter_id'] }}">{{ $m_service['name'] }}</label>
                                                                                 </div>
                                                                             @endforeach
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label
+                                                                            class="col-sm-4 control-label">Тариф лічильника</label>
+                                                                        <div class="col-sm-8">
+                                                                                <div class="meter_service">
+                                                                                    <select name="meters[{{ $meter['meter_id'] }}][tariff_id]" id="">
+                                                                                            <option selected
+                                                                                                value="{{ $meter['tariff']['current']['id'] }}">({{ $meter['tariff']['current']['value'] }}) {{ $meter['tariff']['current']['name'] }}</option>
+
+                                                                                        @foreach($meter['tariff']['available'] as $tariff)
+                                                                                            <option value="{{ $tariff['id'] }}">({{ $tariff['value'] }}) {{ $tariff['name'] }}</option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -319,9 +402,9 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                        <td>{{ $counter['added_at'] }}</td>
-                                                                        <td>{{ $counter['value'] }}</td>
-                                                                        <td>{{ $counter['author']['name'] }}</td>
+                                                                            <td>{{ $counter['added_at'] }}</td>
+                                                                            <td>{{ $counter['value'] }}</td>
+                                                                            <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>
                                                                     @endforeach
 
@@ -367,7 +450,8 @@
                                             <td>{{ $receipt['status_id'] }}</td>
                                             <td>{{ $receipt['author_id'] }}</td>
                                             <td>{{ \Carbon\Carbon::parse($receipt['updated_at'])->format('d.m.Y H:i:s') }}</td>
-                                            <td><a href="/receipts/{{ $receipt['id'] }}"><i class="fa fa-eye"></i></a></td>
+                                            <td><a class="tooltips" href="/receipts/{{ $receipt['id'] }}"><span>Переглянути</span><i
+                                                        class="fa fa-eye"></i></a></td>
                                         </tr>
                                     @endforeach
 
@@ -377,11 +461,17 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-success" type="submit">Зберегти</button>
+                        </div>
+                    </div>
+
                     <div class="clearfix"></div>
                 </div>
 
 
-            </div>
+            </form>
             <!--//forms-->
         </div>
     </div>

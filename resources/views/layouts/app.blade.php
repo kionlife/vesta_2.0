@@ -17,15 +17,11 @@
     <link rel="stylesheet" href="{{ asset('public/css/icon-font.min.css') }}" type='text/css'/>
     <script src="{{ asset('public/js/jquery-1.10.2.min.js') }}"></script>
 
-    <!-- Scripts -->
-    <script src="{{ asset('public/js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
-    <!-- Styles -->
-    <link href="{{ asset('public/css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -88,7 +84,7 @@
     </script>
 </div>
 
-<script src="{{ asset('public/js/jquery.nicescroll.js') }}"></script>
+{{--<script src="{{ asset('public/js/jquery.nicescroll.js') }}"></script>--}}
 <script src="{{ asset('public/js/scripts.js') }}"></script>
 <script src="{{ asset('public/js/bootstrap.min.js') }}"></script>
 </body>
