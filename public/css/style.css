@@ -4045,7 +4045,7 @@ th {
 }
 .btn {
     cursor: pointer;
-    margin: 10px;
+    margin: 0;
     border-radius: 0;
     text-decoration: none;
     padding: 10px 20px;
@@ -8399,4 +8399,13 @@ tr.outcome {
     color: #fff;
     background-color: #d9534f;
     border-color: #d43f3a;
+}
+
+.row-flex {
+    display: flex;
+    align-items: center;
+}
+
+.flex-child-50 {
+    width: 49.99%;
 }

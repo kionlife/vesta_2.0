@@ -247,13 +247,22 @@
                     <div class="clearfix"></div>
                 </div>
 
-                <h2 class="inner-tittle">Лічильники</h2>
+                <div class="row-flex">
+                    <div class="flex-child-50">
+                        <h2 class="inner-tittle">Лічильники</h2>
+                    </div>
+                    <div class="flex-child-50 text-right">
+                        <button class="btn btn-primary" onclick="meter.add({{ $abonent['id'] }})">Додати лічильник</button>
+                    </div>
+                </div>
+
+
                 <div class="grid-1">
                     <div class="col-md-12">
                         <div class="form-body">
                             <div class="form-horizontal">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
+                                <div class="form-group" id="card_meters">
+                                    <div class="col-sm-12" id="meters_content">
                                         @foreach($abonent['meters'] as $meter)
                                             <input type="hidden" value="{{ $meter['meter_id'] }}" name="meters[{{ $meter['meter_id'] }}][meter_id]">
                                             <div
@@ -269,13 +278,13 @@
 
                                                 <div class="content">
                                                     <div class="row">
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-4">
                                                             <div class="form-body">
                                                                 <div class="form-horizontal">
                                                                     <div class="form-group">
-                                                                        <label class="col-sm-4 control-label">Номер
+                                                                        <label class="col-sm-5 control-label">Номер
                                                                             лічильника</label>
-                                                                        <div class="col-sm-8">
+                                                                        <div class="col-sm-7">
                                                                             <input
                                                                                 name="meters[{{ $meter['meter_id'] }}][code]"
                                                                                 type="text"
@@ -386,6 +395,10 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+
+                                                        <div class="col-md-1">
+                                                            <button type="button" onclick="meter.remove({{ $meter['meter_id'] }})" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                                                         </div>
 
 
