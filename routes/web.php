@@ -44,7 +44,7 @@ use App\Models\Abonent;
 /* Роути для дій з абонентами */
 
 Route::middleware('auth:web')->get('/abonents', [AbonentController::class, 'index']);         // список абонентів
-Route::middleware('auth:web')->get('/abonents/add', [AbonentController::class, 'storePage']);         // список абонентів
+Route::middleware('auth:web')->get('/abonents/add', [AbonentController::class, 'storePage']);         // сторінка створення абонента
 Route::middleware('auth:api')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
 Route::middleware('auth:api')->get('/abonents/types', [AbonentController::class, 'types']);   // типи абонента
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
@@ -92,6 +92,7 @@ Route::get('/shifts', [PaymentController::class, 'getShift']);
 
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);
+Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'store']);   //створення лічильника абонента
 
 Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
 
@@ -129,5 +130,11 @@ Route::middleware('auth:api')->get('/custom', [TestController::class, 'func1']);
 Route::get('/invoice-pdf', [InvoiceController::class, 'createPdf']);
 
 Auth::routes();
+
+Route::get('/logout', function (){
+       auth()->logout();
+        return redirect('/');
+});
+
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <link rel="stylesheet" type="text/css" href="../../../public/css/style.css"/>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -44,9 +45,9 @@
             <span class=" name-caret">{{ $user->name }}</span>
             <p style="text-transform: uppercase;">{{ $user->roles->first()->name }}</p>
             <ul>
-                <li><a class="tooltips" href="index.html"><span>Профіль</span><i class="lnr lnr-user"></i></a></li>
-                <li><a class="tooltips" href="index.html"><span>Налаштування</span><i class="lnr lnr-cog"></i></a></li>
-                <li><a class="tooltips" href="index.html"><span>Вихід</span><i class="lnr lnr-power-switch"></i></a></li>
+                <li><a class="tooltips disabled" href="#"><span>Профіль</span><i class="lnr lnr-user"></i></a></li>
+                <li><a class="tooltips disabled" href="#"><span>Налаштування</span><i class="lnr lnr-cog"></i></a></li>
+                <li><a class="tooltips" href="{{ url('/logout') }}"><span>Вихід</span><i class="lnr lnr-power-switch"></i></a></li>
             </ul>
         </div>
         <!--//down-->

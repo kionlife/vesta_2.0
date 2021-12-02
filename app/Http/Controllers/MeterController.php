@@ -45,47 +45,29 @@ class MeterController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return string
      */
     public function store(Request $request)
     {
-		$user = Auth::user();
+        $user = Auth::user();
 		if ($user->hasAnyRole('admin', 'inspector')) {
 			$input = $request->all();
 		}
 
-        $validator = Validator::make($input, [
-            'abonent_id' => 'required',
-            'next_check' => 'required',
-            'code'       => 'required',
-            'counter'    => 'required',
-            'title'      => 'required',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        $services = $input['service'];
         $meter = new Meters();
         $meter->title = $input['title'];
         $meter->abonent_id = $input['abonent_id'];
         $meter->code = $input['code'];
         $meter->code_plomb = $input['code_plomb'];
-        $meter->counter = $input['counter'];
+        $meter->counter = 0;
         $meter->next_check = $input['next_check'];
         $meter->last_check = $input['last_check'];
+        $meter->tariff_id = $input['tariff_id'];
         $meter->save();
 
-        $data = array();
-        foreach ($services as $service) {
-            $data['abonent_id'] = $input['abonent_id'];
-            $data['service_id'] = $service['service_id'];
-            $data['meter_id'] = $meter->id;
-            Service2Meter::create($data);
-        }
+        $meter->services()->attach($input['services']);
 
-        return $this->sendResponse(new MeterResource($meter), 'Лічильник доданий успішно!');
+        return 'Лічильник доданий успішно!';
     }
 
     /**
