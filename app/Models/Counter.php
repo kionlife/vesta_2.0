@@ -18,18 +18,22 @@ class Counter extends Model
         'abonent_id', 'service_id', 'meter_id', 'author_id', 'value'
     ];
 
-	public $timestamps = false;
+    public $timestamps = false;
 
-	public function meter() {
-	    return $this->hasMany(Meters::class, 'id', 'meter_id');
+    public function meter() {
+        return $this->hasMany(Meters::class, 'id', 'meter_id');
     }
 
-	public function author() {
-	    return $this->hasOne(User::class, 'id', 'author_id');
+    public function abonent() {
+        return $this->hasOne(Abonent::class, 'id', 'abonent_id');
+    }
+
+    public function author() {
+        return $this->hasOne(User::class, 'id', 'author_id');
     }
 
     public function service() {
-	    return $this->hasMany(Meters::class, 'id', 'meter_id');
+        return $this->hasMany(Service::class, 'id', 'service_id');
     }
 
 
