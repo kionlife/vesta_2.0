@@ -36,32 +36,20 @@ use App\Models\Abonent;
 
 Route::middleware('auth:web')->get('/abonents', [AbonentController::class, 'index']);         // список абонентів
 Route::middleware('auth:web')->get('/abonents/add', [AbonentController::class, 'storePage']);         // сторінка створення абонента
-Route::middleware('auth:api')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
-Route::middleware('auth:api')->get('/abonents/types', [AbonentController::class, 'types']);   // типи абонента
+Route::middleware('auth:web')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
 Route::middleware('auth:web')->post('/abonents', [AbonentController::class, 'store']);       // створення абонента
 Route::middleware('auth:web')->post('/abonents/{id}', [AbonentController::class, 'update']);   // редагування картки абонента
-Route::middleware('auth:api')->delete('/abonents/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
-Route::middleware('auth:api')->get('/abonents/{id}/counters', [CounterController::class, 'show']);     // показники абонента
-Route::middleware('auth:api')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента
-Route::middleware('auth:api')->get('/abonents/{id}/payments', [PaymentController::class, 'show']);     // платежі абонента
-Route::middleware('auth:api')->get('/abonents/{id}/services', [ServiceController::class, 'show']);     // послуги абонента
-Route::middleware('auth:api')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
+Route::middleware('auth:web')->delete('/abonents/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
+Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
 
-
-Route::middleware('auth:api')->get('/cities', [CityController::class, 'index']);    //список міст
 
 /* Роути для квитанцій */
-Route::middleware('auth:api')->get('/receipts', [ReceiptController::class, 'index']);    //список квитанцій
-Route::middleware('auth:api')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу
-Route::middleware('auth:api')->get('/receipts/preview', [ReceiptController::class, 'preview']);    //список квитанцій перед генерацією
-Route::middleware('auth:api')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
-Route::middleware('auth:api')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
-
-/* Роути для звітів */
-Route::middleware('auth:api')->get('/report/month', [ReportController::class, 'showmonth']);
-Route::middleware('auth:api')->get('/report/day', [ReportController::class, 'showday']);
-Route::middleware('auth:api')->get('/report/year', [ReportController::class, 'showyear']);
+Route::middleware('auth:web')->get('/receipts', [ReceiptController::class, 'index']);    //список квитанцій
+Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу
+Route::middleware('auth:web')->get('/receipts/preview', [ReceiptController::class, 'preview']);    //список квитанцій перед генерацією
+Route::middleware('auth:web')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
+Route::middleware('auth:web')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
 
 /* Роути для списань */
 Route::middleware('auth:api')->get('/costs/generate', [CostController::class, 'generate']);

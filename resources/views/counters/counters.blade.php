@@ -58,7 +58,6 @@
                                 <div class="row margin-top">
                                     <div class="col-md-12 text-center">
                                         <button class="btn btn-primary" type="submit" value="+">Додати показник</button>
-
                                     </div>
                                 </div>
 
