@@ -20,6 +20,14 @@ class Payment extends Model
 
 	public $timestamps = false;
 
+    public function abonent() {
+        return $this->hasOne(Abonent::class, 'id', 'abonent_id');
+    }
+
+    public function service() {
+        return $this->hasMany(Service::class, 'id', 'service_id');
+    }
+
     public function author() {
         return $this->hasOne(User::class, 'id', 'author_id');
     }

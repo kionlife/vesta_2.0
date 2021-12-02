@@ -58,7 +58,7 @@
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
                 <li><a href="/"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
                 <li><a href="/"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
-                <li><a href="/"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
+                <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 
             </ul>
         </div>
