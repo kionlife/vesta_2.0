@@ -17,11 +17,11 @@
                             <div class="row">
 
 
-                                <div class="col-md-6 form-group1">
-                                    <label class="control-label">Особовий рахунок</label>
+                                <div class="col-md-5 form-group1">
+                                    <label class="control-label">Абонент</label>
                                     <input type="text" placeholder="Firstname" required="">
                                 </div>
-                                <div class="col-sm-6 form-group1">
+                                <div class="col-sm-4 form-group1">
                                     <label class="control-label">Послуга</label>
                                     <select class="form-control1" name="city_id" id="">
                                         @foreach($services as $service)
@@ -29,31 +29,24 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3 form-group1">
-                                    <label class="control-label">Лічильник</label>
-                                    <input type="text" placeholder="Lastname" required="">
+                                <div class="col-sm-2 form-group1">
+                                    <label class="control-label">Метод оплати</label>
+                                    <select class="form-control1" name="city_id" id="">
+                                        @foreach($services as $service)
+                                            <option value="{{ $service['id'] }}">{{ $service['name'] }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="col-md-3 form-group1">
-                                    <label class="control-label">Попередній</label>
-                                    <input type="text" display="hidden" required="">
-                                </div>
-                                <div class="col-md-3 form-group1">
-                                    <label class="control-label">Поточний</label>
+                                <div class="col-md-1 form-group1">
+                                    <label class="control-label">Сума</label>
                                     <input type="text" placeholder="" required="">
-                                </div>
-                                <div class="col-md-3 form-group1">
-                                    <label class="control-label">Використано м³</label>
-                                    <input type="text" display="hidden" required="">
                                 </div>
 
                             </div>
 
                             <div class="row margin-top">
                                 <div class="col-md-12 text-center">
-                                    <button class="btn btn-primary" type="submit" value="+">Додати показник</button>
+                                    <button class="btn btn-primary" type="submit" value="+">Додати платіж</button>
                                 </div>
                             </div>
 
