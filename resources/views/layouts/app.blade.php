@@ -11,12 +11,17 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <link href="{{ asset('public/css/bootstrap.min.css') }}" rel='stylesheet' type='text/css'/>
-    <link href="{{ asset('public/css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <link href="{{ asset('public/css/select2.min.css') }}" rel='stylesheet' type='text/css'/>
     <link href="{{ asset('public/css/font-awesome.css') }}" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet'
           type='text/css'>
     <link rel="stylesheet" href="{{ asset('public/css/icon-font.min.css') }}" type='text/css'/>
+    <link href="{{ asset('public/css/style.css') }}" rel='stylesheet' type='text/css'/>
+
     <script src="{{ asset('public/js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ asset('public/js/select2.min.js') }}"></script>
+    <script src="{{ asset('public/js/i18n/uk.js') }}"></script>
+
     <script src="{{ asset('public/js/main.js') }}"></script>
 
 

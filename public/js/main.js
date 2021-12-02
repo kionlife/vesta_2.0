@@ -3,8 +3,48 @@ $(document).ready(function(){
         $(this).parent('.servicesTabs').children('.content').toggleClass('opened');
     });*/
 
+    $('#abonent_search').select2({
+        width: '100%',
+        minimumInputLength: 3,
+        language: 'uk',
+        placeholder: 'Введіть особовий рахунок...',
+        ajax: {
+            url: '/abonents/search',
+            dataType: 'json',
+            type: "GET",
+            data: function (data) {
+                return {
+                    keyword: data.term
+                };
+            },
+            processResults: function (response) {
+                return {
+                    results: $.map(response, function (response) {
+                        return {
+                            text: '(' + response.personal_account + ') ' + response.name,
+                            id: response.id
+                        }
+                    })
+                };
+            },
+            cache: true
+        }
+    }).on('select2:select', function (e) {
+        let id = e.params.data.id;
+        $('#abonent_services').select2({
+            ajax: {
+                url: '/abonents/' + id + '/services',
+                dataType: 'json',
+                type: "GET",
+                processResults: function (response) {
+                    console.log(response);
+                },
+            }
 
+        });
+    });
 });
+
 
 var abonent = {
     'add': function () {

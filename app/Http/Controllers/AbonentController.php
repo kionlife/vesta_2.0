@@ -373,7 +373,7 @@ class AbonentController extends Controller
 
         $data = Abonent::whereHas('balance', function (Builder $query) use ($service_id) {
             $query->whereIn('service_id', $service_id);
-        })->where('name', 'LIKE', '%' . $request->keyword . '%')->orWhere('personal_account', 'LIKE', '%' . $request->keyword . '%')->where('archived', 0)->get();
+        })->where('name', 'LIKE', '%' . $request->keyword . '%')->orWhere('personal_account', 'LIKE', '%' . $request->keyword . '%')->where('archived', 0)->limit(30)->get();
 
         return response()->json($data);
     }

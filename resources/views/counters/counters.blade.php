@@ -12,7 +12,7 @@
             </div>
             <div class="stats-grid">
                 <div class="stats-head">
-                    <h4 class="title3">Внесення платежу</h4>
+                    <h4 class="title3">Внесення показників</h4>
                 </div>
                 <div class="stats-info graph">
                     <div class="stats">
@@ -23,14 +23,13 @@
 
                                     <div class="col-md-6 form-group1">
                                         <label class="control-label">Особовий рахунок</label>
-                                        <input type="text" placeholder="Firstname" required="">
+                                        <select class="form-control1" id="abonent_search" name="abonent_id">
+                                        </select>
                                     </div>
                                     <div class="col-sm-6 form-group1">
                                         <label class="control-label">Послуга</label>
-                                        <select class="form-control1" name="city_id" id="">
-                                            @foreach($services as $service)
-                                                <option value="{{ $service['id'] }}">{{ $service['name'] }}</option>
-                                            @endforeach
+                                        <select class="form-control1" name="service_id" id="abonent_services">
+                                            <option value=""></option>
                                         </select>
                                     </div>
 

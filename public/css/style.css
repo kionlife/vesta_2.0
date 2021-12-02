@@ -40,6 +40,10 @@ a {
 }
 a:hover { transition: all 200ms ease-in-out; }
 
+*:focus {
+    outline:none;
+}
+
 .page-container {
   min-width: 1260px;
   position: relative;
@@ -8435,4 +8439,32 @@ tr.outcome {
 
 .payment_form label {
     display: block;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #303c52;
+    color: white;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #777;
+    line-height: 40px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 40px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 30px;
+}
+
+.select2-container .select2-selection--single {
+    height: 40px;
 }

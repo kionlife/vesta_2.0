@@ -41,6 +41,9 @@ Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 
 Route::middleware('auth:web')->post('/abonents', [AbonentController::class, 'store']);       // створення абонента
 Route::middleware('auth:web')->post('/abonents/{id}', [AbonentController::class, 'update']);   // редагування картки абонента
 Route::middleware('auth:web')->delete('/abonents/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
+Route::middleware('auth:web')->get('/abonents/{id}/services', [ServiceController::class, 'show']);     // послуги абонента
+Route::middleware('auth:web')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента
+Route::middleware('auth:web')->get('/abonents/{id}/payments', [PaymentController::class, 'show']);     // платежі абонента
 Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
 
 
