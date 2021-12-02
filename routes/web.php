@@ -111,7 +111,7 @@ Route::middleware('auth:api')->group( function () {
     Route::resource('services', ServiceController::class);
 });
 
-Route::middleware('auth:api')->get('/import', [\App\Http\Controllers\API\ImportExport::class, 'import']);
+
 
 Route::middleware('auth:api')->get('/custom', [TestController::class, 'func1']);
 Route::get('/invoice-pdf', [InvoiceController::class, 'createPdf']);
