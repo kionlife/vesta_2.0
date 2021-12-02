@@ -13,7 +13,7 @@ use App\Http\Controllers\API\CounterController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ServiceController;
 use App\Http\Controllers\API\InvoiceController;
-use App\Http\Controllers\API\MeterController;
+use App\Http\Controllers\MeterController;
 use App\Http\Controllers\API\TestController;
 use App\Http\Controllers\API\CityController;
 use App\Http\Controllers\API\CostController;
@@ -89,15 +89,16 @@ Route::middleware('auth:api')->post('/corrections', [CorrectionController::class
 /* Роути для чекбокса */
 Route::get('/shifts', [PaymentController::class, 'getShift']);
 
+
+/* Роути для лічильників */
+Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);
+
 Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
 
 Route::middleware('auth:api')->group( function () {
     Route::resource('counters', CounterController::class);
 });
 
-Route::middleware('auth:api')->group( function () {
-    Route::resource('meters', MeterController::class);
-});
 
 Route::middleware('auth:api')->group( function () {
     Route::resource('payments', PaymentController::class);
