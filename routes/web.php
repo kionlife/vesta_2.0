@@ -112,7 +112,6 @@ Route::middleware('auth:api')->group( function () {
 });
 
 
-
 Route::middleware('auth:api')->get('/custom', [TestController::class, 'func1']);
 Route::get('/invoice-pdf', [InvoiceController::class, 'createPdf']);
 
