@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\AbonentController;
-use App\Http\Controllers\API\CounterController;
+use App\Http\Controllers\CounterController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ServiceController;
 use App\Http\Controllers\API\InvoiceController;
@@ -31,15 +31,6 @@ use App\Models\Abonent;
 |
 */
 
-/*Route::get('login', function () {
-    return view('login');
-});*/
-
-/*Route::middleware('auth:api')->group( function () {
-	Route::group(['middleware' => ['role:admin|inspector']], function () {
-		Route::resource('abonents', AbonentController::class);
-	});
-});*/
 
 /* Роути для дій з абонентами */
 
@@ -76,7 +67,8 @@ Route::middleware('auth:api')->get('/report/year', [ReportController::class, 'sh
 Route::middleware('auth:api')->get('/costs/generate', [CostController::class, 'generate']);
 
 /* Роути для показників */
-Route::get('/counters', [CounterController::class, 'index']);
+Route::middleware('auth:web')->get('/counters', [CounterController::class, 'index']);
+Route::middleware('auth:web')->post('/counters', [CounterController::class, 'store']);
 Route::middleware('auth:api')->get('/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
 Route::middleware('auth:api')->post('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
 Route::middleware('auth:api')->get('/counters/meter/{id}', [CounterController::class, 'getCountersByMeter']);
@@ -95,11 +87,6 @@ Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::cla
 Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'store']);   //створення лічильника абонента
 
 Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
-
-Route::middleware('auth:api')->group( function () {
-    Route::resource('counters', CounterController::class);
-});
-
 
 Route::middleware('auth:api')->group( function () {
     Route::resource('payments', PaymentController::class);
