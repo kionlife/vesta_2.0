@@ -113,32 +113,33 @@ class AbonentController extends Controller
         Додати перевірку на наявність абонента, користувача
         Додати перевірку помилок
         */
-        $userReg = new User();
+        $userReg = User::firstOrNew(array(
+            'email' => $input['personal_account'],
+        ));
         $abonent = new Abonent();
         $userReg->password = bcrypt($input['personal_account']);
-        $userReg->email = $input['personal_account'];
         $userReg->name = $input['name'];
+
         try {
             $userReg->save();
             $input['user_id'] = $userReg->id;
-//            $input['user_id'] = 0;
 
             $abonent->personal_account = $input['personal_account'];
             $abonent->name = $input['name'];
             $abonent->address = $input['address'];
             $abonent->phone = $input['phone'];
             $abonent->peoples = $input['peoples'];
-            $abonent->city_id = $input['city_id'];
+            $abonent->city_id = 1;
 
             $abonent->save();
             $abonent->type()->attach(1);
 
             $balanceData['abonent_id'] = $abonent->id;
-            $services = $input['balance'];
+            $services = Service::all();
 
             foreach ($services as $item) {
                 $balanceData['service_id'] = $item['id'];
-                $balanceData['value'] = $item['value'];
+                $balanceData['status'] = 0;
                 $contractsNew[] = array(
                     'abonent_id' => $balanceData['abonent_id'],
                     'provider_id' => Service::where('id', $item['id'])->first('provider_id')['provider_id'],
@@ -156,12 +157,11 @@ class AbonentController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             $message['status'] = false;
             $message['text'] = 'Помилка ' . $e->errorInfo[1] . ': ' . $e->errorInfo[2];
-            $tg = 'Даааа, ебать его в рот: ' . $e->errorInfo[1] . ' ' . $e->errorInfo[2] . ' Користувач: ' . $user->name . ' (' . $user->email . ')' . PHP_EOL . 'UserData: ' . json_encode($userReg, JSON_UNESCAPED_UNICODE) . PHP_EOL . 'AbonentData:' . json_encode($input, JSON_UNESCAPED_UNICODE);
-            $this->sendMessage($tg);
+
         }
 
 
-        return $message['text'];
+        return $abonent->id;
 
     }
 
@@ -175,6 +175,11 @@ class AbonentController extends Controller
     {
         $user = Auth::user();
         $abonent = Abonent::find($id);
+
+        if (is_null($abonent)) {
+            return $this->sendError('Абонента не знайдено!');
+        }
+
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
         $services_ids = Balance::where('abonent_id', $id)->get('service_id');
@@ -245,22 +250,25 @@ class AbonentController extends Controller
 
         $abonent['meters'] = $metersNew;
         $abonent['services'] = $servicesNew;
+        $abonent['tariffs'] = Tariff::whereIn('service_id', $abonent->service()->where('status', 1)->get('service_id'))->whereIn('service_id', $service_id)->get();
         $abonent['contracts'] = array_map("unserialize", array_unique(array_map("serialize", $contractsNew)));
         $abonent['type'] = Abonent::with('type')->findOrFail($id)->type;
+
         $costs = Cost::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
         $payments = Payment::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
 
+
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
         $abonent['receipts'] = $abonent->receipt;
-        if (is_null($abonent)) {
-            return $this->sendError('Abonent not found.');
-        }
+
+
 
         return view('abonents/card', [
             'abonent' => $abonent,
-            'user' => $user,
-            'cities' => City::all(),
-            'types' => Type::all(),
+            'user'      => $user,
+            'cities'    => City::all(),
+            'types'     => Type::all(),
+            'services'  => Service::all()
         ]);
 
     }
@@ -308,7 +316,7 @@ class AbonentController extends Controller
 
         $abonent->save();
         Abonent::find($id)->type()->sync($input['type_id']);
-//        $abonent->type = array(0 => array('id' => $input['type_id'], 'title' => 'rt'));
+
         foreach ($input['services'] as $service) {
             Balance::where('abonent_id', $id)->where('service_id', $service['id'])->update(['status' => $service['status']]);
         }
@@ -335,23 +343,6 @@ class AbonentController extends Controller
             $meter->tariff_id = $single_meter['tariff_id'];
 
             $meter->services()->sync($single_meter['services']);
-
-/*            foreach ($single_meter['services'] as $m_service) {
-                $meter->services()->sync([
-                    $m_service['id'] => ['status' => $m_service['status']]
-                ]);
-            }*/
-
-
-
-            /*Service2Meter::where('meter_id', $meter->id)->where('abonent_id', $meter->abonent_id)->delete();
-
-            foreach ($input['service'] as $service) {
-                $data['abonent_id'] = $meter->abonent_id;
-                $data['service_id'] = $service;
-                $data['meter_id'] = $meter->id;
-                Service2Meter::create($data);
-            }*/
 
             $meter->save();
         }
