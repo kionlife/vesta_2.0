@@ -15,7 +15,7 @@ class Controller extends BaseController
     /**
      * return error response.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * @return array
      */
     public function sendResponseMessage($message, $code = 200)
     {
@@ -36,9 +36,7 @@ class Controller extends BaseController
             'message' => $message,
         ];
 
-        return response(view('elements/notify', [
-            'response' => $response
-        ]), $code);
+        return $response;
     }
 
     /**

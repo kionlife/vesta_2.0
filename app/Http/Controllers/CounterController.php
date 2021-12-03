@@ -42,8 +42,9 @@ class CounterController extends Controller
             $offset = 0;
         }
 
-        if ($request->alert == true) {
+        if (session('alert') == true) {
             $alert = $this->sendResponseMessage('Показник додано.');
+            $request->session()->forget('alert');
         } else {
             $alert = '';
         }
@@ -108,10 +109,10 @@ class CounterController extends Controller
 
 
 
-        if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
+       /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
 //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
             $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
-        } else {
+        } else {*/
 
             $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $input['service_id'])->first()['value'];
             $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('added_at', 'DESC')->first();
@@ -130,9 +131,9 @@ class CounterController extends Controller
 
             $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
             $counter = Counter::create($input);
-            $result = redirect()->route('counters', ['alert' => true]);
+            $result = redirect('/counters')->with('alert', true);
 
-        }
+//        }
 
 
         return $result;
