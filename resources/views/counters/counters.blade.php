@@ -29,7 +29,6 @@
                                     <div class="col-sm-6 form-group1">
                                         <label class="control-label">Послуга</label>
                                         <select class="form-control1" name="service_id" id="abonent_services">
-                                            <option value=""></option>
                                         </select>
                                     </div>
 
