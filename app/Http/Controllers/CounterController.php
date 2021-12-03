@@ -42,6 +42,13 @@ class CounterController extends Controller
             $offset = 0;
         }
 
+        if ($request->alert == true) {
+            $alert = $this->sendResponseMessage('Показник додано.');
+        } else {
+            $alert = '';
+        }
+
+
 
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
@@ -60,7 +67,9 @@ class CounterController extends Controller
             $result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
         }
 
-        return view('counters/counters')->with('counters', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+        return view('counters/counters', [
+            'alert' => $alert
+        ])->with('counters', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
 
     }
 
@@ -121,7 +130,7 @@ class CounterController extends Controller
 
             $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
             $counter = Counter::create($input);
-            $result = $this->sendResponse(new CounterResource($counter), 'Показники додані успішно!');
+            $result = redirect()->route('counters', ['alert' => true]);
 
         }
 
