@@ -4,6 +4,7 @@
 
     <div class="inner-content">
         <div class="outter-wp">
+            {{ $alert }}
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
                     <li><a href="/home">Головна</a></li>
@@ -17,6 +18,7 @@
                 <div class="stats-info graph">
                     <div class="stats">
                         <form method="POST" action="/counters">
+                            @csrf
                             <div class="vali-form payment_form">
                                 <div class="row">
 
@@ -36,19 +38,20 @@
                                 <div class="row">
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Лічильник</label>
-                                        <input type="text" placeholder="Lastname" required="">
+                                        <select class="form-control1" name="meter_id" id="abonent_services_meters">
+                                        </select>
                                     </div>
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Попередній</label>
-                                        <input type="text" display="hidden" required="">
+                                        <input id="last_counter" type="text" disabled required="">
                                     </div>
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Поточний</label>
-                                        <input type="text" placeholder="" required="">
+                                        <input type="text" name="value" placeholder="" required="">
                                     </div>
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Використано м³</label>
-                                        <input type="text" display="hidden" required="">
+                                        <input id="used_counter" type="text" disabled required="">
                                     </div>
 
                                 </div>
