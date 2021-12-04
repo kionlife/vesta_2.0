@@ -48,14 +48,7 @@ function loadMeters(service, auto = false) {
 function loadServices(e) {
     $('#abonent_services').select2().empty();
 
-
     let id = e.params.data.id;
-
-
-
-
-        //loadMeters($('#abonent_services').select2('data'));
-
 
     $.ajax({
         url: '/abonents/' + id + '/services',

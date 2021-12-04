@@ -87,8 +87,6 @@ class MeterController extends Controller
 
 		$service_id = Inspector2Service::where('user_id', $user->id)->where('service_id', $request->service_id)->get('service_id');
 
-        // TODO Виправити повернення всіх лічильників абонента по послузі - $request->service_id
-
         $meters = Meters::where('abonent_id', $id)->where('archived', 0)->whereHas('services', function ($query) use ($request) {
             $query->where('services.id', $request->service_id)->where('archived', 0)->where('status', 1);
         })->with(array('counters' => function($query) {
