@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Поточний</label>
-                                        <input type="text" name="value" placeholder="" required="">
+                                        <input id="current_counter" type="text" name="value" placeholder="" required="">
                                     </div>
                                     <div class="col-md-3 form-group1">
                                         <label class="control-label">Використано м³</label>
@@ -94,7 +94,7 @@
                                     <td>{{ $counter['meter'][0]['title'] }}</td>
                                     <td>{{ $counter['value'] }}</td>
                                     <td>{{ $counter['author']['name'] }}</td>
-                                    <td>{{ $counter['abonent']['name'] }}</td>
+                                    <td><a href="/abonents/{{ $counter['abonent']['id'] }}">{{ $counter['abonent']['name'] }}</a></td>
                                     <td>{{ $counter['added_at'] }}</td>
                                 </tr>
                             @endforeach
