@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\CorrectionController;
-use App\Http\Controllers\API\ReceiptController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\API\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,6 +70,8 @@ Route::middleware('auth:api')->post('/corrections', [CorrectionController::class
 
 /* Роути для платежів */
 Route::middleware('auth:web')->get('/payments', [PaymentController::class, 'index']);
+Route::middleware('auth:web')->post('/payments', [PaymentController::class, 'store']);
+
 
 /* Роути для чекбокса */
 Route::get('/shifts', [PaymentController::class, 'getShift']);

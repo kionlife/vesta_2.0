@@ -15,6 +15,33 @@ class Controller extends BaseController
     /**
      * return error response.
      *
+     * @return array
+     */
+    public function sendResponseMessage($message, $code = 200)
+    {
+        switch ($code) {
+            case 200:
+                $status = 'Операція успішна';
+                $class = 'success';
+                break;
+            default:
+                $status = 'Невідома помилка';
+                $class = 'danger';
+        }
+
+
+        $response = [
+            'status'  => $status,
+            'class'   => $class,
+            'message' => $message,
+        ];
+
+        return $response;
+    }
+
+    /**
+     * return error response.
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function sendError($error, $errorMessages = [], $code = 404)

@@ -112,7 +112,8 @@
                                             <div
                                                 class="servicesTabs wrap-{{ $service['id'] }} ">
 
-                                                <label onclick="tabShow('tab-{{ $service['id'] }}')" class="serv @if ( $service['status'] != 1) notActive @endif"
+                                                <label onclick="tabShow('tab-{{ $service['id'] }}')"
+                                                       class="serv @if ( $service['status'] != 1) notActive @endif"
                                                        for="tab-{{ $service['id'] }}">
                                                     <div>{{ $service['name'] }} <span
                                                             class="balance">Баланс: {{ $service['balance'] }}</span>
@@ -167,16 +168,20 @@
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
+                                                                    {{--
+                                                                    TODO Додати перевірку на наявність записів по послузі
+                                                                    --}}
                                                                     @if($abonent['history']->isNotEmpty())
-                                                                    @foreach($abonent['history'][$service['id']] as $item)
-                                                                        <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
-                                                                            <td>{{ $item['created_at'] }}</td>
-                                                                            <td>{{ $item['title'] }}</td>
-                                                                            <td>{{ $item['value'] }}</td>
-                                                                            <td>{{ $item->author['name'] }}</td>
-                                                                        </tr>
-                                                                    @endforeach
-                                                                        @endif
+                                                                        @foreach($abonent['history'][$service['id']] as $item)
+
+                                                                            <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
+                                                                                <td>{{ $item['created_at'] }}</td>
+                                                                                <td>{{ $item['title'] }}</td>
+                                                                                <td>{{ $item['value'] }}</td>
+                                                                                <td>{{ $item->author['name'] }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    @endif
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -259,7 +264,9 @@
                         <h2 class="inner-tittle">Лічильники</h2>
                     </div>
                     <div class="flex-child-50 text-right">
-                        <button data-toggle="modal" data-target="#add_meter" type="button" class="btn btn-primary">Додати лічильник</button>
+                        <button data-toggle="modal" data-target="#add_meter" type="button" class="btn btn-primary">
+                            Додати лічильник
+                        </button>
                     </div>
                 </div>
 
@@ -276,7 +283,8 @@
                                             <div
                                                 class="servicesTabs wrap-{{ $meter['meter_id'] }} @if ( $meter['archived'] == 1) notActive @endif">
 
-                                                <label onclick="tabShow('tab-{{ $meter['meter_id'] }}')" class="serv" for="">
+                                                <label onclick="tabShow('tab-{{ $meter['meter_id'] }}')" class="serv"
+                                                       for="">
 
                                                     <div>{{ $meter['title'] }}
                                                         <span
@@ -524,147 +532,149 @@
 
 
 
-        <div class="modal fade modalCustom" id="add_meter" tabindex="-1" role="dialog" aria-labelledby="add_meter" aria-hidden="true" style="display: none;">
+    <div class="modal fade modalCustom" id="add_meter" tabindex="-1" role="dialog" aria-labelledby="add_meter"
+         aria-hidden="true" style="display: none;">
 
-    <div class="modal-dialog">
-        <form class="modal-content" action="javascript:void(null);" onsubmit="meter.add()" method="post">
-            @csrf
-            <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h2 class="modal-title">Додавання лічильника</h2>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-body">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Номер
-                                        лічильника</label>
-                                    <div class="col-sm-8">
-                                        <input
-                                            name="code"
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Номер лічильника"
-                                            value="">
+        <div class="modal-dialog">
+            <form class="modal-content" action="javascript:void(null);" onsubmit="meter.add()" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Додавання лічильника</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Номер
+                                            лічильника</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="code"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Номер лічильника"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Код
-                                        пломби</label>
-                                    <div class="col-sm-8">
-                                        <input
-                                            name="code_plomb"
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Код пломби"
-                                            value="">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Код
+                                            пломби</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="code_plomb"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Код пломби"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Розташування
-                                        лічильника</label>
-                                    <div class="col-sm-8">
-                                        <input
-                                            name="title"
-                                            type="tel"
-                                            class="form-control"
-                                            placeholder="Розташування лічильника"
-                                            value="">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Розташування
+                                            лічильника</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="title"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="Розташування лічильника"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-body">
-                            <div class="form-horizontal">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
 
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Дата
-                                        останньої повірки</label>
-                                    <div class="col-sm-8">
-                                        <input
-                                            name="last_check"
-                                            type="date"
-                                            class="form-control"
-                                            placeholder="Дата останньої повірки"
-                                            value="">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Дата
+                                            останньої повірки</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="last_check"
+                                                type="date"
+                                                class="form-control"
+                                                placeholder="Дата останньої повірки"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Дата
-                                        наступної повірки</label>
-                                    <div class="col-sm-8">
-                                        <input
-                                            name="next_check"
-                                            type="date"
-                                            class="form-control"
-                                            placeholder="Дата наступної повірки"
-                                            value="">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Дата
+                                            наступної повірки</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="next_check"
+                                                type="date"
+                                                class="form-control"
+                                                placeholder="Дата наступної повірки"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    <label
-                                        class="col-sm-4 control-label">Послуги</label>
-                                    <div class="col-sm-8">
-                                        @foreach($services as $service)
+                                    <div class="form-group">
+                                        <label
+                                            class="col-sm-4 control-label">Послуги</label>
+                                        <div class="col-sm-8">
+                                            @foreach($services as $service)
+                                                <div class="meter_service">
+                                                    <input
+                                                        name="services[{{ $service['id'] }}][service_id]"
+                                                        type="hidden"
+                                                        value="{{ $service['id'] }}">
+                                                    <input type="hidden" value="{{ $abonent['id'] }}"
+                                                           name="services[{{ $service['id'] }}][abonent_id]">
+
+                                                    <input
+                                                        name="services[{{ $service['id'] }}][status]"
+                                                        type="hidden"
+                                                        value="0">
+                                                    <input
+                                                        name="services[{{ $service['id'] }}][status]"
+                                                        type="checkbox"
+                                                        id="m_service_{{ $service['id'] }}"
+                                                        value="1">
+                                                    <label
+                                                        for="m_service_{{ $service['id'] }}">{{ $service['name'] }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label
+                                            class="col-sm-4 control-label">Тариф лічильника</label>
+                                        <div class="col-sm-8">
                                             <div class="meter_service">
-                                                <input
-                                                    name="services[{{ $service['id'] }}][service_id]"
-                                                    type="hidden"
-                                                    value="{{ $service['id'] }}">
-                                                <input type="hidden" value="{{ $abonent['id'] }}" name="services[{{ $service['id'] }}][abonent_id]">
-
-                                                <input
-                                                    name="services[{{ $service['id'] }}][status]"
-                                                    type="hidden"
-                                                    value="0">
-                                                <input
-                                                    name="services[{{ $service['id'] }}][status]"
-                                                    type="checkbox"
-                                                    id="m_service_{{ $service['id'] }}"
-                                                    value="1">
-                                                <label
-                                                    for="m_service_{{ $service['id'] }}">{{ $service['name'] }}</label>
+                                                <select class="form-control1"
+                                                        name="tariff_id" id="">
+                                                    @foreach($abonent['tariffs'] as $tariff)
+                                                        <option value="{{ $tariff['id'] }}">({{ $tariff['value'] }}
+                                                            ) {{ $tariff['name'] }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label
-                                        class="col-sm-4 control-label">Тариф лічильника</label>
-                                    <div class="col-sm-8">
-                                        <div class="meter_service">
-                                            <select class="form-control1"
-                                                    name="tariff_id" id="">
-                                                @foreach($abonent['tariffs'] as $tariff)
-                                                    <option value="{{ $tariff['id'] }}">({{ $tariff['value'] }}
-                                                        ) {{ $tariff['name'] }}</option>
-                                                @endforeach
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="clearfix"></div>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Додати</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Скасувати</button>
-            </div>
-        </form>
-    </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Скасувати</button>
+                </div>
+            </form>
+        </div>
     </div>
 
 @endsection

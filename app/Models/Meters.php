@@ -25,7 +25,7 @@ class Meters extends Model
 
 	public function services()
     {
-        return $this->belongsToMany(Service::class, 'service_to_meter', 'meter_id', 'service_id')->withPivot('status');
+        return $this->belongsToMany(Service::class, 'service_to_meter', 'meter_id', 'service_id')->withPivot('status', 'service_id');
     }
 
 	public function counters()

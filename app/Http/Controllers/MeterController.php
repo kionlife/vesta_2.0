@@ -88,12 +88,14 @@ class MeterController extends Controller
 		$service_id = Inspector2Service::where('user_id', $user->id)->where('service_id', $request->service_id)->get('service_id');
 
         $meters = Meters::where('abonent_id', $id)->where('archived', 0)->whereHas('services', function ($query) use ($request) {
-            $query->where('services.id', $request->service_id)->where('archived', 0);
+            $query->where('services.id', $request->service_id)->where('archived', 0)->where('status', 1);
         })->with(array('counters' => function($query) {
             $query->orderBy('added_at', 'DESC')->limit(1);
         }))->get();
 
-        return $meters;
+        $meters_data = Meter::collection($meters);
+
+        return $meters_data;
     }
 
     /**

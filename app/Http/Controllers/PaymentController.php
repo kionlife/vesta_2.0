@@ -109,7 +109,7 @@ class PaymentController extends Controller
 
 		$balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->update(['value' => $newBalance]);
 
-        return $this->sendResponse(new PaymentResource($payment), 'Оплата успішна. Баланс абонента оновлено!');
+        return redirect('/payments');
     }
 
     /**

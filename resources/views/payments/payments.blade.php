@@ -12,41 +12,30 @@
             </div>
             <div class="stats-info graph">
                 <div class="stats">
-                    <form method="POST" action="/counters">
+                    <form method="post" action="/payments">
+                        @csrf
                         <div class="vali-form payment_form">
                             <div class="row">
-
-
                                 <div class="col-md-5 form-group1">
                                     <label class="control-label">Абонент</label>
-                                    <input type="text" placeholder="Firstname" required="">
+                                    <select class="form-control1" id="abonent_search" name="abonent_id">
+                                    </select>
                                 </div>
                                 <div class="col-sm-4 form-group1">
                                     <label class="control-label">Послуга</label>
-                                    <select class="form-control1" name="city_id" id="">
-                                        @foreach($services as $service)
-                                            <option value="{{ $service['id'] }}">{{ $service['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-2 form-group1">
-                                    <label class="control-label">Метод оплати</label>
-                                    <select class="form-control1" name="city_id" id="">
-                                        @foreach($services as $service)
-                                            <option value="{{ $service['id'] }}">{{ $service['name'] }}</option>
-                                        @endforeach
+                                    <select class="form-control1" name="service_id" id="abonent_services">
                                     </select>
                                 </div>
                                 <div class="col-md-1 form-group1">
                                     <label class="control-label">Сума</label>
-                                    <input type="text" placeholder="" required="">
+                                    <input type="text" name="value" placeholder="" required="">
                                 </div>
 
                             </div>
 
                             <div class="row margin-top">
                                 <div class="col-md-12 text-center">
-                                    <button class="btn btn-primary" type="submit" value="+">Додати платіж</button>
+                                    <button class="btn btn-primary" type="submit" value="">Додати платіж</button>
                                 </div>
                             </div>
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
-{{ $result }}
+    @csrf
+{{ $payments }}
 
 @endsection
