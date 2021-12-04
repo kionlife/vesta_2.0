@@ -61,7 +61,7 @@
                 <li><a href="/"><i class="fa fa-home"></i> <span>Головна</span></a></li>
                 <li><a href="/counters"><i class="fa fa-tachometer"></i> <span>Показники</span></a></li>
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
-                <li><a href="/"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
+                <li><a href="/receipts"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
                 <li><a href="/"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
                 <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 

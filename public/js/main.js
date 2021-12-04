@@ -31,6 +31,7 @@ $(document).ready(function () {
         }
     }).on('select2:select', function (e) {
         $('#abonent_services').select2().empty();
+        $('#abonent_services_meters').select2().empty();
 
         let id = e.params.data.id;
 
@@ -52,35 +53,58 @@ $(document).ready(function () {
                 $('#abonent_services').select2({
                     data: options,
                     minimumResultsForSearch: -1,
-                }).on('select2:select', function (e) {
-                    $('#abonent_services_meters').select2().empty();
-                    let id = e.params.data.abonent_id;
-                    let service_id = e.params.data.id;
-                    $.ajax({
-                        url: '/abonents/' + id + '/meters?service_id=' + service_id,
-                        dataType: 'json',
-                        type: "GET",
-                        success: function (response) {
+                })
+            },
+        })
+    }).on('select2:select', function (e) {
+        $('#abonent_services').select2().empty();
+        $('#abonent_services_meters').select2().empty();
 
-                            let meters = response.map(function (nested) {
-                                return {
-                                    text: nested.title,
-                                    id: nested.id
-                                }
-                            });
+        let id = e.params.data.id;
 
-                            console.log(meters);
+        $.ajax({
+            url: '/abonents/' + id + '/services',
+            dataType: 'json',
+            type: "GET",
+            success: function (response) {
 
-                            $('#abonent_services_meters').select2({
-                                placeholder: 'Введіть особовий рахунок...',
-                                minimumResultsForSearch: -1,
-                                data: meters
-                            });
-
-                        }
-                    });
-
+                let options = response.map(function (nested) {
+                    return {
+                        text: nested.name,
+                        id: nested.service_id,
+                        abonent_id: id
+                    }
                 });
+
+                let ab_id = options[0].abonent_id;
+                let service_id = options[0].id;
+                console.log(options);
+                $.ajax({
+                    url: '/abonents/' + ab_id + '/meters?service_id=' + service_id,
+                    dataType: 'json',
+                    type: "GET",
+                    success: function (response) {
+
+                        let meters = response.map(function (nested) {
+                            return {
+                                text: nested.title,
+                                id: nested.id
+                            }
+                            console.log(nested)
+                        });
+
+                        console.log(meters);
+
+                        $('#abonent_services_meters').select2({
+                            placeholder: 'Введіть особовий рахунок...',
+                            minimumResultsForSearch: -1,
+                            data: meters
+                        });
+
+                    }
+                });
+
+
             },
         })
     });

@@ -20,6 +20,11 @@ class Receipt extends Model
         return $this->hasMany(ReceiptData::class, 'receipt_id', 'id');
     }
 
+    public function service()
+    {
+        return $this->hasOne(ReceiptData::class, 'id', 'service_id');
+    }
+
     public function status()
     {
         return $this->hasOne(ReceiptStatus::class, 'id', 'status_id');
