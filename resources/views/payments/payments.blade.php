@@ -4,6 +4,9 @@
 
     <div class="inner-content">
         <div class="outter-wp">
+            @if(!empty($alert))
+                @include('elements/notify', ['response' => $alert])
+            @endif
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
                     <li><a href="/home">Головна</a></li>

@@ -45,6 +45,7 @@ function loadMeters(service, auto = false) {
     });
 }
 
+
 function loadServices(e) {
     $('#abonent_services').select2().empty();
 
