@@ -99,6 +99,28 @@
                 straight: false,
                 data: data,
                 labelTextColor: "#002561",
+
+                ajax: {
+                    url: '/home/months',
+                    dataType: 'json',
+                    type: "GET",
+                    data: function (data) {
+                        return {
+                            keyword: data.term
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: $.map(response, function (response) {
+                                return {
+                                    text: '(' + response.personal_account + ') ' + response.name,
+                                    id: response.id
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
             });
         });
     </script>
