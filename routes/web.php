@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\CorrectionController;
+use App\Http\ControllersCorrectionController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\API\ReportController;
 use Illuminate\Http\Request;
@@ -11,6 +11,7 @@ use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\AbonentController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CorrectionController;
 use App\Http\Controllers\API\ServiceController;
 use App\Http\Controllers\API\InvoiceController;
 use App\Http\Controllers\MeterController;
@@ -54,6 +55,7 @@ Route::middleware('auth:web')->get('/receipts/preview', [ReceiptController::clas
 Route::middleware('auth:web')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
 Route::middleware('auth:web')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
 
+
 /* Роути для списань */
 Route::middleware('auth:api')->get('/costs/generate', [CostController::class, 'generate']);
 
@@ -66,7 +68,8 @@ Route::middleware('auth:api')->get('/counters/meter/{id}', [CounterController::c
 Route::middleware('auth:api')->get('/counters/meter/{id}/last', [CounterController::class, 'getLastCounterByMeter']);
 
 /* Роути для корекції */
-Route::middleware('auth:api')->post('/corrections', [CorrectionController::class, 'store']);
+Route::middleware('auth:web')->get('/corrections', [CorrectionController::class, 'index']);
+Route::middleware('auth:web')->post('/corrections', [CorrectionController::class, 'store']);
 
 /* Роути для платежів */
 Route::middleware('auth:web')->get('/payments', [PaymentController::class, 'index']);
