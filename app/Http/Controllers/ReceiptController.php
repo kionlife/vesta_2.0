@@ -41,7 +41,7 @@ class ReceiptController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
 
     public function index(Request $request)
@@ -159,8 +159,8 @@ class ReceiptController extends Controller
             $currentYearOfMonth = Carbon::now()->format('Y');
 
             // Отримуємо минулу квитанцію
-            $last_receipt = Abonent::find($abonent['id'])->receipt()->whereMonth('created_at', Carbon::now()->subMonth()->month)->first();
-
+//            $last_receipt = Abonent::find($abonent['id'])->receipt()->whereMonth('created_at', Carbon::now()->subMonth()->month)->first();
+            $last_receipt = '';
             // Якщо знайдена остання квитанція, отримуємо її вміст (її дані)
             if ($last_receipt) {
                 $receipt = Receipt::find($last_receipt['id']);
@@ -188,7 +188,7 @@ class ReceiptController extends Controller
                     if ($service['counters'] == 1) {
 
                         $meters = Meters::whereHas('services', function (Builder $query) use ($abonent, $service) {
-                            $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id']);
+                            $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id'])->where('status', 1);
                         })->get();
 
                         /* Якщо є лічильники */
@@ -201,10 +201,6 @@ class ReceiptController extends Controller
                                     $last_counter = $this->getCounter($meter['id'], $lastMonth, $lastYearOfMonth);
                                     $current_counter = $this->getCounter($meter['id'], $currentMonth, $currentYearOfMonth);
 
-                                    // якщо немає поточного показника, присвоюємо на 4 більше від останнього
-                                    if ($current_counter['value'] == 0) {
-                                        $current_counter['value'] = $last_counter['value'] + 4;
-                                    }
 
                                     /* отримуємо тариф по послузі лічильника */
                                     $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
@@ -296,13 +292,21 @@ class ReceiptController extends Controller
                     }
                 }
             }
-
             $receipts[] = $receipt;
 
         }
 
         return $receipts;
 //        return $this->sendResponse(new ReceiptPreviewResource($receipts), 'Receipts retrieved successfully.');
+    }
+
+    public function previewPage(Request $request) {
+        $receipts = $this->preview($request);
+        $user = Auth::user();
+        return view('receipts/preview', [
+            'receipts' => $receipts,
+            'user' => $user
+        ]);
     }
 
     public function saveReceipt(Request $request) {
@@ -318,10 +322,12 @@ class ReceiptController extends Controller
             $receipt->created_at = $receipt_single->created_at;
             $receipt->save();
 
-            $result[] = $receipt->id;
+            $result[]['all'] = $receipt->id;
 
             foreach ($receipt_single->services as $service_single) {
-                if (Service::where('id', $service_single['service_id'])->first()['counters'] == 1 ) {
+                if ($service_single['current_counter_id'] == 0) {
+                    $result[]['all'] = $receipt->id;
+                } else {
                     $service = new ReceiptData();
                     $service->receipt_id = $receipt->id;
                     $service->service_id = $service_single['service_id'];
@@ -335,6 +341,8 @@ class ReceiptController extends Controller
 
 
         }
+
+
 
         return $result;
     }

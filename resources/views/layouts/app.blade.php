@@ -13,6 +13,7 @@
     <link href="{{ asset('public/css/bootstrap.min.css') }}" rel='stylesheet' type='text/css'/>
     <link href="{{ asset('public/css/select2.min.css') }}" rel='stylesheet' type='text/css'/>
     <link href="{{ asset('public/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/css/fabochart.css') }}" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet'
           type='text/css'>
     <link rel="stylesheet" href="{{ asset('public/css/icon-font.min.css') }}" type='text/css'/>
@@ -62,6 +63,7 @@
                 <li><a href="/counters"><i class="fa fa-tachometer"></i> <span>Показники</span></a></li>
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
                 <li><a href="/receipts"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
+                <li><a class="disabled" href="#"><i class="fa fa-bookmark"></i> <span>Звітність</span></a></li>
                 <li><a href="/corrections"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
                 <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 
@@ -93,6 +95,7 @@
 
 {{--<script src="{{ asset('public/js/jquery.nicescroll.js') }}"></script>--}}
 <script src="{{ asset('public/js/scripts.js') }}"></script>
+<script src="{{ asset('public/js/fabochart.js') }}"></script>
 <script src="{{ asset('public/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
