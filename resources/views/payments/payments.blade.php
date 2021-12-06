@@ -58,6 +58,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Надавач послуг</th>
+                                <th>Тип</th>
                                 <th>Сума</th>
                                 <th>Автор</th>
                                 <th>Абонент</th>
@@ -69,9 +70,10 @@
                                 <tr>
                                     <td>{{ $payment['id'] }}</td>
                                     <td>{{ $payment['service'][0]['name']}}</td>
+                                    <td>{{ $payment['title'] }}</td>
                                     <td>{{ $payment['value'] }}</td>
                                     <td>{{ $payment['author']['name'] }}</td>
-                                    <td>{{ $payment['abonent']['name']}}</td>
+                                    <td><a href="/abonents/{{ $payment['abonent']['id'] }}">{{ $payment['abonent']['name']}}</td>
                                     <td>{{ $payment['created_at'] }}</td>
                                 </tr>
                             @endforeach
