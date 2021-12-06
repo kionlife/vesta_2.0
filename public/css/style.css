@@ -7,7 +7,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 html, body{
 	font-family: 'Roboto', sans-serif;
     font-size: 100%;
-  	overflow-x: hidden;
 	background:#FFFFFF;
 }
 body a{
@@ -84,6 +83,7 @@ a:hover { transition: all 200ms ease-in-out; }
   width: 65px;
   transition: all 100ms ease-in-out;
   transition-delay: 300ms;
+    overflow-x: hidden;
 }
 
 .page-container.sidebar-collapsed-back .sidebar-menu {
@@ -1960,7 +1960,7 @@ h2.inner-tittle,h3.inner-tittle {
 
 .graph {
        background: #fff;
-    padding: 2em 2em;
+    padding: 0.5em;
     position: relative;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
     -o-box-shadow: 0 1px 1px rgba(0,0,0,.05);
@@ -4053,7 +4053,9 @@ th {
     text-decoration: none;
     padding: 10px 20px;
     font-size: 17px;
-	}
+    border: none;
+}
+
 .inner-grid-button {
     padding: 0;
 }
@@ -8432,10 +8434,6 @@ tr.outcome {
     opacity: 0.5;
 }
 
-.disabled span {
-    display: none;
-}
-
 .payment_form label {
     display: block;
 }
@@ -8466,4 +8464,46 @@ tr.outcome {
 
 .select2-container .select2-selection--single {
     height: 40px;
+}
+
+.receiptRow {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #999999;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.receiptCol {
+    border-left: 1px solid #999999;
+    text-align: center;
+}
+
+.receiptHead {
+    background-color: #303c52;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.receiptHead .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.receiptHead .col {
+    border-left: 1px solid #fff;
+}
+
+.serviceRow {
+    border-bottom: 1px solid #999999;
+}
+
+.form-group-fixed {
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }

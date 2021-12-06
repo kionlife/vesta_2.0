@@ -88,6 +88,8 @@ $(document).ready(function () {
             $(this).parent('.servicesTabs').children('.content').toggleClass('opened');
         });*/
 
+
+
     $('#abonent_search').select2({
         minimumInputLength: 3,
         width: '100%',
@@ -192,4 +194,9 @@ var meter = {
 
 function tabShow(id) {
     $('#' + id).toggleClass('opened');
+}
+
+function checkAll(id) {
+    let checkBoxes = $('#' + id + ' input[type=checkbox]');
+    checkBoxes.prop("checked", !checkBoxes.prop("checked"));
 }
