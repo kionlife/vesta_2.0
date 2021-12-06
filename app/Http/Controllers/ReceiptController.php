@@ -202,7 +202,6 @@ class ReceiptController extends Controller
                                     $current_counter = $this->getCounter($meter['id'], $currentMonth, $currentYearOfMonth);
 
 
-
                                     /* отримуємо тариф по послузі лічильника */
                                     $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
 
