@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Carbon\Traits\Creator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,12 +54,14 @@ class HomeController extends Controller
         $end->endOfDay();
 
 
+        $months = $this->showmonth();
+
 
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
             $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('added_at', [$start, $end])->count();
-            $t_payments = Payment::whereBetween('created_at', [$start, $end])->sum('value');
+            $t_payments = Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
 
         } else {
             //$abonent_id = Abonent::where('user_id', $user->id)->first();
@@ -71,6 +74,45 @@ class HomeController extends Controller
 
         return view('home', [
             'user' => $user
-        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments);
+        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments)->with('months', $months);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showmonth()
+    {
+
+        $start = Carbon::now()->subMonths(5);
+        $start->startOfMonth();
+        $end = Carbon::today();
+        $end->endOfDay();
+
+
+        $period = CarbonPeriod::create($start, $end)->month();
+        $months = collect($period)->map(function (Carbon $date) {
+            return [
+                'month' => $date->month,
+                'name' => $date->monthName,
+            ];
+        })->toArray();
+
+        $service_id = Inspector2Service::where('user_id', 5)->get('service_id');
+
+        $services = Service::whereIn('id', $service_id)->get();
+
+        foreach ($months as $month) {
+
+                $arr[] = array(
+                    'monthName' => $month['name'],
+                    'total_sum' => Payment::whereMonth('created_at', $month['month'])->whereYear('created_at', Carbon::now()->year)->sum('value'),
+                );
+        }
+
+        return $arr;
+
     }
 }
