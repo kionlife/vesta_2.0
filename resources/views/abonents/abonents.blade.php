@@ -28,7 +28,6 @@
                             <thead>
                             <tr>
                                 <th>О/р</th>
-                                <th>Тип абонента</th>
                                 <th>ПІБ</th>
                                 <th>Баланс, грн</th>
                                 <th>Адреса</th>
@@ -36,12 +35,12 @@
                             </tr>
                             </thead>
                             <tbody>
+
                             @foreach ($abonents as $abonent)
                                     <tr>
                                         <td><a href="/abonents/{{ $abonent['id'] }}">{{ $abonent['personal_account'] }}</a></td>
-                                        <td>{{ $abonent['type'][0]['title'] }}</td>
                                         <td>{{ $abonent['name'] }}</td>
-                                        <td></td>
+                                        <td class="@if($abonent['balance_provider']['value'] < 0) balanceMinus @else balancePlus @endif">@money($abonent['balance_provider']['value'])</td>
                                         <td>{{ $abonent['address'] }}</td>
                                         <td>{{ $abonent['phone'] }}</td>
                                     </tr>

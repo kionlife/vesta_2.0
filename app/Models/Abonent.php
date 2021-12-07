@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Abonent extends Model
 {
@@ -28,6 +29,20 @@ class Abonent extends Model
         $payment = $this->hasMany(Payment::class)->where('service_id', $service_id)->sum('value');
         $cost = $this->hasMany(Cost::class)->where('service_id', $service_id)->sum('value');
         $status = $this->hasMany(Balance::class)->where('service_id', $service_id)->first('status')['status'];
+        $val = $payment - $cost;
+        return [
+            'value' => round($val, 2),
+            'status' => $status,
+        ];
+    }
+
+	public function balanceCalcMass()
+    {
+        $user = Auth::user();
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+        $payment = $this->hasMany(Payment::class)->whereIn('service_id', $service_id)->sum('value');
+        $cost = $this->hasMany(Cost::class)->whereIn('service_id', $service_id)->sum('value');
+        $status = $this->hasMany(Balance::class)->whereIn('service_id', $service_id)->first('status')['status'];
         $val = $payment - $cost;
         return [
             'value' => round($val, 2),

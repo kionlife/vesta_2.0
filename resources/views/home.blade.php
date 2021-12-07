@@ -11,7 +11,7 @@
                         <h4>Показників</h4>
                     </div>
                     <div class="stats-right">
-                        <label>90</label>
+                        <label>{{ $t_counters }}</label>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
@@ -21,7 +21,7 @@
                         <h4>Платежів</h4>
                     </div>
                     <div class="stats-right">
-                        <label> 25 000 грн</label>
+                        <label>{{ $t_payments }} грн</label>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
@@ -31,11 +31,18 @@
         </div>
         <!--//custom-widgets-->
 
+
         <!--/charts-->
         <div class="charts">
             <div class="chrt-inner">
                 <div class="chrt-bars">
                     <div class="row">
+
+                        <div class="col-md-6 chrt-two">
+                            <div id="chart1"></div>
+
+                        </div>
+
                         <div class="col-md-3 form-group1">
                             <h3 class="sub-tittle">Надходження до каси</h3>
                         </div>
@@ -47,50 +54,53 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 chrt-two">
-                        <div id="chart2"></div>
-                        <script src="js/fabochart.js"></script>
-                        <script>
-                            $(document).ready(function () {
-                                data = {
-                                    '2010': 300,
-                                    '2011': 200,
-                                    '2012': 100,
-                                    '2013': 500,
-                                    '2014': 400,
-                                    '2015': 200
-                                };
 
-                                $("#chart1").faBoChart({
-                                    time: 500,
-                                    animate: true,
-                                    instantAnimate: true,
-                                    straight: false,
-                                    data: data,
-                                    labelTextColor: "#002561",
-                                });
-                                $("#chart2").faBoChart({
-                                    time: 2500,
-                                    animate: true,
-                                    data: data,
-                                    straight: true,
-                                    labelTextColor: "#002561",
-                                });
-                            });
-                        </script>
-                    </div>
 
-                    <div class="clearfix"></div>
                 </div>
-
-                <div class="clearfix"></div>
-
             </div>
         </div>
+
+
+        <div class="graph-visualization">
+            <div class="col-md-6 map-1">
+                <h3 class="sub-tittle">Погода</h3>
+                <div class="weather">
+                    <div class="weather-top">
+                        <div class="weather-top-left">
+                            <div class="degree">
+                                <span>Не так і холодно, но холодно</span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <!--//bottom-grids-->
 
     </div>
     <!--/charts-inner-->
     </div>
+
+    <script>
+        $(document).ready(function () {
+            data = {
+                '2010': 300,
+                '2011': 200,
+                '2012': 100,
+                '2013': 500,
+                '2014': 400,
+                '2015': 200
+            };
+
+            $("#chart1").faBoChart({
+                time: 500,
+                animate: true,
+                instantAnimate: true,
+                straight: false,
+                data: data,
+                labelTextColor: "#002561",
+            });
+        });
+    </script>
 
 @endsection

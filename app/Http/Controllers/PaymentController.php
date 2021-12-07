@@ -54,6 +54,13 @@ class PaymentController extends Controller
 			$offset = 0;
 		}
 
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Платіж додано.');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
+        }
+
 		if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
             $payments = Payment::offset($offset)->limit($limit)->orderBy('created_at', 'DESC')->get();
@@ -69,7 +76,9 @@ class PaymentController extends Controller
 			$result = PaymentResource::collection($payments)->additional(['total_count' => $total_count, 'success' => true, 'pay_allow' => $this->pay_allow]);
 		}
 
-        return view('payments/payments')->with('payments', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+        return view('payments/payments', [
+        'alert' => $alert
+        ])->with('payments', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
 	}
 
     /**
@@ -109,7 +118,8 @@ class PaymentController extends Controller
 
 		$balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->update(['value' => $newBalance]);
 
-        return redirect('/payments');
+		$result = redirect('/payments')->with('alert', true);
+        return $result;
     }
 
     /**

@@ -45,6 +45,7 @@ function loadMeters(service, auto = false) {
     });
 }
 
+
 function loadServices(e) {
     $('#abonent_services').select2().empty();
 
@@ -87,6 +88,8 @@ $(document).ready(function () {
     /*    $('.servicesTabs .serv').click(function (){
             $(this).parent('.servicesTabs').children('.content').toggleClass('opened');
         });*/
+
+
 
     $('#abonent_search').select2({
         minimumInputLength: 3,
@@ -192,4 +195,9 @@ var meter = {
 
 function tabShow(id) {
     $('#' + id).toggleClass('opened');
+}
+
+function checkAll(id) {
+    let checkBoxes = $('#' + id + ' input[type=checkbox]');
+    checkBoxes.prop("checked", !checkBoxes.prop("checked"));
 }
