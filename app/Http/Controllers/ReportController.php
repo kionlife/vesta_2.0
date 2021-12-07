@@ -55,9 +55,13 @@ class ReportController extends Controller
         $end = Carbon::today();
         $end->endOfDay();
 
+
         $period = CarbonPeriod::create($start, $end)->month();
         $months = collect($period)->map(function (Carbon $date) {
-            return $date->month;
+            return [
+                'month' => $date->month,
+                'name' => $date->monthName,
+                ];
         })->toArray();
 
         $services = Service::all();
@@ -65,26 +69,20 @@ class ReportController extends Controller
         foreach ($services as $service) {
             foreach ($months as $month) {
 
+
                 $obj = Service::find($service['id']);
 
-                $start = new Carbon('first day of '  .$month. ' month');
-                $start->startOfDay();
-
-                $end = new Carbon('last day of 8 month');
-                $end->endOfDay();
 
                 $arr[] = array(
                     'service_id' => $service['id'],
                     'name' => $service['name'],
-                    'total_sum' => $obj->payment()->whereBetween('created_at',[$start, $end])->sum('value'),
+                    'monthName' => $month['name'],
+                    'provider_id' => $service['provider_id'],
+                    'total_sum' => $obj->payment()->whereMonth('created_at',$month['month'])->whereYear('created_at',Carbon::now()->year)->sum('value'),
                 );
-
-               // dd($obj->payment()->whereBetween('created_at', [$start, $end])->count());
 
             }
         }
-
-        dd($arr);
 
         return $this->sendResponse(new ReportResource($arr), 'Report retrieved successfully.');
 

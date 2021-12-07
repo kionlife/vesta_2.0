@@ -40,7 +40,6 @@
 
                         <div class="col-md-6 chrt-two">
                             <div id="chart1"></div>
-
                         </div>
 
                         <div class="col-md-3 form-group1">
@@ -83,45 +82,22 @@
 
     <script>
         $(document).ready(function () {
+
             data = {
-                '2010': 300,
-                '2011': 200,
-                '2012': 100,
-                '2013': 500,
-                '2014': 400,
-                '2015': 200
+
+                @foreach($months as $month)
+                '{{ $month['monthName'] }}' : {{ $month['total_sum'] }},
+                @endforeach
             };
 
             $("#chart1").faBoChart({
                 time: 500,
                 animate: true,
                 instantAnimate: true,
-                straight: false,
+                straight: true,
                 data: data,
-                labelTextColor: "#002561",
-
-                ajax: {
-                    url: '/home/months',
-                    dataType: 'json',
-                    type: "GET",
-                    data: function (data) {
-                        return {
-                            keyword: data.term
-                        };
-                    },
-                    processResults: function (response) {
-                        return {
-                            results: $.map(response, function (response) {
-                                return {
-                                    text: '(' + response.personal_account + ') ' + response.name,
-                                    id: response.id
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
-            });
+                labelTextColor: "#eee",
+        });
         });
     </script>
 

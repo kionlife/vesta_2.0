@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Carbon\Traits\Creator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,9 @@ class HomeController extends Controller
         $end->endOfDay();
 
 
+        $months=$this->showmonth();
+
+
 
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
@@ -71,6 +75,53 @@ class HomeController extends Controller
 
         return view('home', [
             'user' => $user
-        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments);
+        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments)->with('months', $months);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showmonth()
+    {
+
+        $start = Carbon::now()->subMonths(6);
+        $start->startOfMonth();
+        $end = Carbon::today();
+        $end->endOfDay();
+
+
+        $period = CarbonPeriod::create($start, $end)->month();
+        $months = collect($period)->map(function (Carbon $date) {
+            return [
+                'month' => $date->month,
+                'name' => $date->monthName,
+            ];
+        })->toArray();
+
+        $services = Service::all();
+
+        foreach ($services as $service) {
+            foreach ($months as $month) {
+
+
+                $obj = Service::find($service['id']);
+
+
+                $arr[] = array(
+                    'service_id' => $service['id'],
+                    'name' => $service['name'],
+                    'monthName' => $month['name'],
+                    'provider_id' => $service['provider_id'],
+                    'total_sum' => $obj->payment()->whereMonth('created_at',$month['month'])->whereYear('created_at',Carbon::now()->year)->sum('value'),
+                );
+
+            }
+        }
+
+        return $arr;
+
     }
 }
