@@ -69,7 +69,7 @@ class AbonentController extends Controller
         }
 
         $abonents = collect();
-        $service_id = Inspector2Service::where('user_id', 5)->get('service_id');
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
         //$service_id = 1;
         $total_count = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
             $query->whereIn('service_id', $service_id);
@@ -79,8 +79,14 @@ class AbonentController extends Controller
             $query->whereIn('service_id', $service_id);
         })->orderBy('personal_account')->with('type')->get();
 
+        foreach ($abonents as $item) {
+            $abonent = $item;
+            $abonent['balance_provider'] = $item->balanceCalcMass($service_id);
+            $abonentsNew[] = $abonent;
+        }
+
         return view('abonents/abonents', [
-            'abonents' => $abonents,
+            'abonents' => $abonentsNew,
             'user' => $user,
         ]);
     }
@@ -251,6 +257,20 @@ class AbonentController extends Controller
         $abonent['meters'] = $metersNew;
         $abonent['services'] = $servicesNew;
         $abonent['tariffs'] = Tariff::whereIn('service_id', $abonent->service()->where('status', 1)->get('service_id'))->whereIn('service_id', $service_id)->get();
+        $providers = $services->groupBy('provider_id');
+        foreach($providers as $provider) {
+            $balance_temp = 0;
+            foreach ($provider as $pr_service) {
+                $balance_temp += $pr_service['balance'];
+                $providers[$pr_service['provider_id']] = array(
+                    'provider' => Provider::find($pr_service['provider_id']),
+                    'balance' => $balance_temp
+                );
+            }
+        }
+
+
+        $abonent['providers'] = $providers;
         $abonent['contracts'] = array_map("unserialize", array_unique(array_map("serialize", $contractsNew)));
         $abonent['type'] = Abonent::with('type')->findOrFail($id)->type;
 
