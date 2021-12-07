@@ -8507,3 +8507,16 @@ tr.outcome {
     bottom: 0;
     right: 0;
 }
+
+.balanceMinus {
+    color: #d10000 !important;
+}
+
+.balancePlus {
+    color: darkgreen !important;
+}
+
+.redBg {
+    background: darkred;
+    color: #fff;
+}

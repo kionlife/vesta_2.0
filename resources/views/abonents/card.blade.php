@@ -7,6 +7,7 @@
 
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
+                    <li><a href="/">Головна</a></li>
                     <li><a href="/abonents">Абоненти</a></li>
                     <li class="active">{{ $abonent['name'] }}</li>
                 </ol>
@@ -107,6 +108,31 @@
                         <div class="form-body">
                             <div class="form-horizontal">
                                 <div class="form-group">
+                                    <div class="col-md-12">
+                                        @foreach($abonent['providers'] as $balance)
+                                            <div class="col-md-12 text-left">
+                                                <div class="form-body">
+                                                    <div class="form-group">
+                                                        <label class="col-md-4 text-left">{{ $balance['provider']['title'] }}</label>
+                                                        <div class="col-md-6 text-left">
+                                                            <p class="@if($balance['balance'] < 0) balanceMinus @else balancePlus @endif">@money($balance['balance']) грн.</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        @endforeach
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-body">
+                            <div class="form-horizontal">
+                                <div class="form-group">
                                     <div class="col-sm-12">
                                         @foreach($abonent['services'] as $service)
                                             <div
@@ -172,8 +198,8 @@
                                                                     TODO Додати перевірку на наявність записів по послузі
                                                                     --}}
                                                                     @if($abonent['history']->isNotEmpty())
+                                                                    @isset($abonent['history'][$service['id']])
                                                                         @foreach($abonent['history'][$service['id']] as $item)
-
                                                                             <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
                                                                                 <td>{{ $item['created_at'] }}</td>
                                                                                 <td>{{ $item['title'] }}</td>
@@ -181,6 +207,7 @@
                                                                                 <td>{{ $item->author['name'] }}</td>
                                                                             </tr>
                                                                         @endforeach
+                                                                    @endisset
                                                                     @endif
                                                                     </tbody>
                                                                 </table>

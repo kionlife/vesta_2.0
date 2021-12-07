@@ -311,6 +311,7 @@ class ReceiptController extends Controller
 
     public function saveReceipt(Request $request) {
 
+        $user = Auth::user();
         $receipts = $this->preview($request);
 
         foreach ($receipts as $receipt_single) {
@@ -322,11 +323,16 @@ class ReceiptController extends Controller
             $receipt->created_at = $receipt_single->created_at;
             $receipt->save();
 
-            $result[]['all'] = $receipt->id;
+            $result['all'][] = $receipt->id;
 
             foreach ($receipt_single->services as $service_single) {
                 if ($service_single['current_counter_id'] == 0) {
-                    $result[]['all'] = $receipt->id;
+                    $result['not_full'][$receipt->id][$service_single['service_id']] = array(
+                        'receipt_id' => $receipt->id,
+                        'abonent' => Abonent::find($receipt->abonent_id),
+                        'error_service' => Service::find($service_single['service_id'])
+                    );
+                    Receipt::destroy([$receipt->id]);
                 } else {
                     $service = new ReceiptData();
                     $service->receipt_id = $receipt->id;
@@ -340,11 +346,13 @@ class ReceiptController extends Controller
             }
 
 
+
         }
 
-
-
-        return $result;
+        return view('receipts/result', [
+            'result' => $result,
+            'user' => $user
+        ]);
     }
 
     /**

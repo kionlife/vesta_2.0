@@ -6,8 +6,9 @@
         <div class="outter-wp">
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
-                    <li><a href="/home">Головна</a></li>
-                    <li class="active">Квитанції</li>
+                    <li><a href="/">Головна</a></li>
+                    <li class="active"><a href="/receipts">Квитанції</a></li>
+                    <li class="active">Формування квитанцій</li>
                 </ol>
             </div>
             <div class="graph-visual tables-main">
@@ -50,7 +51,7 @@
                                             <div class="receiptCol col-md-3">{{ $service['service_title'] }}</div>
                                             <div class="receiptCol col-md-1">@money($service['tariff'])</div>
                                             <div class="receiptCol col-md-1">{{ $service['last_counter'] }}</div>
-                                            <div class="receiptCol col-md-1">{{ $service['current_counter']}}</div>
+                                            <div class="receiptCol @if ($service['current_counter'] == 0) redBg @endif col-md-1">{{ $service['current_counter'] }}</div>
                                             <div class="receiptCol col-md-1">{{ $service['used_counter']}}</div>
                                             <div class="receiptCol col-md-2">@money($service['generated'])</div>
                                             <div class="receiptCol col-md-1">@money($service['balance'])</div>
