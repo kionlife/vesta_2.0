@@ -59,33 +59,6 @@
                     </div>
                 </div>
             </div>
-            <div class="graph-visual tables-main">
-                <div class="graph">
-                    <div class="tables">
-
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>Вид послуги</th>
-                                <th>Баланс</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td id="correction_service"></td>
-                                <td id="correction_balance"></td>
-                            </tr>
-
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-
-            </div>
-            <!--//graph-visual-->
         </div>
         <!--//outer-wp-->
     </div>

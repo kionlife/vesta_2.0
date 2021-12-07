@@ -43,7 +43,7 @@
     right: 0;
     top: 18px; }
 	.fabo-value-label {
-    color: #00C6D7!important;
+    color: rgba(35, 208, 22, 0.64) !important;
 }
 
 .fabo-chart .fabo-point .fabo-value {
@@ -63,7 +63,7 @@
     color: #fff!important;
 }
 .fabo-value-label {
-    color: #00C6D7!important;
+    color: rgba(35, 208, 22, 0.64)!important;
 }
 .fabo-chart .fabo-point .fabo-value.hide {
     display: none;

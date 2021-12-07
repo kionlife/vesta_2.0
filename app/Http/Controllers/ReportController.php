@@ -7,6 +7,8 @@ use App\Models\Service;
 use Carbon\Carbon;
 use App\Http\Resources\Report as ReportResource;
 use App\Http\Resources\Report;
+use Carbon\CarbonPeriod;
+use Carbon\Traits\Creator;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -24,6 +26,7 @@ class ReportController extends Controller
         $start->startOfDay();
         $end = Carbon::today();
         $end->endOfDay();
+
         $services = Service::all();
 
         foreach ($services as $service) {
@@ -44,27 +47,41 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showmonth(Request $request)
+    public function showmonth()
     {
 
-        $currentYear = Carbon::now()->year;
-        $currentMonth = Carbon::now()->month;
+        $start = Carbon::now()->subMonths(6);
+        $start->startOfMonth();
+        $end = Carbon::today();
+        $end->endOfDay();
 
-        if ($request->month) {
-            $month = $request->month;
-        } else {
-            $month = $currentMonth;
-        }
+
+        $period = CarbonPeriod::create($start, $end)->month();
+        $months = collect($period)->map(function (Carbon $date) {
+            return [
+                'month' => $date->month,
+                'name' => $date->monthName,
+                ];
+        })->toArray();
 
         $services = Service::all();
 
         foreach ($services as $service) {
-            $obj = Service::find($service['id']);
-            $arr[] = array(
-                'service_id' => $service['id'],
-                'name' => $service['name'],
-                'total_sum' => $obj->payment()->whereMonth('created_at', $month)->whereYear('created_at', $currentYear)->sum('value'),
-            );
+            foreach ($months as $month) {
+
+
+                $obj = Service::find($service['id']);
+
+
+                $arr[] = array(
+                    'service_id' => $service['id'],
+                    'name' => $service['name'],
+                    'monthName' => $month['name'],
+                    'provider_id' => $service['provider_id'],
+                    'total_sum' => $obj->payment()->whereMonth('created_at',$month['month'])->whereYear('created_at',Carbon::now()->year)->sum('value'),
+                );
+
+            }
         }
 
         return $this->sendResponse(new ReportResource($arr), 'Report retrieved successfully.');

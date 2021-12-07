@@ -21,7 +21,7 @@
                         <h4>Платежів</h4>
                     </div>
                     <div class="stats-right">
-                        <label>{{ $t_payments }} грн</label>
+                        <label>@money($t_payments) грн</label>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
@@ -38,11 +38,10 @@
                 <div class="chrt-bars">
                     <div class="row">
 
-                        <div class="col-md-6 chrt-two">
+                        <div class="col-md-12 chrt-two">
                             <div id="chart1"></div>
-
                         </div>
-
+<!--
                         <div class="col-md-3 form-group1">
                             <h3 class="sub-tittle">Надходження до каси</h3>
                         </div>
@@ -53,6 +52,7 @@
                                 <option value="day">Рік</option>
                             </select>
                         </div>
+                        -->
                     </div>
 
 
@@ -83,23 +83,22 @@
 
     <script>
         $(document).ready(function () {
+
             data = {
-                '2010': 300,
-                '2011': 200,
-                '2012': 100,
-                '2013': 500,
-                '2014': 400,
-                '2015': 200
+
+                @foreach($months as $month)
+                '{{ $month['monthName'] }}' : {{ $month['total_sum'] }},
+                @endforeach
             };
 
             $("#chart1").faBoChart({
                 time: 500,
                 animate: true,
                 instantAnimate: true,
-                straight: false,
+                straight: true,
                 data: data,
-                labelTextColor: "#002561",
-            });
+                labelTextColor: "#eee",
+        });
         });
     </script>
 

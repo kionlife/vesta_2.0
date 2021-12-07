@@ -17,11 +17,11 @@
             animate : true,
             time : 2000,
             instantAnimate : true,
-            straight : false,
-            valueColor : "#002561",
-            backgroundColor :"#ccc",
-            valueTextColor : "#00C6D7",
-            labelTextColor : "#00C6D7",
+            straight : true,
+            valueColor : "#303c52",
+            backgroundColor :"#fff",
+            valueTextColor : "rgba(35, 208, 22, 0.64)",
+            labelTextColor : "rgba(35, 208, 22, 0.64)",
             gutter : "2px"
         }, options);
 

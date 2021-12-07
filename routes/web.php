@@ -2,7 +2,7 @@
 
 use App\Http\ControllersCorrectionController;
 use App\Http\Controllers\ReceiptController;
-use App\Http\Controllers\API\ReportController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
