@@ -523,10 +523,10 @@
                                     <tbody>
                                     @foreach($abonent['receipts'] as $receipt)
                                         <tr>
-                                            <td>{{ \Carbon\Carbon::parse($receipt['created_at'])->format('d.m.Y H:i:s') }}</td>
+                                            <td>@date($receipt['created_at'])</td>
                                             <td>{{ $receipt['status_id'] }}</td>
                                             <td>{{ $receipt['author_id'] }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($receipt['updated_at'])->format('d.m.Y H:i:s') }}</td>
+                                            <td>@date($receipt['updated_at'])</td>
                                             <td><a class="tooltips" href="/receipts/{{ $receipt['id'] }}"><span>Переглянути</span><i
                                                         class="fa fa-eye"></i></a></td>
                                         </tr>

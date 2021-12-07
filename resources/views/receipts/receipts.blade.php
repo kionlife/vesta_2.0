@@ -26,21 +26,14 @@
                 <div class="graph">
                     <div class="receiptHead">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 Абонент
                             </div>
-                            <div class="col-md-9">
-                                <div class="col-md-3 col">Послуга</div>
-                                <div class="col-md-3 col">
-                                    <div class="col-md-12">Показники</div>
-                                    <div class="col-md-4">Останній</div>
-                                    <div class="col-md-4">Поточний</div>
-                                    <div class="col-md-4">Спожито</div>
-                                </div>
-
-                                <div class="col-md-2 col">Нараховано</div>
-                                <div class="col-md-1 col">Баланс</div>
-                                <div class="col-md-2 col">До сплати</div>
+                            <div class="col-md-2 col">Статус</div>
+                            <div class="col-md-6">
+                                <div class="col-md-4 col">Баланс</div>
+                                <div class="col-md-4 col">До сплати</div>
+                                <div class="col-md-4 col">Дата формування</div>
                             </div>
                         </div>
                     </div>
@@ -48,28 +41,26 @@
 
                     @foreach ($receipts as $reсeipt)
                         <div class="row receiptRow">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <p>({{ $reсeipt['abonent_personal_account']}}) {{ $reсeipt['abonent_name']}}</p>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-2">
+                                <p>{{ $reсeipt['status']['title'] }}</p>
+                            </div>
+                            <div class="col-md-6">
                                 @foreach ($reсeipt['services'] as $service)
-                                    <div class="receiptCol col-md-3">{{ $service['service_title'] }}</div>
-                                    <div class="receiptCol col-md-1">@money($service['tariff'])</div>
-                                    <div class="receiptCol col-md-1">{{ $service['last_counter'] }}</div>
-                                    <div class="receiptCol @if ($service['current_counter'] == 0) redBg @endif col-md-1">{{ $service['current_counter'] }}</div>
-                                    <div class="receiptCol col-md-1">{{ $service['used_counter']}}</div>
-                                    <div class="receiptCol col-md-2">@money($service['generated'])</div>
-                                    <div class="receiptCol col-md-1">@money($service['balance'])</div>
-                                    <div class="receiptCol col-md-2">@money($service['to_pay'])</div>
+                                    <div class="receiptCol col-md-4">{{ $service['balance'] }}</div>
+                                    <div class="receiptCol col-md-4">@money($service['to_pay'])</div>
+                                    <div class="receiptCol col-md-4">@date($service['created_at'])</div>
                                 @endforeach
                             </div>
                         </div>
                     @endforeach
 
-                    <div class="form-group-fixed">
+                   {{-- <div class="form-group-fixed">
                         <button onclick="checkAll('receipts_preview_form')" type="button" class="btn btn-primary">Відмітити всі</button>
                         <button class="btn btn-success" type="submit">Зберегти квитанції</button>
-                    </div>
+                    </div>--}}
                 </div>
 
 
