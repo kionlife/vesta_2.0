@@ -79,8 +79,6 @@ Route::middleware('auth:web')->post('/payments', [PaymentController::class, 'sto
 /* Роути для чекбокса */
 Route::get('/shifts', [PaymentController::class, 'getShift']);
 
-/* Роути для звіту */
-Route::middleware('auth:web')->get('/home/months', [ReportController::class, 'showmonth']);
 
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);

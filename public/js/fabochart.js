@@ -20,8 +20,8 @@
             straight : true,
             valueColor : "#303c52",
             backgroundColor :"#fff",
-            valueTextColor : "#eee",
-            labelTextColor : "#eee",
+            valueTextColor : "rgba(35, 208, 22, 0.64)",
+            labelTextColor : "rgba(35, 208, 22, 0.64)",
             gutter : "2px"
         }, options);
 

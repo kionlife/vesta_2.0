@@ -21,7 +21,7 @@
                         <h4>Платежів</h4>
                     </div>
                     <div class="stats-right">
-                        <label>{{ $t_payments }} грн</label>
+                        <label>@money($t_payments) грн</label>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
@@ -38,10 +38,10 @@
                 <div class="chrt-bars">
                     <div class="row">
 
-                        <div class="col-md-6 chrt-two">
+                        <div class="col-md-12 chrt-two">
                             <div id="chart1"></div>
                         </div>
-
+<!--
                         <div class="col-md-3 form-group1">
                             <h3 class="sub-tittle">Надходження до каси</h3>
                         </div>
@@ -52,6 +52,7 @@
                                 <option value="day">Рік</option>
                             </select>
                         </div>
+                        -->
                     </div>
 
 
