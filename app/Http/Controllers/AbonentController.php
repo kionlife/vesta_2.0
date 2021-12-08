@@ -64,13 +64,15 @@ class AbonentController extends Controller
     {
         $user = Auth::user();
 
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+
+        $abonents = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
+            $query->whereIn('service_id', $service_id);
+        })->with('type', 'balance');
+
+        $total_count = $abonents->count();
 
         if ($request->ajax()) {
-            $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
-            $abonents = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
-                $query->whereIn('service_id', $service_id);
-            })->with('type', 'balance');
-
 
             $data = Abonent::select('*');
 
@@ -116,7 +118,7 @@ class AbonentController extends Controller
 
         return view('abonents/abonents', [
             'user' => $user,
-            'total_count' => '2222'
+            'total_count' => $total_count
         ]);
     }
 
