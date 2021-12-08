@@ -440,4 +440,22 @@ class AbonentController extends Controller
     {
         return $this->sendResponse(new TypeResource(Type::all()), 'Abonent retrieved successfully.');
     }
+
+    /**
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getBalance($id, Request $request) {
+
+        $abonent = Abonent::find($id);
+
+        $service_id = $request->service_id;
+
+        $balance = $abonent->balanceCalc($service_id);
+
+        return $balance;
+    }
 }
+
+

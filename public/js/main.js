@@ -39,7 +39,7 @@ function loadMeters(service, auto = false) {
             });
 
             let last_counter = $('#abonent_services_meters').select2('data');
-            $('#last_counter').val(last_counter[0]['last_counter']);
+            $('#last_counter').val(last_counter[0]['last_counter'].toFixed(2));
 
         }
     });
@@ -70,16 +70,45 @@ function loadServices(e) {
                 data: options,
                 minimumResultsForSearch: -1,
             }).on('select2:select', function (service) {
+                loadBalance(service);
                 loadMeters(service);
             });
 
             loadMeters($('#abonent_services').select2('data'), true);
+            loadBalance($('#abonent_services').select2('data'), true);
         }
 
     });
 
 }
 
+
+function loadBalance(service, auto = false) {
+
+    let id = 0;
+    let service_id = 0;
+
+    if (auto === true) {
+        id = service[0].abonent_id;
+        service_id = service[0].id;
+    } else {
+        id = service.params.data.abonent_id;
+        service_id = service.params.data.id;
+    }
+
+    $.ajax({
+        url: '/abonents/' + id + '/balances?service_id=' + service_id,
+        dataType: 'json',
+        type: "GET",
+        success: function (response) {
+            let balance = response.value;
+            $('#current_balance').val(balance.toFixed(2));
+        }
+    });
+
+
+
+}
 
 
 

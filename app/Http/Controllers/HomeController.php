@@ -56,31 +56,38 @@ class HomeController extends Controller
 
         $months = $this->showmonth();
 
-
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
             $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('added_at', [$start, $end])->count();
             $t_payments = Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
+            $date = [
+                'day' => Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end] )->sum('value'),
+                'month' => Payment::whereIn('service_id', $service_id)->whereMonth('created_at', Carbon::today()->month)->get()->sum('value'),
+                'year' => Payment::whereIn('service_id', $service_id)->whereYear('created_at', Carbon::today()->year)->get()->sum('value'),
+            ];
 
         } else {
             //$abonent_id = Abonent::where('user_id', $user->id)->first();
             $abonent_id = Abonent::where('user_id', $user->id)->first();
 
             $t_counters = Counter::where('abonent_id', $abonent_id->id)->whereBetween('added_at', [$start, $end])->get()->count();
-            $t_payments = Counter::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->count()->sum('value');
-
+            $t_payments = Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->sum('value');
+            $date = [
+                'day' => Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->sum('value'),
+                'month' => Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', Carbon::today()->month)->sum('value'),
+                'year' => Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', Carbon::today()->year)->sum('value'),
+            ];
         }
 
         return view('home', [
             'user' => $user
-        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments)->with('months', $months);
+        ])->with('t_counters', $t_counters)->with('t_payments', $t_payments)->with('months', $months)->with('date', $date);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function showmonth()
