@@ -18,10 +18,10 @@
             time : 2000,
             instantAnimate : true,
             straight : true,
-            valueColor : "#303c52",
-            backgroundColor :"#fff",
-            valueTextColor : "rgba(35, 208, 22, 0.64)",
-            labelTextColor : "rgba(35, 208, 22, 0.64)",
+            valueColor : "#3E3D3D",
+            backgroundColor :"#eee",
+            valueTextColor : "#000",
+            labelTextColor : "#3E3D3D",
             gutter : "2px"
         }, options);
 
