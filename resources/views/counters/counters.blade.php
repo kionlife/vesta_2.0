@@ -103,6 +103,7 @@
                         </table>
                     </div>
 
+                    {{ $counters->links('pagination::bootstrap-4') }}
                 </div>
 
 

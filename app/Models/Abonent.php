@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Kyslik\ColumnSortable\Sortable;
 
 class Abonent extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +20,20 @@ class Abonent extends Model
         'id', 'personal_account', 'user_id', 'name', 'address', 'phone', 'peoples', 'city_id', 'status', 'archived'
     ];
 
+    public $sortable = [
+        'personal_account',
+        'name',
+        'address',
+    ];
+
 	public function balance()
+    {
+        $user = Auth::user();
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+        return $this->hasMany(Balance::class)->whereIn('service_id', $service_id);
+    }
+
+	public function balanceDebug()
     {
         return $this->hasMany(Balance::class);
     }
@@ -44,6 +58,7 @@ class Abonent extends Model
         $cost = $this->hasMany(Cost::class)->whereIn('service_id', $service_id)->sum('value');
         $status = $this->hasMany(Balance::class)->whereIn('service_id', $service_id)->first('status')['status'];
         $val = $payment - $cost;
+
         return [
             'value' => round($val, 2),
             'status' => $status,

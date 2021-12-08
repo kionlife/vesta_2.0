@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DebugController;
 use App\Http\ControllersCorrectionController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
@@ -36,6 +37,7 @@ use App\Models\Abonent;
 /* Роути для дій з абонентами */
 
 Route::middleware('auth:web')->get('/abonents', [AbonentController::class, 'index']);         // список абонентів
+Route::middleware('auth:web')->get('/abonents/filter', [AbonentController::class, 'abonents']);         // список абонентів
 Route::middleware('auth:web')->get('/abonents/add', [AbonentController::class, 'storePage']);         // сторінка створення абонента
 Route::middleware('auth:web')->get('/abonents/search', [AbonentController::class, 'search']);   // пошук абонента
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
@@ -84,6 +86,9 @@ Route::get('/shifts', [PaymentController::class, 'getShift']);
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);
 Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'store']);   //створення лічильника абонента
 
+/* Дебаг роути */
+
+Route::middleware('auth:web')->get('/debug/balances', [DebugController::class, 'balancesMigrate']);
 Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
 
 

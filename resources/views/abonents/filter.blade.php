@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
@@ -23,20 +25,20 @@
                     </div>
                 </div>
 
-<!--                <div class="row">
+                <div class="row">
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
                                 <label><strong>Не проживає:</strong></label>
                                 <select id='status' class="form-control" style="width: 200px">
-                                    <option value="">&#45;&#45;Select Status&#45;&#45;</option>
+                                    <option value="">--Select Status--</option>
                                     <option value="1">Active</option>
                                     <option value="0">Deactive</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                </div>-->
+                </div>
 
                 <div class="graph">
                     <div class="tables">
@@ -85,21 +87,7 @@
                     {data: 'balance', name: 'balance'},
                     {data: 'address', name: 'address'},
                     {data: 'phone', name: 'phone'},
-                ],
-                "language": {
-                    "lengthMenu": "Показати _MENU_ абонентів на сторінку",
-                    "zeroRecords": "Нічого не знайдено",
-                    "info": "Сторінка _PAGE_ з _PAGES_",
-                    "infoEmpty": "Не знайдено",
-                    "search": "Пошук",
-                    "previous": "Пошук",
-                    "infoFiltered": "знайдено серед _MAX_ абонентів)",
-                    "paginate": {
-                        "previous": "Попередня",
-                        "next":     "Наступна"
-                    }
-                },
-                "pageLength": 50
+                ]
             });
 
             $('#status').change(function(){
@@ -125,55 +113,55 @@
                                         <label class="col-sm-4 control-label">ПІБ</label>
                                         <div class="col-sm-8">
                                             <input required
-                                                   name="name"
-                                                   type="text"
-                                                   class="form-control"
-                                                   placeholder="ПІБ"
-                                                   value="">
+                                                name="name"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="ПІБ"
+                                                value="">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Адреса</label>
                                         <div class="col-sm-8">
                                             <input required
-                                                   name="address"
-                                                   type="text"
-                                                   class="form-control"
-                                                   placeholder="Адреса"
-                                                   value="">
+                                                name="address"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Адреса"
+                                                value="">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Телефон</label>
                                         <div class="col-sm-8">
                                             <input required
-                                                   name="phone"
-                                                   type="tel"
-                                                   class="form-control"
-                                                   placeholder="Телефон"
-                                                   value="">
+                                                name="phone"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="Телефон"
+                                                value="">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Кількість прописаних людей</label>
                                         <div class="col-sm-8">
                                             <input required
-                                                   name="peoples"
-                                                   type="number"
-                                                   class="form-control"
-                                                   placeholder="Кількість прописаних людей"
-                                                   value="">
+                                                name="peoples"
+                                                type="number"
+                                                class="form-control"
+                                                placeholder="Кількість прописаних людей"
+                                                value="">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Особовий рахунок</label>
                                         <div class="col-sm-8">
                                             <input required
-                                                   name="personal_account"
-                                                   type="number"
-                                                   class="form-control"
-                                                   placeholder="Особовий рахунок"
-                                                   value="">
+                                                name="personal_account"
+                                                type="number"
+                                                class="form-control"
+                                                placeholder="Особовий рахунок"
+                                                value="">
                                         </div>
                                     </div>
 

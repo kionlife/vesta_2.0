@@ -26,8 +26,13 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Http\Resources\Abonent as AbonentResource;
 use App\Http\Resources\AbonentUpdatedResource;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use DB;
 use App\Http\Resources\CityResource;
+use Yajra\DataTables\DataTables;
+
 
 class AbonentController extends Controller
 {
@@ -57,39 +62,64 @@ class AbonentController extends Controller
 
     public function index(Request $request)
     {
-        $limit = 50;
-        $result = '';
         $user = Auth::user();
 
-        if ($request->page) {
-            $page = $request->page;
-            $offset = $page * $limit;
-        } else {
-            $offset = 0;
-        }
 
-        $abonents = collect();
-        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
-        //$service_id = 1;
-        $total_count = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
-            $query->whereIn('service_id', $service_id);
-        })->orderBy('id')->count();
+        if ($request->ajax()) {
+            $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+            $abonents = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
+                $query->whereIn('service_id', $service_id);
+            })->with('type', 'balance');
 
-        $abonents = Abonent::where('archived', 0)->offset($offset)->limit($limit)->whereHas('balance', function (Builder $query) use ($service_id) {
-            $query->whereIn('service_id', $service_id);
-        })->orderBy('personal_account')->with('type')->get();
 
-        foreach ($abonents as $item) {
-            $abonent = $item;
-            $abonent['balance_provider'] = $item->balanceCalcMass($service_id);
-            $abonentsNew[] = $abonent;
+            $data = Abonent::select('*');
+
+            $result = Datatables::of($abonents)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    if ($row->status) {
+                        return '<span class="badge badge-primary">Active</span>';
+                    } else {
+                        return '<span class="badge badge-danger">Deactive</span>';
+                    }
+                })
+                ->addColumn('balance', function($row){
+                    $sum = 0;
+                    foreach ($row->balance as $item) {
+                        $sum += $item['value'];
+                    }
+                    return view('datatables/balance', [
+                        'sum' => $sum
+                    ]);
+                })
+                ->filter(function ($instance) use ($request) {
+                    if ($request->get('status') == '0' || $request->get('status') == '1') {
+                        $instance->where('status', $request->get('status'));
+                    }
+                    if (!empty($request->get('search'))) {
+                        $instance->where(function($w) use($request){
+                            $search = $request->get('search');
+                            $w->orWhere('name', 'LIKE', "%$search%")
+                                ->orWhere('personal_account', 'LIKE', "%$search%");
+                        });
+                    }
+                })
+                ->rawColumns(['status'])
+                ->setRowAttr([
+                    'data-href' => function($ab) {
+                        return '/abonents/' . $ab->id;
+                    },
+                ])
+                ->make(true);
+            return $result;
         }
 
         return view('abonents/abonents', [
-            'abonents' => $abonentsNew,
             'user' => $user,
+            'total_count' => '2222'
         ]);
     }
+
 
     public function storePage() {
         $data = '';
