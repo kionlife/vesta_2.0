@@ -37,12 +37,12 @@ class PaymentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
 
 	 public function index(Request $request)
     {
-		$limit = 20;
+		$limit = 30;
 		$user = Auth::user();
 		$result = '';
 
@@ -63,10 +63,8 @@ class PaymentController extends Controller
 
 		if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
-            $payments = Payment::offset($offset)->limit($limit)->orderBy('created_at', 'DESC')->get();
-			$total_count = Payment::all()->count();
+            $payments = Payment::orderBy('created_at', 'DESC')->paginate($limit);
 
-			$result = PaymentResource::collection($payments)->additional(['total_count' => $total_count, 'success' => true, 'pay_allow' => $this->pay_allow]);
 		} else {
 			$abonent_id = Abonent::where('user_id', $user->id)->first();
 
@@ -78,7 +76,7 @@ class PaymentController extends Controller
 
         return view('payments/payments', [
         'alert' => $alert
-        ])->with('payments', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+        ])->with('payments', $payments)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
 	}
 
     /**

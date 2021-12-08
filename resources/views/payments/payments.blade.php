@@ -84,6 +84,10 @@
 
                 </div>
 
+                <div class="row">
+                    {{ $payments->links('pagination::bootstrap-4') }}
+                </div>
+
 
             </div>
             <!--//graph-visual-->

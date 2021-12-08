@@ -118,6 +118,11 @@ $(document).ready(function () {
             $(this).parent('.servicesTabs').children('.content').toggleClass('opened');
         });*/
 
+    $('body').on('click', '.linkRow tr', function(e){
+        e.prevenDefault; // на случай если вместо <tr> кто то захочет поставить поставить <a href="#"><tr>
+        document.location.href = $(this).data('href');
+    })
+
 
 
     $('#abonent_search').select2({

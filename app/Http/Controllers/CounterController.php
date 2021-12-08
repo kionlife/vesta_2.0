@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AbonentsWithoutCountersResource;
+use App\Models\Balance;
 use App\Models\Cost;
 use App\Models\Tariff;
 use Carbon\Carbon;
@@ -54,12 +55,9 @@ class CounterController extends Controller
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
-            $counters = Counter::orderBy('id', 'desc')->offset($offset)->limit($limit)->whereIn('service_id', $service_id)->get();
-            $total_count = Counter::whereIn('service_id', $service_id)->count();
+            $counters = Counter::orderBy('id', 'desc')->whereIn('service_id', $service_id)->paginate($limit);
 
-            $result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
         } else {
-            //$abonent_id = Abonent::where('user_id', $user->id)->first();
             $abonent_id = Abonent::where('user_id', $user->id)->first();
 
             $counters = Counter::where('abonent_id', $abonent_id->id)->orderBy('added_at', 'desc')->offset($offset)->limit($limit)->get();
@@ -70,7 +68,7 @@ class CounterController extends Controller
 
         return view('counters/counters', [
             'alert' => $alert
-        ])->with('counters', $result)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+        ])->with('counters', $counters)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
 
     }
 
@@ -128,6 +126,11 @@ class CounterController extends Controller
             $cost->author_id = $input['author_id'];
             $cost->value = ($input['value'] - $last_counter) * $tariff;
             $cost->save();
+
+            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $input['service_id'])->first();
+            $current_balance->value = $current_balance->value - $cost->value;
+            $current_balance->last_update = date('Y-m-d');
+            $current_balance->save();
 
             $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
             $counter = Counter::create($input);
