@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\AbonentController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CorrectionController;
@@ -47,6 +48,7 @@ Route::middleware('auth:web')->delete('/abonents/{id}', [AbonentController::clas
 Route::middleware('auth:web')->get('/abonents/{id}/services', [ServiceController::class, 'show']);     // послуги абонента
 Route::middleware('auth:web')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента
 Route::middleware('auth:web')->get('/abonents/{id}/payments', [PaymentController::class, 'show']);     // платежі абонента
+Route::middleware('auth:web')->get('/abonents/{id}/balances', [AbonentController::class, 'getBalance']);     // баланс абонента
 Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
 
 
@@ -81,6 +83,8 @@ Route::middleware('auth:web')->post('/payments', [PaymentController::class, 'sto
 /* Роути для чекбокса */
 Route::get('/shifts', [PaymentController::class, 'getShift']);
 
+/* Роути для звіту */
+Route::middleware('auth:web')->get('/home/{date}', [HomeController::class, 'show']);
 
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);

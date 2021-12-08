@@ -13,7 +13,7 @@
                     <div class="stats-right">
                         <label>{{ $t_counters }}</label>
                     </div>
-                    <div class="clearfix"> </div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="col-md-6 states-mdl">
                     <div class="stats-left">
@@ -23,10 +23,10 @@
                     <div class="stats-right">
                         <label>@money($t_payments) грн</label>
                     </div>
-                    <div class="clearfix"> </div>
+                    <div class="clearfix"></div>
                 </div>
 
-                <div class="clearfix"> </div>
+                <div class="clearfix"></div>
             </div>
         </div>
         <!--//custom-widgets-->
@@ -38,21 +38,9 @@
                 <div class="chrt-bars">
                     <div class="row">
 
-                        <div class="col-md-12 chrt-two">
+                        <div class="col-md-6 chrt-two">
                             <div id="chart1"></div>
                         </div>
-<!--
-                        <div class="col-md-3 form-group1">
-                            <h3 class="sub-tittle">Надходження до каси</h3>
-                        </div>
-                        <div class="col-sm-3 form-group1">
-                            <select class="stats-right" name="service_id" id="abonent_services">
-                                <option value="day">День</option>
-                                <option value="day">Місяць</option>
-                                <option value="day">Рік</option>
-                            </select>
-                        </div>
-                        -->
                     </div>
 
 
@@ -60,23 +48,26 @@
             </div>
         </div>
 
-
-        <div class="graph-visualization">
-            <div class="col-md-6 map-1">
-                <h3 class="sub-tittle">Погода</h3>
-                <div class="weather">
-                    <div class="weather-top">
-                        <div class="weather-top-left">
-                            <div class="degree">
-                                <span>Не так і холодно, но холодно</span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="set-1">
+        <div class="row">
+            <div class="col-md-3 ">
+                <h3 class="sub-tittle">Надходження до каси</h3>
             </div>
-        <!--//bottom-grids-->
-
+            <div class="col-md-3 ">
+                <select class="stats-right" name="service_id" id="payments_date">
+                    <option selected="selected" value="@money($date['day']) грн">День</option>
+                    <option value="@money($date['month']) грн">Місяць</option>
+                    <option value="@money($date['year']) грн">Рік</option>
+                </select>
+            </div>
+        </div>
+            <div class="degree">
+                <span id="payments"></span>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    <!--//bottom-grids-->
+</div>
     </div>
     <!--/charts-inner-->
     </div>
@@ -87,7 +78,7 @@
             data = {
 
                 @foreach($months as $month)
-                '{{ $month['monthName'] }}' : {{ $month['total_sum'] }},
+                '{{ $month['monthName'] }}': {{ $month['total_sum'] }},
                 @endforeach
             };
 
@@ -97,8 +88,20 @@
                 instantAnimate: true,
                 straight: true,
                 data: data,
-                labelTextColor: "#eee",
+                labelTextColor: "#000",
+            });
         });
+
+    </script>
+
+    <script>
+        $(".stats-right").ready(function ()
+        {
+            $("#payments").text($(".stats-right :selected").val());
+        });
+        $(".stats-right").change(function ()
+        {
+            $("#payments").text($(".stats-right :selected").val());
         });
     </script>
 
