@@ -24,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">ПІБ</label>
                                     <div class="col-sm-9">
-                                        <input name="name" type="text" class="form-control" placeholder="ПІБ"
+                                        <input name="name" type="text" class="form-control bigFont" placeholder="ПІБ"
                                                value="{{ $abonent['name'] }}">
                                     </div>
                                 </div>
@@ -45,7 +45,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">О/Р</label>
                                     <div class="col-sm-9">
-                                        <input name="personal_account" type="tel" class="form-control"
+                                        <input name="personal_account" type="tel" class="form-control bigFont"
                                                placeholder="Особовий рахунок"
                                                value="{{ $abonent['personal_account'] }}">
                                     </div>
@@ -201,7 +201,7 @@
                                                                     @isset($abonent['history'][$service['id']])
                                                                         @foreach($abonent['history'][$service['id']] as $item)
                                                                             <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
-                                                                                <td>{{ $item['created_at'] }}</td>
+                                                                                <td>@date($item['created_at'])</td>
                                                                                 <td>{{ $item['title'] }}</td>
                                                                                 <td>{{ $item['value'] }}</td>
                                                                                 <td>{{ $item->author['name'] }}</td>
@@ -476,7 +476,7 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                            <td>{{ $counter['added_at'] }}</td>
+                                                                            <td>@date($counter['added_at'])</td>
                                                                             <td>{{ $counter['value'] }}</td>
                                                                             <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>

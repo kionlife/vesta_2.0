@@ -8543,3 +8543,9 @@ tr.outcome {
 #DataTables_Table_0_filter input {
     width: 100%;
 }
+
+.bigFont {
+    font-weight: 600;
+    font-size: 18px;
+    color: #000;
+}
