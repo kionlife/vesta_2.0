@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <link rel="stylesheet" type="text/css" href="../../../public/css/style.css"/>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -10,22 +11,25 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <link href="{{ asset('public/css/bootstrap.min.css') }}" rel='stylesheet' type='text/css'/>
-    <link href="{{ asset('public/css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <link href="{{ asset('public/css/select2.min.css') }}" rel='stylesheet' type='text/css'/>
     <link href="{{ asset('public/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/css/fabochart.css') }}" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet'
           type='text/css'>
     <link rel="stylesheet" href="{{ asset('public/css/icon-font.min.css') }}" type='text/css'/>
-    <script src="{{ asset('public/js/jquery-1.10.2.min.js') }}"></script>
+    <link href="{{ asset('public/css/style.css') }}" rel='stylesheet' type='text/css'/>
 
-    <!-- Scripts -->
-    <script src="{{ asset('public/js/app.js') }}" defer></script>
+    <script src="{{ asset('public/js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ asset('public/js/select2.min.js') }}"></script>
+    <script src="{{ asset('public/js/i18n/uk.js') }}"></script>
+
+    <script src="{{ asset('public/js/main.js') }}"></script>
+
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
-    <!-- Styles -->
-    <link href="{{ asset('public/css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -36,7 +40,7 @@
     </div>
     <div class="sidebar-menu">
         <header class="logo">
-            <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="/home"> <span id="logo"> <h1>Vesta</h1></span>
+            <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="/"> <span id="logo"> <h1>Vesta</h1></span>
                 <!--<img id="logo" src="" alt="Logo"/>-->
             </a>
         </header>
@@ -47,20 +51,21 @@
             <span class=" name-caret">{{ $user->name }}</span>
             <p style="text-transform: uppercase;">{{ $user->roles->first()->name }}</p>
             <ul>
-                <li><a class="tooltips" href="index.html"><span>Профіль</span><i class="lnr lnr-user"></i></a></li>
-                <li><a class="tooltips" href="index.html"><span>Налаштування</span><i class="lnr lnr-cog"></i></a></li>
-                <li><a class="tooltips" href="index.html"><span>Вихід</span><i class="lnr lnr-power-switch"></i></a></li>
+                <li><a class="tooltips disabled" href="#"><span>Профіль</span><i class="lnr lnr-user"></i></a></li>
+                <li><a class="tooltips disabled" href="#"><span>Налаштування</span><i class="lnr lnr-cog"></i></a></li>
+                <li><a class="tooltips" href="{{ url('/logout') }}"><span>Вихід</span><i class="lnr lnr-power-switch"></i></a></li>
             </ul>
         </div>
         <!--//down-->
         <div class="menu">
             <ul id="menu" >
-                <li><a href="/home"><i class="fa fa-home"></i> <span>Головна</span></a></li>
+                <li><a href="/"><i class="fa fa-home"></i> <span>Головна</span></a></li>
                 <li><a href="/counters"><i class="fa fa-tachometer"></i> <span>Показники</span></a></li>
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
-                <li><a href="/home"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
-                <li><a href="/home"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
-                <li><a href="/home"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
+                <li><a href="/receipts"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
+                <li><a class="disabled" href="#"><i class="fa fa-bookmark"></i> <span>Звітність</span></a></li>
+                <li><a href="/corrections"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
+                <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 
             </ul>
         </div>
@@ -88,8 +93,9 @@
     </script>
 </div>
 
-<script src="{{ asset('public/js/jquery.nicescroll.js') }}"></script>
+{{--<script src="{{ asset('public/js/jquery.nicescroll.js') }}"></script>--}}
 <script src="{{ asset('public/js/scripts.js') }}"></script>
+<script src="{{ asset('public/js/fabochart.js') }}"></script>
 <script src="{{ asset('public/js/bootstrap.min.js') }}"></script>
 </body>
 </html>

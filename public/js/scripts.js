@@ -3,7 +3,7 @@
 
     // custom scrollbar
 
-    $("html").niceScroll({styler:"fb",cursorcolor:"#00C6D7", cursorwidth: '5', cursorborderradius: '10px', background: '#002561', spacebarenabled:false, cursorborder: '0',  zindex: '1000'});
+/*    $("html").niceScroll({styler:"fb",cursorcolor:"#00C6D7", cursorwidth: '5', cursorborderradius: '10px', background: '#002561', spacebarenabled:false, cursorborder: '0',  zindex: '1000'});
 
     $(".left-side").niceScroll({styler:"fb",cursorcolor:"#00C6D7", cursorwidth: '3', cursorborderradius: '10px', background: '#002561', spacebarenabled:false, cursorborder: '0'});
 
@@ -11,16 +11,16 @@
     $(".left-side").getNiceScroll();
     if ($('body').hasClass('left-side-collapsed')) {
         $(".left-side").getNiceScroll().hide();
-    }
+    }*/
 
 
 
     // Toggle Left Menu
    jQuery('.menu-list > a').click(function() {
-      
+
       var parent = jQuery(this).parent();
       var sub = parent.find('> ul');
-      
+
       if(!jQuery('body').hasClass('left-side-collapsed')) {
          if(sub.is(':visible')) {
             sub.slideUp(200, function(){
@@ -68,7 +68,7 @@
    // Menu Toggle
    jQuery('.toggle-btn').click(function(){
        $(".left-side").getNiceScroll().hide();
-       
+
        if ($('body').hasClass('left-side-collapsed')) {
            $(".left-side").getNiceScroll().hide();
        }
@@ -101,7 +101,7 @@
       }
 
    });
-   
+
 
    searchform_reposition();
 
@@ -136,9 +136,9 @@
 						    $(".dropdown-toggle").dropdown("active");
 						  });
 						});
-						
-	
-     
+
+
+
   /************** Search ****************/
 		$(function() {
 	    var button = $('#loginButton');
@@ -149,7 +149,7 @@
 	        box.toggle();
 	        button.toggleClass('active');
 	    });
-	    form.mouseup(function() { 
+	    form.mouseup(function() {
 	        return false;
 	    });
 	    $(this).mouseup(function(login) {
@@ -159,4 +159,3 @@
 	        }
 	    });
 	});
-	

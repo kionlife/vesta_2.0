@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AbonentsWithoutCountersResource;
+use App\Models\Balance;
 use App\Models\Cost;
 use App\Models\Tariff;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Counter;
 use App\Models\User;
 use App\Models\Abonent;
+use App\Models\Service;
 use App\Models\Meters;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Inspector2Service;
@@ -25,41 +27,50 @@ class CounterController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
 
-	 public function index(Request $request)
+    public function index(Request $request)
     {
-		$limit = 50;
-		$user = Auth::user();
-		$result = '';
+        $limit = 50;
+        $user = Auth::user();
+        $result = '';
 
-		if ($request->page) {
-			$page = $request->page;
-			$offset = $page*$limit;
-		} else {
-			$offset = 0;
-		}
+        if ($request->page) {
+            $page = $request->page;
+            $offset = $page*$limit;
+        } else {
+            $offset = 0;
+        }
 
-		if ($user->hasAnyRole('admin', 'inspector')) {
-			$service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Показник додано.');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
+        }
 
-			$counters = Counter::orderBy('id', 'desc')->offset($offset)->limit($limit)->whereIn('service_id', $service_id)->get();
-			$total_count = Counter::whereIn('service_id', $service_id)->count();
 
-			$result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
-		} else {
-			//$abonent_id = Abonent::where('user_id', $user->id)->first();
-			$abonent_id = Abonent::where('user_id', $user->id)->first();
 
-			$counters = Counter::where('abonent_id', $abonent_id->id)->orderBy('added_at', 'desc')->offset($offset)->limit($limit)->get();
-			$total_count = Counter::where('abonent_id', $abonent_id->id)->get()->count();
+        if ($user->hasAnyRole('admin', 'inspector')) {
+            $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
-			$result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
-		}
+            $counters = Counter::orderBy('id', 'desc')->whereIn('service_id', $service_id)->paginate($limit);
 
-        return $result;
-	}
+        } else {
+            $abonent_id = Abonent::where('user_id', $user->id)->first();
+
+            $counters = Counter::where('abonent_id', $abonent_id->id)->orderBy('added_at', 'desc')->offset($offset)->limit($limit)->get();
+            $total_count = Counter::where('abonent_id', $abonent_id->id)->get()->count();
+
+            $result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
+        }
+
+        return view('counters/counters', [
+            'alert' => $alert
+        ])->with('counters', $counters)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -69,18 +80,18 @@ class CounterController extends Controller
      */
     public function store(Request $request)
     {
-		$user = Auth::user();
-		if ($user->hasAnyRole('admin', 'inspector')) {
-			$input = $request->all();
+        $user = Auth::user();
+        if ($user->hasAnyRole('admin', 'inspector')) {
+            $input = $request->all();
             $input['author_id'] = $user->id;
             $abonent = Abonent::find($input['abonent_id']);
-		} else {
-			$input['abonent_id'] = Abonent::where('user_id', $user->id)->first()->id;
-			$input['service_id'] = $request->service_id;
-			$input['author_id'] = $user->id;
-			$input['meter_id'] = $request->meter_id;
-			$input['value'] = $request->value;
-		}
+        } else {
+            $input['abonent_id'] = Abonent::where('user_id', $user->id)->first()->id;
+            $input['service_id'] = $request->service_id;
+            $input['author_id'] = $user->id;
+            $input['meter_id'] = $request->meter_id;
+            $input['value'] = $request->value;
+        }
 
         $validator = Validator::make($input, [
             'abonent_id' => 'required',
@@ -96,10 +107,10 @@ class CounterController extends Controller
 
 
 
-        if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
+       /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
 //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
             $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
-        } else {
+        } else {*/
 
             $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $input['service_id'])->first()['value'];
             $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('added_at', 'DESC')->first();
@@ -116,11 +127,16 @@ class CounterController extends Controller
             $cost->value = ($input['value'] - $last_counter) * $tariff;
             $cost->save();
 
+            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $input['service_id'])->first();
+            $current_balance->value = $current_balance->value - $cost->value;
+            $current_balance->last_update = date('Y-m-d');
+            $current_balance->save();
+
             $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
             $counter = Counter::create($input);
-            $result = $this->sendResponse(new CounterResource($counter), 'Показники додані успішно!');
+            $result = redirect('/counters')->with('alert', true);
 
-        }
+//        }
 
 
         return $result;
@@ -139,23 +155,23 @@ class CounterController extends Controller
             return $this->sendError('Abonent not found.');
         }
 
-		$limit = 10;
-		$user = Auth::user();
-		$result = '';
+        $limit = 10;
+        $user = Auth::user();
+        $result = '';
 
-		if ($request->page) {
-			$page = $request->page;
-			$offset = $page*$limit;
-		} else {
-			$offset = 0;
-		}
+        if ($request->page) {
+            $page = $request->page;
+            $offset = $page*$limit;
+        } else {
+            $offset = 0;
+        }
 
-		$user = Auth::user();
+        $user = Auth::user();
 
-		$service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
-		$total_count = Counter::where('abonent_id', $id)->whereIn('service_id', $service_id)->count();
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
+        $total_count = Counter::where('abonent_id', $id)->whereIn('service_id', $service_id)->count();
 
-		$result = CounterResource::collection(Counter::offset($offset)->limit($limit)->where('abonent_id', $id)->whereIn('service_id', $service_id)->orderBy('added_at', 'DESC')->get())->additional(['total_count' => $total_count, 'success' => true]);
+        $result = CounterResource::collection(Counter::offset($offset)->limit($limit)->where('abonent_id', $id)->whereIn('service_id', $service_id)->orderBy('added_at', 'DESC')->get())->additional(['total_count' => $total_count, 'success' => true]);
 
         return $result;
     }

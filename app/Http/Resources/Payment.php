@@ -25,11 +25,10 @@ class Payment extends JsonResource
 
 		return [
 				'abonent_id' => $abonent->id,
-				'abonent_name' => $abonent->name,
+				'abonent' => $abonent->name,
 				'service' => $service->name,
-				'author_name' => $author->name,
+				'author' => $author->name,
 				'value' => $this->value,
-				'added_at' => $this->created_at,
 			];
 
     }

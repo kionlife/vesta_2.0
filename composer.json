@@ -11,13 +11,15 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3.0|^7.0.1",
         "igorbunov/checkbox-in-ua-php-sdk": "^1.2",
+        "kyslik/column-sortable": "^6.4",
         "laravel/framework": "^8.40",
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "maatwebsite/excel": "^3.1",
         "orangehill/iseed": "^3.0",
-        "spatie/laravel-permission": "^4.0"
+        "spatie/laravel-permission": "^4.0",
+        "yajra/laravel-datatables-oracle": "^9.18"
     },
     "require-dev": {
         "bennett-treptow/laravel-migration-generator": "^4.0",

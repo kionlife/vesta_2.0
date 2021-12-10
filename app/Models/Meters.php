@@ -18,19 +18,29 @@ class Meters extends Model
 	protected $table = 'meters';
 
     protected $fillable = [
-        'abonent_id', 'next_check', 'code', 'counter', 'title', 'archived'
+        'abonent_id', 'last_check', 'next_check', 'code', 'counter', 'title', 'archived', 'tariff_id'
     ];
 
 	public $timestamps = false;
 
 	public function services()
     {
-        return $this->belongsToMany(Service::class, 'service_to_meter', 'meter_id', 'service_id');
+        return $this->belongsToMany(Service::class, 'service_to_meter', 'meter_id', 'service_id')->withPivot('status', 'service_id');
     }
 
 	public function counters()
     {
         return $this->hasMany(Counter::class, 'meter_id', 'id');
+    }
+
+	public function tariff()
+    {
+        return $this->hasOne(Tariff::class, 'id', 'tariff_id');
+    }
+
+	public function provider()
+    {
+        return $this->hasOne(Tariff::class, 'id', 'tariff_id');
     }
 
 }
