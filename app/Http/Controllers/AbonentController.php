@@ -234,7 +234,6 @@ class AbonentController extends Controller
             $service['status'] = $balance['status'];
 
             array_push($servicesNew, $service);
-//			$providers[] = ;
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
             if ($contract) {
                 $contracts = array(
