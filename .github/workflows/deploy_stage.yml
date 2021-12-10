@@ -21,7 +21,7 @@ jobs:
             sudo chown -R www-data:www-data framework
             cd ..
             composer install
-            cp /var/www/env_storage/back/stage.env /var/www/stage.vesta.org.ua/.env
+            sudo cp /var/www/env_storage/back/stage.env /var/www/stage.vesta.org.ua/.env
             php artisan key:generate
             php artisan passport:install
             php artisan storage:link
