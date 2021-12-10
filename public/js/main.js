@@ -39,7 +39,7 @@ function loadMeters(service, auto = false) {
             });
 
             let last_counter = $('#abonent_services_meters').select2('data');
-            $('#last_counter').val(last_counter[0]['last_counter'].toFixed(2));
+            $('#last_counter').val(last_counter[0]['last_counter']);
 
         }
     });
