@@ -11,22 +11,9 @@ jobs:
         with:
           command: |
             cd /var/www/stage.vesta.org.ua/
-            sudo rm -rf *
-            git clone https://github.com/kionlife/vesta_2.0.git --branch dev
-            cd vesta_2.0 && mv -v * /var/www/stage.vesta.org.ua/
-            cd ..
-            mkdir storage
-            cd storage/
-            mkdir -p framework/{sessions,views,cache}
-            sudo chown -R www-data:www-data framework
-            cd ..
             composer install
-            sudo cp /var/www/env_storage/back/stage.env /var/www/stage.vesta.org.ua/.env
-            php artisan key:generate
-            php artisan passport:install
-            php artisan storage:link
-            php artisan config:clear
             wget --no-check-certificate --quiet --method GET --timeout=0 --header '' 'https://tsukr.tech/db_data_migrate.php'
+            php artisan migrate --force
             php artisan db:seed --force
             sudo chown -R www-data /var/www/stage.vesta.org.ua
           host: 31.131.17.142

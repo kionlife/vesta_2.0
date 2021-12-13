@@ -524,8 +524,8 @@
                                     @foreach($abonent['receipts'] as $receipt)
                                         <tr>
                                             <td>@date($receipt['created_at'])</td>
-                                            <td>{{ $receipt['status_id'] }}</td>
-                                            <td>{{ $receipt['author_id'] }}</td>
+                                            <td>{{ $receipt['status']['title'] }}</td>
+                                            <td>{{ $receipt['author']['name'] }}</td>
                                             <td>@date($receipt['updated_at'])</td>
                                             <td><a class="tooltips" href="/receipts/{{ $receipt['id'] }}"><span>Переглянути</span><i
                                                         class="fa fa-eye"></i></a></td>

@@ -19,6 +19,7 @@ class CreateTariffsTable extends Migration
             $table->float('value');
             $table->integer('city_id')->nullable();
             $table->integer('service_id');
+            $table->integer('provider_id')->default(1);
             $table->integer('abonent_type')->default(0);
             $table->integer('virtual')->default(0);
         });
