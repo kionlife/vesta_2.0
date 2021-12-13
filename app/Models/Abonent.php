@@ -71,7 +71,7 @@ class Abonent extends Model
     }
 
     public function type() {
-        return $this->belongsToMany(Type::class, 'abonent_type', 'abonent_id', 'type_id')->withPivot('type_id', 'abonent_id');;
+        return $this->belongsToMany(Type::class, 'abonent_type', 'abonent_id', 'type_id')->withPivot('type_id', 'abonent_id');
     }
 
     public function city() {

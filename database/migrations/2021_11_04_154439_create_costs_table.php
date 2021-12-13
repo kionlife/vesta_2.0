@@ -19,6 +19,7 @@ class CreateCostsTable extends Migration
             $table->integer('author_id')->default(0);
             $table->integer('meter_id')->default(0);
             $table->integer('service_id');
+            $table->string('title', 255)->default('Списання');
             $table->decimal('value', 10, 2)->nullable();
             $table->dateTime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });

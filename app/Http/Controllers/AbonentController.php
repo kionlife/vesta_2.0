@@ -310,8 +310,7 @@ class AbonentController extends Controller
 
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
-        $abonent['receipts'] = $abonent->receipt;
-
+        $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
 
 
         return view('abonents/card', [

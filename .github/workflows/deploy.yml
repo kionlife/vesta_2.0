@@ -13,21 +13,10 @@ jobs:
       with:
         command: |
           cd /var/www/dev.vesta.org.ua/
-          sudo rm -rf *
-          git clone https://github.com/kionlife/vesta_2.0.git --branch dev
-          cd vesta_2.0 && mv -v * /var/www/dev.vesta.org.ua/
-          cd ..
-          mkdir storage
-          cd storage/
-          mkdir -p framework/{sessions,views,cache}
-          sudo chown -R www-data:www-data framework
-          cd ..
+          git pull
           composer install
-          cp /var/www/env_storage/back/dev.env /var/www/dev.vesta.org.ua/.env
-          php artisan key:generate
-          php artisan passport:install
-          php artisan storage:link
-          php artisan config:clear
+          php artisan migrate --force
+          php artisan db:seed --force
           sudo chown -R www-data:groupgit /var/www/dev.vesta.org.ua
         host: 31.131.17.142
         user: git

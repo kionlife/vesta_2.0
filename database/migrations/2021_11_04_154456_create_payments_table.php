@@ -17,6 +17,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('id')->primary();
             $table->integer('abonent_id');
             $table->integer('service_id');
+            $table->string('title', 255)->default('Оплата');
             $table->integer('author_id')->nullable()->default(0);
             $table->decimal('value', 10, 2)->nullable();
             $table->dateTime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
