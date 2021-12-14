@@ -15,8 +15,9 @@ jobs:
           cd /var/www/dev.vesta.org.ua/
           sudo git pull
           composer install
-          php artisan migrate:fresh
-          php artisan db:seed --force
+          sudo php artisan migrate:fresh
+          sudo php artisan db:seed --class=ServicesTableSeeder
+          sudo php artisan db:seed --force
           sudo chown -R www-data:groupgit /var/www/dev.vesta.org.ua
         host: 31.131.17.142
         user: git
