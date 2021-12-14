@@ -21,8 +21,6 @@ class CreateBalancesTable extends Migration
             $table->integer('status')->default(1);
             $table->integer('archived')->default(0);
             $table->date('last_update')->default(DB::raw('CURRENT_TIMESTAMP'));
-            
-            $table->foreign('service_id', 'balances_ibfk_2')->references('id')->on('services');
         });
     }
 
