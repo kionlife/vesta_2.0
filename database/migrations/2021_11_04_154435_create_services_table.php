@@ -20,10 +20,6 @@ class CreateServicesTable extends Migration
             $table->boolean('counters')->default(1);
             $table->integer('city_id')->nullable();
             $table->integer('provider_id')->default(0);
-            
-            $table->index(['id', 'name', 'type', 'city_id'], 'id_2');
-            $table->index(['id', 'name', 'type', 'city_id'], 'id_3');
-            $table->index(['name', 'type', 'city_id'], 'name_2');
         });
     }
 
