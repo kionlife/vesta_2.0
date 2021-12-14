@@ -23,9 +23,11 @@
                         <a href="/receipts/preview" class="btn btn-primary"><i class="fa fa-user"></i><span> Сформувати квитанції</span></a>
                     </div>
                 </div>
+                @isset($result['not_full'])
                 <div class="graph">
                     <div class="tables">
                         <p>Квитанції не було сформовано через недостатню кількість даних:</p>
+
                         @foreach($result['not_full'] as $item)
                             @foreach($item as $service)
                                 <p>
@@ -36,6 +38,7 @@
                     </div>
 
                 </div>
+                @endisset
 
 
             </div>

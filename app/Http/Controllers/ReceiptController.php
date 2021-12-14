@@ -58,7 +58,7 @@ class ReceiptController extends Controller
 //1
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 //
-        $receipts_arr = Receipt::where('archived', 0)->offset($offset)->limit($limit)->with('services')->get();
+        $receipts_arr = Receipt::where('archived', 0)->offset($offset)->limit($limit)->with('services')->orderBy('created_at', 'desc')->get();
 
         foreach ($receipts_arr as $item) {
             $receipt = new Receipt();
@@ -386,10 +386,14 @@ class ReceiptController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function generate()
+    public function generate($id)
     {
 
-        $receipts_arr = Receipt::where('status_id', 1)->with('services')->get();
+        if ($id) {
+            $receipts_arr = Receipt::where('id', $id)->with('services')->get();
+        } else {
+            $receipts_arr = Receipt::where('status_id', 1)->with('services')->get();
+        }
 
         foreach ($receipts_arr as $receipt_single) {
             $receipt = new Receipt();
