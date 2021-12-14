@@ -452,7 +452,7 @@
 
                                                         <div class="col-md-1">
                                                             <button type="button"
-                                                                    onclick="meter.remove({{ $meter['meter_id'] }})"
+                                                                    onclick="meter.remove({{ $meter['meter_id'] }}, {{ $abonent['id'] }})"
                                                                     class="btn btn-danger"><i class="fa fa-trash-o"></i>
                                                             </button>
                                                         </div>
@@ -608,6 +608,17 @@
                                                 type="tel"
                                                 class="form-control"
                                                 placeholder="Розташування лічильника"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Початковий показник</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="counter"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="Початковий показник"
                                                 value="">
                                         </div>
                                     </div>

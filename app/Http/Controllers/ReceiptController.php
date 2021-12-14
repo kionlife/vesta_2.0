@@ -219,7 +219,8 @@ class ReceiptController extends Controller
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
                                             'balance' => $abonent->balanceCalc($service['id'])['value'],
-                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
+//                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
+                                            'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
                                         )
                                     );
 
@@ -243,8 +244,8 @@ class ReceiptController extends Controller
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
                                             'balance' => $abonent->balanceCalc($service['id'])['value'],
-                                            'to_pay' => abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),
-                                        )
+                                            'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
+                                            )
                                     );
                                 }
                             }
@@ -445,7 +446,7 @@ class ReceiptController extends Controller
             ])->setPaper('a5', 'landscape');;
 
             $path = public_path('pdfs/');
-            $filename = $receipt->abonent['personal_account'] . ' - ' . $created_at . '.pdf';
+            $filename = str_replace('/', '_', $receipt->abonent['address']) . ' - ' . $created_at . '.pdf';
             $pdf->save($path . $filename);
 
         }
