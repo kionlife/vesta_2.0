@@ -58,6 +58,7 @@ Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::
 Route::middleware('auth:web')->get('/receipts/preview', [ReceiptController::class, 'previewPage']);    //список квитанцій перед генерацією
 Route::middleware('auth:web')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
 Route::middleware('auth:web')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
+Route::middleware('auth:web')->get('/receipts/generate/{id}', [ReceiptController::class, 'generate']);    //генерація PDF
 
 
 /* Роути для списань */

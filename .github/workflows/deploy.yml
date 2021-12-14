@@ -13,7 +13,7 @@ jobs:
       with:
         command: |
           cd /var/www/dev.vesta.org.ua/
-          git pull
+          sudo git pull
           composer install
           php artisan migrate --force
           php artisan db:seed --force
@@ -21,4 +21,3 @@ jobs:
         host: 31.131.17.142
         user: git
         key: ${{ secrets.GITKEY }}
-
