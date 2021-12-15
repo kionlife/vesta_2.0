@@ -387,14 +387,15 @@ class ReceiptController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function generate($id)
+    public function generate(Request $request)
     {
 
-        if ($id) {
-            $receipts_arr = Receipt::where('id', $id)->with('services')->get();
+        if ($request->id) {
+            $receipts_arr = Receipt::where('id', $request->id)->with('services')->get();
         } else {
             $receipts_arr = Receipt::where('status_id', 1)->with('services')->get();
         }
+
 
         foreach ($receipts_arr as $receipt_single) {
             $receipt = new Receipt();
@@ -411,7 +412,7 @@ class ReceiptController extends Controller
             $receipt->last_month_year = Carbon::now()->subMonth()->translatedFormat('Y');
             $total = 0;
             foreach ($receipt_single->services as $service_single) {
-                    $last_payment = PaymentModel::where('abonent_id', $service_single['abonent_id'])->where('service_id', $service_single['service_id'])->orderBy('created_at', 'DESC')->first();
+                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->orderBy('created_at', 'DESC')->first();
                     if (!$last_payment) {
                         $last_payment = 0;
                     } else {
