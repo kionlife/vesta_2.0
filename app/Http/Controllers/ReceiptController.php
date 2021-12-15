@@ -154,6 +154,8 @@ class ReceiptController extends Controller
             $abonentData = Abonent::find($abonent['id']);
             $currentDate = Carbon::now();
             $lastMonth = Carbon::now()->subMonth()->format('m');
+            $firstDay = Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d');
+            $lastDay = Carbon::now()->subMonth()->lastOfMonth()->format('Y-m-d');
             $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
             $currentMonth = Carbon::now()->format('m');
             $currentYearOfMonth = Carbon::now()->format('Y');
@@ -218,7 +220,7 @@ class ReceiptController extends Controller
                                             'used_counter' => $current_counter['value'] - $last_counter['value'],
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
-                                            'balance' => $abonent->balanceCalc($service['id'])['value'],
+                                            'balance' => $abonent->balanceCalcByDate($service['id'], $firstDay)['value'],
 //                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
                                             'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
                                         )
@@ -335,6 +337,7 @@ class ReceiptController extends Controller
                     );
                     Receipt::destroy([$receipt->id]);
                 } else {
+
                     $service = new ReceiptData();
                     $service->receipt_id = $receipt->id;
                     $service->service_id = $service_single['service_id'];
@@ -343,9 +346,13 @@ class ReceiptController extends Controller
                     $service->balance = $service_single['balance'];
                     $service->to_pay = $service_single['to_pay'];
                     $service->save();
+                    $result['success'][$receipt->id][$service_single['service_id']] = array(
+                        'receipt_id' => $receipt->id,
+                        'abonent' => Abonent::find($receipt->abonent_id),
+                        'service' => Service::find($service_single['service_id'])
+                    );
                 }
             }
-
 
 
         }
@@ -412,7 +419,7 @@ class ReceiptController extends Controller
             $receipt->last_month_year = Carbon::now()->subMonth()->translatedFormat('Y');
             $total = 0;
             foreach ($receipt_single->services as $service_single) {
-                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->orderBy('created_at', 'DESC')->first();
+                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->whereMonth('created_at', $receipt->last_month)->whereYear('created_at', $receipt->last_month_year)->sum('value');
                     if (!$last_payment) {
                         $last_payment = 0;
                     } else {

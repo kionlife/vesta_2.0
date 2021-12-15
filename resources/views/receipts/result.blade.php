@@ -40,6 +40,24 @@
                 </div>
                 @endisset
 
+                @isset($result['success'])
+                <div class="graph">
+                    <div class="tables">
+                        <p>Квитанції було сформовано:</p>
+
+                        @foreach($result['success'] as $item)
+                            @foreach($item as $service)
+                                <p>
+                                    <a href="/abonents/{{ $service['abonent']['id'] }}">{{ $service['abonent']['name'] }}</a>:
+                                    {{ $service['service']['name'] }}</p>
+                                <a href="/receipt/">Переглянути квитанцію</a>
+                            @endforeach
+                        @endforeach
+                    </div>
+
+                </div>
+                @endisset
+
 
             </div>
             <!--//graph-visual-->

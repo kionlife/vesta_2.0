@@ -50,6 +50,18 @@ class Abonent extends Model
         ];
     }
 
+	public function balanceCalcByDate($service_id, $date)
+    {
+        $payment = $this->hasMany(Payment::class)->where('service_id', $service_id)->where('created_at', '<=', $date)->sum('value');
+        $cost = $this->hasMany(Cost::class)->where('service_id', $service_id)->where('created_at', '<=', $date)->sum('value');
+        $status = $this->hasMany(Balance::class)->where('service_id', $service_id)->first('status')['status'];
+        $val = $payment - $cost;
+        return [
+            'value' => round($val, 2),
+            'status' => $status,
+        ];
+    }
+
 	public function balanceCalcMass()
     {
         $user = Auth::user();

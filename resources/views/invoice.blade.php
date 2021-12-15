@@ -47,7 +47,8 @@
         </tr>
         <tr>
             <td colspan="5">
-                Повідомлення про нарахування за <b>{{ $receipt['last_month'] }} {{ $receipt['last_month_year'] }} р. </b> <br>
+{{--                Повідомлення про нарахування за розрахунковий період з (<b>{{ $receipt['last_month'] }} {{ $receipt['last_month_year'] }} р. </b>) <br>--}}
+                Повідомлення про нарахування за розрахунковий період з <b>01.11.2021 по 30.11.2021 р.</b> <br>
                 <b>{{ $receipt['abonent']['name'] }} (О/Р <span style="background: #c4c4c4; padding: 5px 15px;">{{ $receipt['abonent']['personal_account'] }} </span>)  <br>
                 {{ $receipt['abonent']['address'] }}</b>
             </td>
@@ -55,14 +56,14 @@
         </tr>
         <tr>
             <td>Стаття нарахувань, <br>одиниці виміру</td>
-            <td>Залишок на (01.{{ $receipt['date'] }})</td>
-            <td>Попередні показники</td>
-            <td>Поточні показники</td>
+            <td>Залишок на початок розрахункового періоду</td>
+            <td>Показники на початок періоду</td>
+            <td>Показники на кінець періоду</td>
             <td>Обсяг</td>
             <td>Тариф</td>
-            <td>Нараховано за <b>{{ $receipt['last_month'] }}</b></td>
-            <td>Сплачено за <b>{{ $receipt['last_month'] }}</b></td>
-            <td>До сплати</td>
+            <td>Нараховано за розрахунковий період</td>
+            <td>Сплачено у розрахунковий період</td>
+            <td>До сплати на 30.11.2021 р.</td>
         </tr>
         @foreach ($receipt['services'] as $provider => $value)
             {{ $total = 0 }}
