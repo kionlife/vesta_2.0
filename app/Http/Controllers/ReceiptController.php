@@ -154,8 +154,6 @@ class ReceiptController extends Controller
             $abonentData = Abonent::find($abonent['id']);
             $currentDate = Carbon::now();
             $lastMonth = Carbon::now()->subMonth()->format('m');
-            $firstDay = Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d');
-            $lastDay = Carbon::now()->subMonth()->lastOfMonth()->format('Y-m-d');
             $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
             $currentMonth = Carbon::now()->format('m');
             $currentYearOfMonth = Carbon::now()->format('Y');
@@ -220,7 +218,7 @@ class ReceiptController extends Controller
                                             'used_counter' => $current_counter['value'] - $last_counter['value'],
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
-                                            'balance' => $abonent->balanceCalcByDate($service['id'], $firstDay)['value'],
+                                            'balance' => $abonent->balanceCalc($service['id'])['value'],
 //                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
                                             'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
                                         )
@@ -415,15 +413,15 @@ class ReceiptController extends Controller
             Carbon::setLocale('uk');
             $created_at = Carbon::parse($receipt_single->created_at)->subMonth()->format('m.Y');
             $receipt->date = $created_at;
+            $receipt->created_at = Carbon::parse($receipt_single->created_at);
+            $receipt->last_receipt_date = $receipt->created_at->subMonth()->format('Y-m-d');
             $receipt->last_month = Carbon::now()->subMonth()->translatedFormat('F');
             $receipt->last_month_year = Carbon::now()->subMonth()->translatedFormat('Y');
             $total = 0;
             foreach ($receipt_single->services as $service_single) {
-                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->whereMonth('created_at', $receipt->last_month)->whereYear('created_at', $receipt->last_month_year)->sum('value');
+                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->whereBetween('created_at', array($receipt->last_receipt_date, $receipt->created_at->format('Y-m-d')))->sum('value');
                     if (!$last_payment) {
                         $last_payment = 0;
-                    } else {
-                        $last_payment = $last_payment['value'];
                     }
                     $service = new ReceiptData();
                     $service->service_id = $service_single['service_id'];
@@ -445,13 +443,13 @@ class ReceiptController extends Controller
                     $receipt->services->push($service);
             }
 
-            $receipt->services = $receipt->services->groupBy('service_provider_title');
-//            dd($receipt);
+            $receipt->services = $receipt->services->groupBy(['service_provider_title', 'service_title']);
+
             $receipts[] = $receipt;
 
             $pdf = PDF::loadView('invoice', [
                 'receipt' => $receipt
-            ])->setPaper('a5', 'landscape');;
+            ])->setPaper('a4', 'portrait');;
 
             $path = public_path('pdfs/');
             $filename = str_replace('/', '_', $receipt->abonent['address']) . ' - ' . $created_at . '.pdf';

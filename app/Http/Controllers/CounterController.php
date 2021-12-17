@@ -119,6 +119,8 @@ class CounterController extends Controller
             } else {
                 $last_counter = $last_counter['value'];
             }
+
+
             $cost = new Cost();
             $cost->abonent_id = $abonent->id;
             $cost->service_id = $input['service_id'];
