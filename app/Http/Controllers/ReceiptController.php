@@ -189,7 +189,7 @@ class ReceiptController extends Controller
 
                         $meters = Meters::whereHas('services', function (Builder $query) use ($abonent, $service) {
                             $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id'])->where('status', 1);
-                        })->get();
+                        })->where('archived', 0)->get();
 
                         /* Якщо є лічильники */
                         if ($meters->isNotEmpty()) {
@@ -428,11 +428,12 @@ class ReceiptController extends Controller
                     $service->service_title = Service::where('id', $service_single['service_id'])->first()['name'];
                     $service->service_provider = Service::find($service_single['service_id'])->provider;
                     $service->service_provider_title = Service::find($service_single['service_id'])->provider[0]['title'];
+                    $service->meter = Counter::find($service_single['last_counters_id'])->meter;
                     $service->last_counters = $this->getCounterValue($service_single['last_counters_id']);
                     $service->last_counters_id = $service_single['last_counters_id'];
                     $service->current_counters = $this->getCounterValue($service_single['current_counters_id']);
                     $service->current_counters_id = $service_single['current_counters_id'];
-                    $service->used_counter = $service->current_counters -  $service->last_counters;
+                    $service->used_counter = $service->current_counters - $service->last_counters;
                     $service->tariff = Tariff::where('abonent_type', $receipt->abonent->type[0]->id)->where('city_id', $receipt->abonent->city_id)->where('service_id', $service_single['service_id'])->first()['value'];
                     $service->generated = ($service->current_counters -  $service->last_counters) * $service->tariff;
                     $service->last_payment = $last_payment;
@@ -443,7 +444,23 @@ class ReceiptController extends Controller
                     $receipt->services->push($service);
             }
 
-            $receipt->services = $receipt->services->groupBy(['service_provider_title', 'service_title']);
+
+            $receipt->services = $receipt->services->groupBy(['service_provider_title', 'service_id']);
+
+            $receipt->total_used = $receipt->services->map(function ($row) {
+                return $row->map(function ($row1) {
+                    return $row1->sum('used_counter');
+                });
+            });
+
+            $receipt->total_generated = $receipt->services->map(function ($row) {
+                return $row->map(function ($row1) {
+                    return $row1->sum('generated');
+                });
+            });
+
+
+
 
             $receipts[] = $receipt;
 
