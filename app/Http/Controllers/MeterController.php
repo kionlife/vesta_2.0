@@ -59,7 +59,7 @@ class MeterController extends Controller
         $meter->abonent_id = $input['abonent_id'];
         $meter->code = $input['code'];
         $meter->code_plomb = $input['code_plomb'];
-        $meter->counter = 0;
+        $meter->counter = $input['counter'];
         $meter->next_check = $input['next_check'];
         $meter->last_check = $input['last_check'];
         $meter->tariff_id = $input['tariff_id'];
@@ -67,6 +67,13 @@ class MeterController extends Controller
 
         $meter->services()->attach($input['services']);
 
+        $counter = new Counter();
+        $counter->abonent_id = $input['abonent_id'];
+        $counter->meter_id = $meter->id;
+        $counter->author_id = $user->id;
+        $counter->value = $input['counter'];
+
+        $counter->save();
         return 'Лічильник доданий успішно!';
     }
 

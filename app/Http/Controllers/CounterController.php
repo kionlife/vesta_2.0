@@ -8,7 +8,6 @@ use App\Models\Cost;
 use App\Models\Tariff;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Counter;
 use App\Models\User;
 use App\Models\Abonent;
@@ -119,6 +118,8 @@ class CounterController extends Controller
             } else {
                 $last_counter = $last_counter['value'];
             }
+
+
             $cost = new Cost();
             $cost->abonent_id = $abonent->id;
             $cost->service_id = $input['service_id'];
@@ -248,7 +249,7 @@ class CounterController extends Controller
         return $counter;
     }
 
-    public function addCounters(Request $request) {
+    public function addCounters() {
 //        $meters = $request->meters;
         $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
             $query->whereMonth('added_at', Carbon::now()->format('m'));
@@ -294,6 +295,9 @@ class CounterController extends Controller
                 $counter->save();
             }
         }
+
+        return 'test';
+
     }
 
     public function getCountersByMeter($id) {

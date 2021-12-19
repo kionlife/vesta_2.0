@@ -188,18 +188,20 @@ var abonent = {
 
 var meter = {
     'add': function () {
+        let data = $('#add_meter form').serialize();
+        let abon_id = $('#add_meter form input[name=abonent_id]').val();
         $.ajax({
             url: '/meters/add',
             type: 'post',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            data: $('#add_meter form').serialize(),
+            data: data,
             complete: function () {
 
             },
             success: function () {
-                $('#card_meters').load('/abonents/1 #meters_content');
+                $('#card_meters').load('/abonents/'+ abon_id +' #meters_content');
                 $('#add_meter').modal('hide');
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -207,7 +209,8 @@ var meter = {
             }
         });
     },
-    'remove': function (meter_id) {
+    'remove': function (meter_id, abon_id) {
+
         $.ajax({
             url: '/meters/remove/' + meter_id,
             type: 'post',
@@ -218,7 +221,7 @@ var meter = {
 
             },
             success: function () {
-                $('#card_meters').load('/abonents/1 #meters_content');
+                $('#card_meters').load('/abonents/' + abon_id + ' #meters_content');
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
