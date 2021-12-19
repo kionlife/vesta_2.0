@@ -20,6 +20,7 @@ class CreateCountersTable extends Migration
             $table->integer('meter_id')->default(0);
             $table->integer('author_id');
             $table->integer('value');
+            $table->integer('archived')->default(0);
             $table->dateTime('added_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }

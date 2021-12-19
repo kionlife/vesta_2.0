@@ -452,7 +452,7 @@
 
                                                         <div class="col-md-1">
                                                             <button type="button"
-                                                                    onclick="meter.remove({{ $meter['meter_id'] }})"
+                                                                    onclick="meter.remove({{ $meter['meter_id'] }}, {{ $abonent['id'] }})"
                                                                     class="btn btn-danger"><i class="fa fa-trash-o"></i>
                                                             </button>
                                                         </div>
@@ -524,8 +524,8 @@
                                     @foreach($abonent['receipts'] as $receipt)
                                         <tr>
                                             <td>@date($receipt['created_at'])</td>
-                                            <td>{{ $receipt['status_id'] }}</td>
-                                            <td>{{ $receipt['author_id'] }}</td>
+                                            <td>{{ $receipt['status']['title'] }}</td>
+                                            <td>{{ $receipt['author']['name'] }}</td>
                                             <td>@date($receipt['updated_at'])</td>
                                             <td><a class="tooltips" href="/receipts/{{ $receipt['id'] }}"><span>Переглянути</span><i
                                                         class="fa fa-eye"></i></a></td>
@@ -608,6 +608,17 @@
                                                 type="tel"
                                                 class="form-control"
                                                 placeholder="Розташування лічильника"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Початковий показник</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="counter"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="Початковий показник"
                                                 value="">
                                         </div>
                                     </div>

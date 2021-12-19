@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\DebugController;
-use App\Http\ControllersCorrectionController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ use App\Http\Controllers\API\InvoiceController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\API\TestController;
 use App\Http\Controllers\API\CityController;
-use App\Http\Controllers\API\CostController;
+use App\Http\Controllers\CostController;
 
 use App\Models\Abonent;
 
@@ -57,17 +56,17 @@ Route::middleware('auth:web')->get('/receipts', [ReceiptController::class, 'inde
 Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу
 Route::middleware('auth:web')->get('/receipts/preview', [ReceiptController::class, 'previewPage']);    //список квитанцій перед генерацією
 Route::middleware('auth:web')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
-Route::middleware('auth:web')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
+Route::middleware('auth:web')->get('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
 
 
 /* Роути для списань */
-Route::middleware('auth:api')->get('/costs/generate', [CostController::class, 'generate']);
+Route::middleware('auth:web')->get('/costs/generate', [CostController::class, 'generate']);
 
 /* Роути для показників */
 Route::middleware('auth:web')->get('/counters', [CounterController::class, 'index']);
 Route::middleware('auth:web')->post('/counters', [CounterController::class, 'store']);
 Route::middleware('auth:api')->get('/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
-Route::middleware('auth:api')->post('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
+Route::middleware('auth:web')->get('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
 Route::middleware('auth:api')->get('/counters/meter/{id}', [CounterController::class, 'getCountersByMeter']);
 Route::middleware('auth:api')->get('/counters/meter/{id}/last', [CounterController::class, 'getLastCounterByMeter']);
 

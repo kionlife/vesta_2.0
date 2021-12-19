@@ -17,6 +17,7 @@ class CreateMetersTable extends Migration
             $table->integer('id')->primary();
             $table->string('title', 128);
             $table->integer('abonent_id')->index('abonent_id');
+            $table->integer('tariff_id')->default(1);
             $table->string('service_id', 10)->default('0');
             $table->bigInteger('code')->default(0);
             $table->integer('code_plomb')->default(0);

@@ -15,7 +15,7 @@ class Counter extends Model
      * @var array
      */
     protected $fillable = [
-        'abonent_id', 'service_id', 'meter_id', 'author_id', 'value'
+        'abonent_id', 'service_id', 'meter_id', 'author_id', 'value', 'added_at'
     ];
 
     public $timestamps = false;
