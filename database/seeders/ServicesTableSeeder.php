@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class ServicesTableSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class ServicesTableSeeder extends Seeder
     public function run()
     {
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
         \DB::table('services')->delete();
 
         \DB::table('services')->insert(array (
