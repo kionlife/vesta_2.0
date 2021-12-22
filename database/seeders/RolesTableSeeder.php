@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class RolesTableSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class RolesTableSeeder extends Seeder
     public function run()
     {
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
         \DB::table('roles')->delete();
 
         \DB::table('roles')->insert(array (
