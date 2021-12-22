@@ -234,7 +234,9 @@ class CounterController extends Controller
 
 
 
-        return $this->sendResponseCustom(new AbonentsWithoutCountersResource($meters), $limit, $meters_all->count(), 'Abonent updated successfully.');
+        return view('counters/empty', [
+            'meters' => $meters
+        ]);
 
     }
 

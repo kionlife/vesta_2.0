@@ -14,12 +14,12 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \DB::table('permissions')->delete();
-        
+
         \DB::table('permissions')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'name' => 'add counters',
@@ -27,7 +27,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 12:50:30',
                 'updated_at' => '2021-05-31 12:50:30',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 4,
                 'name' => 'page home',
@@ -35,7 +35,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 13:38:10',
                 'updated_at' => '2021-05-31 13:38:10',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 5,
                 'name' => 'page operations',
@@ -43,7 +43,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 13:39:51',
                 'updated_at' => '2021-05-31 13:39:51',
             ),
-            3 => 
+            3 =>
             array (
                 'id' => 6,
                 'name' => 'page payments',
@@ -51,7 +51,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 13:40:04',
                 'updated_at' => '2021-05-31 13:40:04',
             ),
-            4 => 
+            4 =>
             array (
                 'id' => 7,
                 'name' => 'page services',
@@ -59,7 +59,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 13:40:16',
                 'updated_at' => '2021-05-31 13:40:16',
             ),
-            5 => 
+            5 =>
             array (
                 'id' => 8,
                 'name' => 'page reports payments',
@@ -67,7 +67,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 16:30:34',
                 'updated_at' => '2021-05-31 16:30:34',
             ),
-            6 => 
+            6 =>
             array (
                 'id' => 9,
                 'name' => 'page abonents',
@@ -75,7 +75,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-05-31 16:34:35',
                 'updated_at' => '2021-05-31 16:34:35',
             ),
-            7 => 
+            7 =>
             array (
                 'id' => 10,
                 'name' => 'edit balance',
@@ -83,7 +83,7 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2021-08-09 13:43:19',
                 'updated_at' => '2021-08-09 13:43:19',
             ),
-            8 => 
+            8 =>
             array (
                 'id' => 11,
                 'name' => 'page corrections',
@@ -92,7 +92,7 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2021-08-09 13:43:19',
             ),
         ));
-        
-        
+
+
     }
 }

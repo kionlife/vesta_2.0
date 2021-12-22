@@ -423,12 +423,21 @@ class ReceiptController extends Controller
                     if (!$last_payment) {
                         $last_payment = 0;
                     }
+
+                    $meter = Counter::find($service_single['last_counters_id']);
+
+                    if(!isset($meter)) {
+                        $meter = null;
+                    } else {
+                        $meter = $meter->meter;
+                    }
+
                     $service = new ReceiptData();
                     $service->service_id = $service_single['service_id'];
                     $service->service_title = Service::where('id', $service_single['service_id'])->first()['name'];
                     $service->service_provider = Service::find($service_single['service_id'])->provider;
                     $service->service_provider_title = Service::find($service_single['service_id'])->provider[0]['title'];
-                    $service->meter = Counter::find($service_single['last_counters_id'])->meter;
+                    $service->meter = $meter;
                     $service->last_counters = $this->getCounterValue($service_single['last_counters_id']);
                     $service->last_counters_id = $service_single['last_counters_id'];
                     $service->current_counters = $this->getCounterValue($service_single['current_counters_id']);
