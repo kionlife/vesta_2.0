@@ -86,22 +86,22 @@ class CostController extends Controller
                 $query->where('abonent_id', '=', $abonent['id'])->where('status', 1);
             })->get();
 
+
+
             /* Отримуємо дані по послугах */
             foreach ($services as $service) {
 
                 $meters = Meters::whereHas('services', function (Builder $query) use ($abonent, $service) {
-                    $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id']);
-                })->where('archived', 0)->where('title', 'virtual')->get();
-
+                    $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id'])->where('status', 1);
+                })->where('archived', 0)->where('title', 'virtual')->where('abonent_id', '=', $abonent['id'])->get();
 
                 /* Перебираємо лічильники */
                 foreach ($meters as $meter) {
 
                         $abonent = Abonent::find($meter['abonent_id']);
                         $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
-
-                        $last_counter = Counter::where('meter_id', $meter['id'])->orderBy('added_at', 'DESC')->first();
-                        $current_counter = Counter::where('meter_id', $meter['id'])->orderBy('added_at', 'ASC')->first();
+                        $last_counter = Counter::where('meter_id', $meter['id'])->whereMonth('added_at', Carbon::now()->subMonth())->orderBy('added_at', 'ASC')->first();
+                        $current_counter = Counter::where('meter_id', $meter['id'])->orderBy('added_at', 'DESC')->first();
 
                         if (!$last_counter) {
                             $last_counter['id'] = 0;

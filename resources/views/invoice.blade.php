@@ -54,12 +54,16 @@
     @foreach ($receipt['services'] as $value)
         @foreach ($value as $item)
             @foreach ($item as $service)
+                @if (isset($service['meter']))
+                    @if ($service['meter'][0]['title'] != 'virtual')
                 <tr>
                     <td colspan="4"></td>
                     <td>{{ $service['meter'][0]['title'] }}</td>
                     <td>{{ $service['last_counters'] }}</td>
                     <td>{{ $service['current_counters'] }}</td>
                 </tr>
+                @endif
+                @endif
             @endforeach
         @endforeach
     @endforeach
