@@ -14,12 +14,12 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \DB::table('roles')->delete();
-        
+
         \DB::table('roles')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'name' => 'inspector',
@@ -27,7 +27,7 @@ class RolesTableSeeder extends Seeder
                 'created_at' => '2021-05-30 22:09:56',
                 'updated_at' => '2021-05-30 22:09:56',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 2,
                 'name' => 'abonent',
@@ -35,7 +35,7 @@ class RolesTableSeeder extends Seeder
                 'created_at' => '2021-05-30 22:11:33',
                 'updated_at' => '2021-05-30 22:11:33',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 3,
                 'name' => 'admin',
@@ -43,7 +43,7 @@ class RolesTableSeeder extends Seeder
                 'created_at' => '2021-05-30 22:12:20',
                 'updated_at' => '2021-05-30 22:12:20',
             ),
-            3 => 
+            3 =>
             array (
                 'id' => 4,
                 'name' => 'employee',
@@ -52,7 +52,7 @@ class RolesTableSeeder extends Seeder
                 'updated_at' => '2021-05-31 09:42:16',
             ),
         ));
-        
-        
+
+
     }
 }

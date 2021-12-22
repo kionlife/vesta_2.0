@@ -64,6 +64,13 @@ class AbonentController extends Controller
     {
         $user = Auth::user();
 
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Абонент переміщений в архів');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
+        }
+
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
         $abonents = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
@@ -78,11 +85,11 @@ class AbonentController extends Controller
 
             $result = Datatables::of($abonents)
                 ->addIndexColumn()
-                ->addColumn('status', function($row){
+                ->addColumn('archived', function($row){
                     if ($row->status) {
-                        return '<span class="badge badge-primary">Active</span>';
+                        return '<span class="">Active</span>';
                     } else {
-                        return '<span class="badge badge-danger">Deactive</span>';
+                        return '<span class="">Deactive</span>';
                     }
                 })
                 ->addColumn('balance', function($row){
@@ -95,8 +102,8 @@ class AbonentController extends Controller
                     ]);
                 })
                 ->filter(function ($instance) use ($request) {
-                    if ($request->get('status') == '0' || $request->get('status') == '1') {
-                        $instance->where('status', $request->get('status'));
+                    if ($request->get('archived') == '0' || $request->get('archived') == '1') {
+                        $instance->where('archived', $request->get('archived'));
                     }
                     if (!empty($request->get('search'))) {
                         $instance->where(function($w) use($request){
@@ -106,7 +113,7 @@ class AbonentController extends Controller
                         });
                     }
                 })
-                ->rawColumns(['status'])
+                ->rawColumns(['archived'])
                 ->setRowAttr([
                     'data-href' => function($ab) {
                         return '/abonents/' . $ab->id;
@@ -118,7 +125,8 @@ class AbonentController extends Controller
 
         return view('abonents/abonents', [
             'user' => $user,
-            'total_count' => $total_count
+            'total_count' => $total_count,
+            'alert' => $alert
         ]);
     }
 
@@ -405,15 +413,17 @@ class AbonentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
-    public function destroy(Abonent $abonent)
+    public function destroy($id)
     {
 
+        $abonent = Abonent::find($id);
         User::where('id', $abonent->user_id)->update(['archived' => 1]);
         $abonent->update(['archived' => 1]);
         $message = 'Абонент %s переміщений в архів';
-        return $this->sendResponse([], sprintf($message, $abonent->name));
+
+        return redirect('/abonents')->with('alert', true);
     }
 
     public function search(Request $request)

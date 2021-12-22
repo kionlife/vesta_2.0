@@ -539,8 +539,11 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <button class="btn btn-success" type="submit">Зберегти</button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
                         </div>
                     </div>
 
@@ -555,6 +558,42 @@
 
 
 
+    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent"
+         aria-hidden="true" style="display: none;">
+
+        <div class="modal-dialog">
+            <form class="modal-content" action="/abonents/delete/{{ $abonent['id'] }}" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Підтвердження дії</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <p>Ви дійсно хочете перемістити абонента {{ $abonent['name'] }} до архіву?</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Так</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Ні</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 

@@ -62,9 +62,9 @@ class HomeController extends Controller
             $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('added_at', [$start, $end])->count();
             $t_payments = Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
             $date = [
-                'day' => Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end] )->sum('value'),
-                'month' => Payment::whereIn('service_id', $service_id)->whereMonth('created_at', Carbon::today()->month)->get()->sum('value'),
-                'year' => Payment::whereIn('service_id', $service_id)->whereYear('created_at', Carbon::today()->year)->get()->sum('value'),
+                'day' => Payment::whereIn('service_id', $service_id)->where('title', '!=', 'Корекція')->whereBetween('created_at', [$start, $end] )->sum('value'),
+                'month' => Payment::whereIn('service_id', $service_id)->where('title', '!=', 'Корекція')->whereMonth('created_at', Carbon::today()->month)->get()->sum('value'),
+                'year' => Payment::whereIn('service_id', $service_id)->where('title', '!=', 'Корекція')->whereYear('created_at', Carbon::today()->year)->get()->sum('value'),
             ];
 
         } else {

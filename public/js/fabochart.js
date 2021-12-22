@@ -18,7 +18,7 @@
             time : 2000,
             instantAnimate : true,
             straight : true,
-            valueColor : "#3E3D3D",
+            valueColor : "#303c52",
             backgroundColor :"#eee",
             valueTextColor : "#000",
             labelTextColor : "#3E3D3D",
@@ -56,7 +56,6 @@
         var keys = [];
         $.each(data, function (index, v) {
             keys.push(index);
-
             if (v > highest)
                 highest = v;
 
@@ -119,7 +118,7 @@
         var width = Math.ceil(pi[0].getBoundingClientRect().width);
 
         label_text.clone().text(label).appendTo(pi);
-        value_text.clone().text(val).appendTo(pi);
+        value_text.clone().text(new Intl.NumberFormat('uk-UA').format(val)).appendTo(pi);
 
 
         if(!straight) {
