@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class PermissionsTableSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class PermissionsTableSeeder extends Seeder
     public function run()
     {
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
         \DB::table('permissions')->delete();
 
         \DB::table('permissions')->insert(array (
