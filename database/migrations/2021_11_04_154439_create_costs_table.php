@@ -13,6 +13,7 @@ class CreateCostsTable extends Migration
      */
     public function up()
     {
+
         Schema::create('costs', function (Blueprint $table) {
             $table->integer('id')->primary();
             $table->integer('abonent_id');
