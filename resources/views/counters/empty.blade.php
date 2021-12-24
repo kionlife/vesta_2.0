@@ -2,6 +2,7 @@
 
 @section('content')
 
+
     <div class="inner-content">
         <div class="outter-wp">
             @if(!empty($alert))
