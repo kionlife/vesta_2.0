@@ -16,8 +16,6 @@ class BalancesTableSeeder extends Seeder
      */
     public function run()
     {
-        Schema::disableForeignKeyConstraints();
-
         DB::table('balances')->delete();
 
 

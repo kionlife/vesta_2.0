@@ -16,7 +16,6 @@ class ServicesTableSeeder extends Seeder
     public function run()
     {
 
-        Schema::disableForeignKeyConstraints();
         \DB::table('services')->delete();
 
         \DB::table('services')->insert(array (
