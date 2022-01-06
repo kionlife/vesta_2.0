@@ -217,13 +217,20 @@ class AbonentController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $user = Auth::user();
         $abonent = Abonent::find($id);
 
         if (is_null($abonent)) {
             return $this->sendError('Абонента не знайдено!');
+        }
+
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Дані абонента оновлено.');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
         }
 
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
@@ -279,16 +286,6 @@ class AbonentController extends Controller
                 'counters' => Counter::where('meter_id', $meter->id)->orderBy('added_at', 'DESC')->with('author')->get()
             );
 
-            /*$meterServices = array();
-            foreach (Service2Meter::where('meter_id', $meter['id'])->get() as $service) {
-                $meterServicesTemp = array(
-                    'service_id' => $service['service_id'],
-                    'name' => Service::where('id', $service['service_id'])->first()['name']
-                );
-                array_push($meterServices, $meterServicesTemp);
-            }
-
-            $meter0['services'] = $meterServices;*/
             array_push($metersNew, $meter0);
 
         }
@@ -322,7 +319,8 @@ class AbonentController extends Controller
 
 
         return view('abonents/card', [
-            'abonent' => $abonent,
+            'abonent'   => $abonent,
+            'alert'     => $alert,
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
@@ -336,7 +334,7 @@ class AbonentController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $id)
     {
@@ -406,7 +404,7 @@ class AbonentController extends Controller
         }
 
         //return $this->sendResponse(new AbonentResource($abonent), 'Дані абонента оновлено!');
-        return $abonent;
+        return redirect('/abonents/' . $id)->with('alert', true);
     }
 
     /**

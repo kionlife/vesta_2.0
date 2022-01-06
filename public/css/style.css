@@ -1270,7 +1270,7 @@ ul.dropdown {
 .chrt-two,.chrt-three {
         padding: 2em 2em;
     background: #fff;
-    width: 49%;
+    width: 100%;
     margin-right: 2%;
    box-shadow: 0 1px 1px rgba(0,0,0,.05);
     -o-box-shadow: 0 1px 1px rgba(0,0,0,.05);
@@ -8548,4 +8548,12 @@ tr.outcome {
     font-weight: 600;
     font-size: 18px;
     color: #000;
+}
+
+input.editableInput {
+    display: block;
+    width: 100px;
+    text-align: center;
+    background: rgba(153,153,153,0.57);
+    border: 2px solid;
 }
