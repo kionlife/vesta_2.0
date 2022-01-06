@@ -14,9 +14,8 @@ jobs:
             git pull
             composer install
             wget --no-check-certificate --quiet --method GET --timeout=0 --header '' 'https://tsukr.tech/db_data_migrate.php'
-            sed -i '17i Schema::disableForeignKeyConstraints();' /var/www/stage.vesta.org.ua/database/seeders/DatabaseSeeder.php
-            php artisan migrate:fresh
-            php artisan db:seed --force
+            mysql -u ${{ secrets.DB_USERNAME }} -p ${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < /var/www/db_storage/prod.sql
+
             sudo chown -R www-data /var/www/stage.vesta.org.ua
           host: 31.131.17.142
           user: git

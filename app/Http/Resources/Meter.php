@@ -21,10 +21,13 @@ class Meter extends JsonResource
 	public function toArray($request)
     {
 
-        if ($this->counters->isEmpty()) {
+        $last_counter = Meters::find($this->id)->counters()->orderBy('added_at', 'DESC')->first();
+
+
+        if (!$last_counter) {
             $last_counter = 0;
         } else {
-            $last_counter = $this->counters[0]['value'];
+            $last_counter = $last_counter['value'];
         }
 
 		return [
