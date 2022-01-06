@@ -39,8 +39,10 @@
                     <div class="row">
 
 
-                        <div class="col-md-6 chrt-two">
+                        <div class="col-md-8">
+                        <div class="chrt-two">
                             <div id="chart1"></div>
+                        </div>
                         </div>
                     </div>
 

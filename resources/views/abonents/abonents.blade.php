@@ -26,21 +26,6 @@
                     </div>
                 </div>
 
-<!--                <div class="row">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label><strong>Показувати архівних абонентів?</strong></label>
-                                <select id="archived" class="form-control" style="width: 200px">
-                                    <option value="">&#45;&#45;Select Status&#45;&#45;</option>
-                                    <option value="1">Так</option>
-                                    <option value="0">Ні</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
-
                 <div class="graph">
                     <div class="tables">
 

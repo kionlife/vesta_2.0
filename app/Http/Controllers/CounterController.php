@@ -212,7 +212,7 @@ class CounterController extends Controller
         if ($request->limit){
             $limit = $request->limit;
         } else {
-            $limit = 100;
+            $limit = 1000;
         }
 
         if ($request->page) {
@@ -230,12 +230,53 @@ class CounterController extends Controller
             $query->whereMonth('added_at', Carbon::now()->format('m'));
         })->orderBy('abonent_id', 'ASC')->get();
 
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $lastMonth = Carbon::now()->subMonth()->format('m');
+        $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
+
+        foreach ($meters as $single_meter) {
+            $services = array();
+            $meter = $single_meter;
+
+            $abonent = Abonent::find($meter->abonent_id);
+            $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
+
+            $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
+            if($current_counter['value'] == 0) {
+                foreach ($meter->services as $service) {
+                    $services[] = $service['id'];
+                }
 
 
+                if ($meter['title'] == 'virtual') {
+                    if (in_array(1, $services)) {
+                        $current_counter['value'] = $last_counter['value'] + 4 * $abonent->peoples;
+                    } else {
+                        $current_counter['value'] = $last_counter['value'] + $abonent->peoples;
+                    }
+                } else {
+                    $current_counter['value'] = $last_counter['value'];
+                }
+
+
+                $counter = new Counter();
+                $counter->abonent_id = $meter->abonent_id;
+                $counter->service_id = $services[0];
+                $counter->meter_id = $meter->id;
+                $counter->author_id = 0;
+                $counter->archived = 0;
+                $counter->last_value = $last_counter['value'];
+                $counter->value = $current_counter['value'];
+                $counters[] = $counter;
+            }
+        }
 
 
         return view('counters/empty', [
-            'meters' => $meters
+            'user' => $user,
+            'meters' => $meters,
+            'counters' => $counters
         ]);
 
     }
@@ -251,11 +292,14 @@ class CounterController extends Controller
         return $counter;
     }
 
-    public function addCounters() {
-//        $meters = $request->meters;
+    public function addCounters(Request $request) {
+        $meters = $request->meters;
+
         $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
             $query->whereMonth('added_at', Carbon::now()->format('m'));
         })->where('archived', 0)->orderBy('abonent_id', 'ASC')->get();
+
+        dd($meters);
 
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
