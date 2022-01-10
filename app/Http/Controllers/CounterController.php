@@ -104,14 +104,19 @@ class CounterController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $meter_services = Meters::find($input['meter_id'])->services;
+
+
 
 
        /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
 //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
             $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
         } else {*/
+        foreach ($meter_services as $service) {
 
-            $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $input['service_id'])->first()['value'];
+
+            $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
             $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('added_at', 'DESC')->first();
             if (!$last_counter) {
                 $last_counter = 0;
@@ -122,19 +127,21 @@ class CounterController extends Controller
 
             $cost = new Cost();
             $cost->abonent_id = $abonent->id;
-            $cost->service_id = $input['service_id'];
+            $cost->service_id = $service['id'];
             $cost->meter_id = $input['meter_id'];
             $cost->author_id = $input['author_id'];
             $cost->value = ($input['value'] - $last_counter) * $tariff;
             $cost->save();
 
-            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $input['service_id'])->first();
-            $current_balance->value = $current_balance->value - $cost->value;
+            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
+            $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
             $current_balance->last_update = date('Y-m-d');
             $current_balance->save();
 
-            $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
-            $counter = Counter::create($input);
+
+        }
+        $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
+        $counter = Counter::create($input);
             $result = redirect('/counters')->with('alert', true);
 
 //        }
