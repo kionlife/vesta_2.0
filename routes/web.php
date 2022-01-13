@@ -92,7 +92,8 @@ Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'sto
 /* Дебаг роути */
 
 Route::middleware('auth:web')->get('/debug/balances', [DebugController::class, 'balancesMigrate']);
-Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
+Route::middleware('auth:web')->get('/generate', [InvoiceController::class, 'generate']);
+Route::middleware('auth:web')->get('/cost/repair', [DebugController::class, 'costGenerateByServiceId']);
 
 
 
