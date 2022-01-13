@@ -58,7 +58,7 @@ class ReceiptController extends Controller
 //1
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 //
-        $receipts_arr = Receipt::where('archived', 0)->offset($offset)->limit($limit)->with('services')->get();
+        $receipts_arr = Receipt::where('archived', 0)->offset($offset)->limit($limit)->with('services')->orderBy('created_at', 'desc')->get();
 
         foreach ($receipts_arr as $item) {
             $receipt = new Receipt();
@@ -189,7 +189,7 @@ class ReceiptController extends Controller
 
                         $meters = Meters::whereHas('services', function (Builder $query) use ($abonent, $service) {
                             $query->where('abonent_id', '=', $abonent['id'])->where('service_id', $service['id'])->where('status', 1);
-                        })->get();
+                        })->where('archived', 0)->get();
 
                         /* Якщо є лічильники */
                         if ($meters->isNotEmpty()) {
@@ -219,7 +219,8 @@ class ReceiptController extends Controller
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
                                             'balance' => $abonent->balanceCalc($service['id'])['value'],
-                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
+//                                            'to_pay' => round(abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),2),
+                                            'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
                                         )
                                     );
 
@@ -243,8 +244,8 @@ class ReceiptController extends Controller
                                             'generated' => ($current_counter['value'] - $last_counter['value']) * $tariff,
                                             'tariff' => $tariff,
                                             'balance' => $abonent->balanceCalc($service['id'])['value'],
-                                            'to_pay' => abs($abonent->balanceCalc($service['id'])['value'] - (($current_counter['value'] - $last_counter['value']) * $tariff)),
-                                        )
+                                            'to_pay' => ($abonent->balanceCalc($service['id'])['value'] <= 0) ? abs($abonent->balanceCalc($service['id'])['value']) : $abonent->balanceCalc($service['id'])['value'] * -1,
+                                            )
                                     );
                                 }
                             }
@@ -334,6 +335,7 @@ class ReceiptController extends Controller
                     );
                     Receipt::destroy([$receipt->id]);
                 } else {
+
                     $service = new ReceiptData();
                     $service->receipt_id = $receipt->id;
                     $service->service_id = $service_single['service_id'];
@@ -342,9 +344,13 @@ class ReceiptController extends Controller
                     $service->balance = $service_single['balance'];
                     $service->to_pay = $service_single['to_pay'];
                     $service->save();
+                    $result['success'][$receipt->id][$service_single['service_id']] = array(
+                        'receipt_id' => $receipt->id,
+                        'abonent' => Abonent::find($receipt->abonent_id),
+                        'service' => Service::find($service_single['service_id'])
+                    );
                 }
             }
-
 
 
         }
@@ -386,10 +392,15 @@ class ReceiptController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function generate()
+    public function generate(Request $request)
     {
 
-        $receipts_arr = Receipt::where('status_id', 1)->with('services')->get();
+        if ($request->id) {
+            $receipts_arr = Receipt::where('id', $request->id)->with('services')->get();
+        } else {
+            $receipts_arr = Receipt::where('status_id', 1)->with('services')->get();
+        }
+
 
         foreach ($receipts_arr as $receipt_single) {
             $receipt = new Receipt();
@@ -402,26 +413,36 @@ class ReceiptController extends Controller
             Carbon::setLocale('uk');
             $created_at = Carbon::parse($receipt_single->created_at)->subMonth()->format('m.Y');
             $receipt->date = $created_at;
+            $receipt->created_at = Carbon::parse($receipt_single->created_at);
+            $receipt->last_receipt_date = $receipt->created_at->subMonth()->format('Y-m-d');
             $receipt->last_month = Carbon::now()->subMonth()->translatedFormat('F');
             $receipt->last_month_year = Carbon::now()->subMonth()->translatedFormat('Y');
             $total = 0;
             foreach ($receipt_single->services as $service_single) {
-                    $last_payment = PaymentModel::where('abonent_id', $service_single['abonent_id'])->where('service_id', $service_single['service_id'])->orderBy('created_at', 'DESC')->first();
+                    $last_payment = PaymentModel::where('abonent_id', $receipt->abonent_id)->where('service_id', $service_single['service_id'])->whereBetween('created_at', array($receipt->last_receipt_date, $receipt->created_at->format('Y-m-d')))->sum('value');
                     if (!$last_payment) {
                         $last_payment = 0;
-                    } else {
-                        $last_payment = $last_payment['value'];
                     }
+
+                    $meter = Counter::find($service_single['last_counters_id']);
+
+                    if(!isset($meter)) {
+                        $meter = null;
+                    } else {
+                        $meter = $meter->meter;
+                    }
+
                     $service = new ReceiptData();
                     $service->service_id = $service_single['service_id'];
                     $service->service_title = Service::where('id', $service_single['service_id'])->first()['name'];
                     $service->service_provider = Service::find($service_single['service_id'])->provider;
                     $service->service_provider_title = Service::find($service_single['service_id'])->provider[0]['title'];
+                    $service->meter = $meter;
                     $service->last_counters = $this->getCounterValue($service_single['last_counters_id']);
                     $service->last_counters_id = $service_single['last_counters_id'];
                     $service->current_counters = $this->getCounterValue($service_single['current_counters_id']);
                     $service->current_counters_id = $service_single['current_counters_id'];
-                    $service->used_counter = $service->current_counters -  $service->last_counters;
+                    $service->used_counter = $service->current_counters - $service->last_counters;
                     $service->tariff = Tariff::where('abonent_type', $receipt->abonent->type[0]->id)->where('city_id', $receipt->abonent->city_id)->where('service_id', $service_single['service_id'])->first()['value'];
                     $service->generated = ($service->current_counters -  $service->last_counters) * $service->tariff;
                     $service->last_payment = $last_payment;
@@ -432,16 +453,32 @@ class ReceiptController extends Controller
                     $receipt->services->push($service);
             }
 
-            $receipt->services = $receipt->services->groupBy('service_provider_title');
-//            dd($receipt);
+
+            $receipt->services = $receipt->services->groupBy(['service_provider_title', 'service_id']);
+
+            $receipt->total_used = $receipt->services->map(function ($row) {
+                return $row->map(function ($row1) {
+                    return $row1->sum('used_counter');
+                });
+            });
+
+            $receipt->total_generated = $receipt->services->map(function ($row) {
+                return $row->map(function ($row1) {
+                    return $row1->sum('generated');
+                });
+            });
+
+
+
+
             $receipts[] = $receipt;
 
             $pdf = PDF::loadView('invoice', [
                 'receipt' => $receipt
-            ])->setPaper('a5', 'landscape');;
+            ])->setPaper('a4', 'portrait');;
 
             $path = public_path('pdfs/');
-            $filename = $receipt->abonent['personal_account'] . ' - ' . $created_at . '.pdf';
+            $filename = str_replace('/', '_', $receipt->abonent['address']) . ' - ' . $created_at . '.pdf';
             $pdf->save($path . $filename);
 
         }

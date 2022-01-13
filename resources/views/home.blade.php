@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="inner-content">
+    <div class="inner-content" style="overflow-x: hidden;">
         <div class="custom-widgets">
             <div class="row-one">
                 <div class="col-md-6">
@@ -38,8 +38,11 @@
                 <div class="chrt-bars">
                     <div class="row">
 
-                        <div class="col-md-6 chrt-two">
+
+                        <div class="col-md-8">
+                        <div class="chrt-two">
                             <div id="chart1"></div>
+                        </div>
                         </div>
                     </div>
 
@@ -68,9 +71,6 @@
         </div>
     <!--//bottom-grids-->
 </div>
-    </div>
-    <!--/charts-inner-->
-    </div>
 
     <script>
         $(document).ready(function () {
@@ -98,8 +98,7 @@
         $(".stats-right").ready(function ()
         {
             $("#payments").text($(".stats-right :selected").val());
-        });
-        $(".stats-right").change(function ()
+        }).change(function ()
         {
             $("#payments").text($(".stats-right :selected").val());
         });

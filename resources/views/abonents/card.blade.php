@@ -4,7 +4,9 @@
 
     <div class="inner-content">
         <div class="outter-wp">
-
+            @if(!empty($alert))
+                @include('elements/notify', ['response' => $alert])
+            @endif
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
                     <li><a href="/">Головна</a></li>
@@ -24,7 +26,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">ПІБ</label>
                                     <div class="col-sm-9">
-                                        <input name="name" type="text" class="form-control" placeholder="ПІБ"
+                                        <input name="name" type="text" class="form-control bigFont" placeholder="ПІБ"
                                                value="{{ $abonent['name'] }}">
                                     </div>
                                 </div>
@@ -45,7 +47,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">О/Р</label>
                                     <div class="col-sm-9">
-                                        <input name="personal_account" type="tel" class="form-control"
+                                        <input name="personal_account" type="tel" class="form-control bigFont"
                                                placeholder="Особовий рахунок"
                                                value="{{ $abonent['personal_account'] }}">
                                     </div>
@@ -201,7 +203,7 @@
                                                                     @isset($abonent['history'][$service['id']])
                                                                         @foreach($abonent['history'][$service['id']] as $item)
                                                                             <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
-                                                                                <td>{{ $item['created_at'] }}</td>
+                                                                                <td>@date($item['created_at'])</td>
                                                                                 <td>{{ $item['title'] }}</td>
                                                                                 <td>{{ $item['value'] }}</td>
                                                                                 <td>{{ $item->author['name'] }}</td>
@@ -452,7 +454,7 @@
 
                                                         <div class="col-md-1">
                                                             <button type="button"
-                                                                    onclick="meter.remove({{ $meter['meter_id'] }})"
+                                                                    onclick="meter.remove({{ $meter['meter_id'] }}, {{ $abonent['id'] }})"
                                                                     class="btn btn-danger"><i class="fa fa-trash-o"></i>
                                                             </button>
                                                         </div>
@@ -476,7 +478,7 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                            <td>{{ $counter['added_at'] }}</td>
+                                                                            <td>@date($counter['added_at'])</td>
                                                                             <td>{{ $counter['value'] }}</td>
                                                                             <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>
@@ -524,8 +526,8 @@
                                     @foreach($abonent['receipts'] as $receipt)
                                         <tr>
                                             <td>@date($receipt['created_at'])</td>
-                                            <td>{{ $receipt['status_id'] }}</td>
-                                            <td>{{ $receipt['author_id'] }}</td>
+                                            <td>{{ $receipt['status']['title'] }}</td>
+                                            <td>{{ $receipt['author']['name'] }}</td>
                                             <td>@date($receipt['updated_at'])</td>
                                             <td><a class="tooltips" href="/receipts/{{ $receipt['id'] }}"><span>Переглянути</span><i
                                                         class="fa fa-eye"></i></a></td>
@@ -539,8 +541,11 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <button class="btn btn-success" type="submit">Зберегти</button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
                         </div>
                     </div>
 
@@ -555,6 +560,42 @@
 
 
 
+    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent"
+         aria-hidden="true" style="display: none;">
+
+        <div class="modal-dialog">
+            <form class="modal-content" action="/abonents/delete/{{ $abonent['id'] }}" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Підтвердження дії</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <p>Ви дійсно хочете перемістити абонента {{ $abonent['name'] }} до архіву?</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Так</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Ні</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 
@@ -608,6 +649,17 @@
                                                 type="tel"
                                                 class="form-control"
                                                 placeholder="Розташування лічильника"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Початковий показник</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="counter"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="Початковий показник"
                                                 value="">
                                         </div>
                                     </div>

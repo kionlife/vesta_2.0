@@ -8,7 +8,6 @@ use App\Models\Cost;
 use App\Models\Tariff;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Counter;
 use App\Models\User;
 use App\Models\Abonent;
@@ -105,35 +104,44 @@ class CounterController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $meter_services = Meters::find($input['meter_id'])->services;
+
+
 
 
        /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
 //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
             $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
         } else {*/
+        foreach ($meter_services as $service) {
 
-            $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $input['service_id'])->first()['value'];
+
+            $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
             $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('added_at', 'DESC')->first();
             if (!$last_counter) {
                 $last_counter = 0;
             } else {
                 $last_counter = $last_counter['value'];
             }
+
+
             $cost = new Cost();
             $cost->abonent_id = $abonent->id;
-            $cost->service_id = $input['service_id'];
+            $cost->service_id = $service['id'];
             $cost->meter_id = $input['meter_id'];
             $cost->author_id = $input['author_id'];
             $cost->value = ($input['value'] - $last_counter) * $tariff;
             $cost->save();
 
-            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $input['service_id'])->first();
-            $current_balance->value = $current_balance->value - $cost->value;
+            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
+            $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
             $current_balance->last_update = date('Y-m-d');
             $current_balance->save();
 
-            $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
-            $counter = Counter::create($input);
+
+        }
+        $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
+        $counter = Counter::create($input);
             $result = redirect('/counters')->with('alert', true);
 
 //        }
@@ -211,7 +219,7 @@ class CounterController extends Controller
         if ($request->limit){
             $limit = $request->limit;
         } else {
-            $limit = 100;
+            $limit = 1000;
         }
 
         if ($request->page) {
@@ -229,11 +237,54 @@ class CounterController extends Controller
             $query->whereMonth('added_at', Carbon::now()->format('m'));
         })->orderBy('abonent_id', 'ASC')->get();
 
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $lastMonth = Carbon::now()->subMonth()->format('m');
+        $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
+
+        foreach ($meters as $single_meter) {
+            $services = array();
+            $meter = $single_meter;
+
+            $abonent = Abonent::find($meter->abonent_id);
+            $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
+
+            $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
+            if($current_counter['value'] == 0) {
+                foreach ($meter->services as $service) {
+                    $services[] = $service['id'];
+                }
 
 
+                if ($meter['title'] == 'virtual') {
+                    if (in_array(1, $services)) {
+                        $current_counter['value'] = $last_counter['value'] + 4 * $abonent->peoples;
+                    } else {
+                        $current_counter['value'] = $last_counter['value'] + $abonent->peoples;
+                    }
+                } else {
+                    $current_counter['value'] = $last_counter['value'];
+                }
 
 
-        return $this->sendResponseCustom(new AbonentsWithoutCountersResource($meters), $limit, $meters_all->count(), 'Abonent updated successfully.');
+                $counter = new Counter();
+                $counter->abonent_id = $meter->abonent_id;
+                $counter->service_id = $services[0];
+                $counter->meter_id = $meter->id;
+                $counter->author_id = 0;
+                $counter->archived = 0;
+                $counter->last_value = $last_counter['value'];
+                $counter->value = $current_counter['value'];
+                $counters[] = $counter;
+            }
+        }
+
+
+        return view('counters/empty', [
+            'user' => $user,
+            'meters' => $meters,
+            'counters' => $counters
+        ]);
 
     }
 
@@ -249,10 +300,13 @@ class CounterController extends Controller
     }
 
     public function addCounters(Request $request) {
-//        $meters = $request->meters;
+        $meters = $request->meters;
+
         $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
             $query->whereMonth('added_at', Carbon::now()->format('m'));
         })->where('archived', 0)->orderBy('abonent_id', 'ASC')->get();
+
+        dd($meters);
 
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
@@ -294,6 +348,9 @@ class CounterController extends Controller
                 $counter->save();
             }
         }
+
+        return 'test';
+
     }
 
     public function getCountersByMeter($id) {

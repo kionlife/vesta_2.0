@@ -43,7 +43,7 @@
                                         <select class="form-control1" name="meter_id" id="abonent_services_meters">
                                         </select>
                                     </div>
-                                    <div class="col-md-3 form-group1">
+                                    <div class="col-md-2 form-group1">
                                         <label class="control-label">Попередній</label>
                                         <input id="last_counter" type="text" disabled required="">
                                     </div>
@@ -51,11 +51,14 @@
                                         <label class="control-label">Поточний</label>
                                         <input id="current_counter" type="text" name="value" placeholder="" required="">
                                     </div>
-                                    <div class="col-md-3 form-group1">
+                                    <div class="col-md-2 form-group1">
                                         <label class="control-label">Використано м³</label>
                                         <input id="used_counter" type="text" disabled required="">
                                     </div>
-
+                                    <div class="col-md-2 form-group1">
+                                        <label class="control-label">Дата</label>
+                                        <input id="added_at" type="date" name="added_at" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required="">
+                                    </div>
                                 </div>
 
                                 <div class="row margin-top">
@@ -112,6 +115,5 @@
         </div>
         <!--//outer-wp-->
     </div>
-
 
 @endsection

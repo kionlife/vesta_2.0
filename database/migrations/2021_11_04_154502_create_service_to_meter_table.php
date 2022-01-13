@@ -18,6 +18,7 @@ class CreateServiceToMeterTable extends Migration
             $table->integer('abonent_id');
             $table->integer('service_id');
             $table->integer('meter_id');
+            $table->integer('status')->default(1);
             $table->integer('archived')->default(0);
         });
     }

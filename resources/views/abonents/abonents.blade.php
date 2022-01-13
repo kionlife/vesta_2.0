@@ -6,6 +6,9 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <div class="inner-content">
         <div class="outter-wp">
+            @if(!empty($alert))
+                @include('elements/notify', ['response' => $alert])
+            @endif
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
                     <li><a href="/home">Головна</a></li>
@@ -22,21 +25,6 @@
                         <button data-toggle="modal" data-target="#add_abonent" type="button" class="btn btn-primary"><i class="fa fa-user"></i><span> Додати абонента</span></button>
                     </div>
                 </div>
-
-<!--                <div class="row">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label><strong>Не проживає:</strong></label>
-                                <select id='status' class="form-control" style="width: 200px">
-                                    <option value="">&#45;&#45;Select Status&#45;&#45;</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Deactive</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
 
                 <div class="graph">
                     <div class="tables">
@@ -75,8 +63,8 @@
                 ajax: {
                     url: "/abonents",
                     data: function (d) {
-                        d.status = $('#status').val(),
-                            d.search = $('input[type="search"]').val()
+                        d.archived = $('#archived').val(),
+                        d.search = $('input[type="search"]').val()
                     }
                 },
                 columns: [
@@ -102,7 +90,7 @@
                 "pageLength": 50
             });
 
-            $('#status').change(function(){
+            $('#archived').change(function(){
                 table.draw();
             });
 

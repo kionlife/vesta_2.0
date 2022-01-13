@@ -30,7 +30,7 @@
     <div class="error-top error">
         <h3>4<i class="fa fa-smile-o"></i>4</h3>
         <span>Щось пішло не так</span>
-        <p>{{ $response['message'] }}</p>
+        <p>@isset($response){{ $response['message'] }} @endisset</p>
         <div class="error-btn">
             <a class="read fourth" href="/">Повернутись на головну</a>
         </div>

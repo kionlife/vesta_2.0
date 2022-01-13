@@ -29,7 +29,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 18px; }
+    bottom: -30px; }
 .fabo-chart .fabo-point
 .fabo-value-label {
     width: 100%;
@@ -41,7 +41,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 18px; }
+    top: -23px; }
 	.fabo-value-label {
     color:#7b82ff!important;
 }

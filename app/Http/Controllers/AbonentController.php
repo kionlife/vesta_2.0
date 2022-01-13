@@ -64,6 +64,13 @@ class AbonentController extends Controller
     {
         $user = Auth::user();
 
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Абонент переміщений в архів');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
+        }
+
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
         $abonents = Abonent::where('archived', 0)->whereHas('balance', function (Builder $query) use ($service_id) {
@@ -78,11 +85,11 @@ class AbonentController extends Controller
 
             $result = Datatables::of($abonents)
                 ->addIndexColumn()
-                ->addColumn('status', function($row){
+                ->addColumn('archived', function($row){
                     if ($row->status) {
-                        return '<span class="badge badge-primary">Active</span>';
+                        return '<span class="">Active</span>';
                     } else {
-                        return '<span class="badge badge-danger">Deactive</span>';
+                        return '<span class="">Deactive</span>';
                     }
                 })
                 ->addColumn('balance', function($row){
@@ -95,8 +102,8 @@ class AbonentController extends Controller
                     ]);
                 })
                 ->filter(function ($instance) use ($request) {
-                    if ($request->get('status') == '0' || $request->get('status') == '1') {
-                        $instance->where('status', $request->get('status'));
+                    if ($request->get('archived') == '0' || $request->get('archived') == '1') {
+                        $instance->where('archived', $request->get('archived'));
                     }
                     if (!empty($request->get('search'))) {
                         $instance->where(function($w) use($request){
@@ -106,7 +113,7 @@ class AbonentController extends Controller
                         });
                     }
                 })
-                ->rawColumns(['status'])
+                ->rawColumns(['archived'])
                 ->setRowAttr([
                     'data-href' => function($ab) {
                         return '/abonents/' . $ab->id;
@@ -118,7 +125,8 @@ class AbonentController extends Controller
 
         return view('abonents/abonents', [
             'user' => $user,
-            'total_count' => $total_count
+            'total_count' => $total_count,
+            'alert' => $alert
         ]);
     }
 
@@ -209,13 +217,20 @@ class AbonentController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $user = Auth::user();
         $abonent = Abonent::find($id);
 
         if (is_null($abonent)) {
             return $this->sendError('Абонента не знайдено!');
+        }
+
+        if (session('alert') == true) {
+            $alert = $this->sendResponseMessage('Дані абонента оновлено.');
+            $request->session()->forget('alert');
+        } else {
+            $alert = '';
         }
 
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
@@ -234,7 +249,6 @@ class AbonentController extends Controller
             $service['status'] = $balance['status'];
 
             array_push($servicesNew, $service);
-//			$providers[] = ;
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
             if ($contract) {
                 $contracts = array(
@@ -272,16 +286,6 @@ class AbonentController extends Controller
                 'counters' => Counter::where('meter_id', $meter->id)->orderBy('added_at', 'DESC')->with('author')->get()
             );
 
-            /*$meterServices = array();
-            foreach (Service2Meter::where('meter_id', $meter['id'])->get() as $service) {
-                $meterServicesTemp = array(
-                    'service_id' => $service['service_id'],
-                    'name' => Service::where('id', $service['service_id'])->first()['name']
-                );
-                array_push($meterServices, $meterServicesTemp);
-            }
-
-            $meter0['services'] = $meterServices;*/
             array_push($metersNew, $meter0);
 
         }
@@ -311,12 +315,12 @@ class AbonentController extends Controller
 
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
-        $abonent['receipts'] = $abonent->receipt;
-
+        $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
 
 
         return view('abonents/card', [
-            'abonent' => $abonent,
+            'abonent'   => $abonent,
+            'alert'     => $alert,
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
@@ -330,7 +334,7 @@ class AbonentController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $id)
     {
@@ -400,22 +404,24 @@ class AbonentController extends Controller
         }
 
         //return $this->sendResponse(new AbonentResource($abonent), 'Дані абонента оновлено!');
-        return $abonent;
+        return redirect('/abonents/' . $id)->with('alert', true);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
-    public function destroy(Abonent $abonent)
+    public function destroy($id)
     {
 
+        $abonent = Abonent::find($id);
         User::where('id', $abonent->user_id)->update(['archived' => 1]);
         $abonent->update(['archived' => 1]);
         $message = 'Абонент %s переміщений в архів';
-        return $this->sendResponse([], sprintf($message, $abonent->name));
+
+        return redirect('/abonents')->with('alert', true);
     }
 
     public function search(Request $request)

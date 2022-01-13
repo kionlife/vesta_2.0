@@ -59,7 +59,7 @@ class MeterController extends Controller
         $meter->abonent_id = $input['abonent_id'];
         $meter->code = $input['code'];
         $meter->code_plomb = $input['code_plomb'];
-        $meter->counter = 0;
+        $meter->counter = $input['counter'];
         $meter->next_check = $input['next_check'];
         $meter->last_check = $input['last_check'];
         $meter->tariff_id = $input['tariff_id'];
@@ -67,6 +67,13 @@ class MeterController extends Controller
 
         $meter->services()->attach($input['services']);
 
+        $counter = new Counter();
+        $counter->abonent_id = $input['abonent_id'];
+        $counter->meter_id = $meter->id;
+        $counter->author_id = $user->id;
+        $counter->value = $input['counter'];
+
+        $counter->save();
         return 'Лічильник доданий успішно!';
     }
 
@@ -89,9 +96,9 @@ class MeterController extends Controller
 
         $meters = Meters::where('abonent_id', $id)->where('archived', 0)->whereHas('services', function ($query) use ($request) {
             $query->where('services.id', $request->service_id)->where('archived', 0)->where('status', 1);
-        })->with(array('counters' => function($query) {
-            $query->orderBy('added_at', 'DESC')->limit(1);
-        }))->get();
+        })->get();
+
+
 
         $meters_data = Meter::collection($meters);
 

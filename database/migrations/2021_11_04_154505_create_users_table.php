@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('name', 191);
             $table->string('email', 191)->unique('users_email_unique');
             $table->timestamp('email_verified_at')->nullable();
+            $table->integer('archived')->default(0);
             $table->string('password', 191);
             $table->rememberToken();
             $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

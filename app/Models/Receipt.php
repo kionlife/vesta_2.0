@@ -15,6 +15,11 @@ class Receipt extends Model
         return $this->hasOne(Abonent::class, 'id', 'abonent_id');
     }
 
+    public function author()
+    {
+        return $this->hasOne(User::class, 'id', 'author_id');
+    }
+
     public function services()
     {
         return $this->hasMany(ReceiptData::class, 'receipt_id', 'id');

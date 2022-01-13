@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\DebugController;
-use App\Http\ControllersCorrectionController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ use App\Http\Controllers\API\InvoiceController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\API\TestController;
 use App\Http\Controllers\API\CityController;
-use App\Http\Controllers\API\CostController;
+use App\Http\Controllers\CostController;
 
 use App\Models\Abonent;
 
@@ -44,7 +43,7 @@ Route::middleware('auth:web')->get('/abonents/search', [AbonentController::class
 Route::middleware('auth:web')->get('/abonents/{id}', [AbonentController::class, 'show']);     // картка абонента
 Route::middleware('auth:web')->post('/abonents', [AbonentController::class, 'store']);       // створення абонента
 Route::middleware('auth:web')->post('/abonents/{id}', [AbonentController::class, 'update']);   // редагування картки абонента
-Route::middleware('auth:web')->delete('/abonents/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
+Route::middleware('auth:web')->post('/abonents/delete/{id}', [AbonentController::class, 'destroy']);   // видалення абонента
 Route::middleware('auth:web')->get('/abonents/{id}/services', [ServiceController::class, 'show']);     // послуги абонента
 Route::middleware('auth:web')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента
 Route::middleware('auth:web')->get('/abonents/{id}/payments', [PaymentController::class, 'show']);     // платежі абонента
@@ -56,18 +55,18 @@ Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterControlle
 Route::middleware('auth:web')->get('/receipts', [ReceiptController::class, 'index']);    //список квитанцій
 Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу
 Route::middleware('auth:web')->get('/receipts/preview', [ReceiptController::class, 'previewPage']);    //список квитанцій перед генерацією
-Route::middleware('auth:web')->post('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
-Route::middleware('auth:web')->post('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
+Route::middleware('auth:web')->get('/receipts/save', [ReceiptController::class, 'saveReceipt']);    //збереження квитанцій
+Route::middleware('auth:web')->get('/receipts/generate', [ReceiptController::class, 'generate']);    //генерація PDF
 
 
 /* Роути для списань */
-Route::middleware('auth:api')->get('/costs/generate', [CostController::class, 'generate']);
+Route::middleware('auth:web')->get('/costs/generate', [CostController::class, 'generate']);
 
 /* Роути для показників */
 Route::middleware('auth:web')->get('/counters', [CounterController::class, 'index']);
 Route::middleware('auth:web')->post('/counters', [CounterController::class, 'store']);
 Route::middleware('auth:api')->get('/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
-Route::middleware('auth:api')->post('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
+Route::middleware('auth:web')->get('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
 Route::middleware('auth:api')->get('/counters/meter/{id}', [CounterController::class, 'getCountersByMeter']);
 Route::middleware('auth:api')->get('/counters/meter/{id}/last', [CounterController::class, 'getLastCounterByMeter']);
 
@@ -93,7 +92,8 @@ Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'sto
 /* Дебаг роути */
 
 Route::middleware('auth:web')->get('/debug/balances', [DebugController::class, 'balancesMigrate']);
-Route::middleware('auth:api')->get('/generate', [InvoiceController::class, 'generate']);
+Route::middleware('auth:web')->get('/generate', [InvoiceController::class, 'generate']);
+Route::middleware('auth:web')->get('/cost/repair', [DebugController::class, 'costGenerateByServiceId']);
 
 
 

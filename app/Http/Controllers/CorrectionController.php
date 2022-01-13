@@ -97,9 +97,19 @@ class CorrectionController extends Controller
         $input['title'] = 'Корекція';
         if ($input['value'] > 0) {
             $operation = Payment::create($input);
+
+            $current_balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->first();
+            $current_balance->value = $current_balance->value + $input['value'];
+            $current_balance->last_update = date('Y-m-d');
+            $current_balance->save();
+
         } else {
             $input['value'] = abs($input['value']);
             $operation = Cost::create($input);
+            $current_balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->first();
+            $current_balance->value = $current_balance->value - $input['value'];
+            $current_balance->last_update = date('Y-m-d');
+            $current_balance->save();
         }
         $result = redirect('/corrections')->with('alert', true);
 
