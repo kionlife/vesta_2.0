@@ -106,17 +106,12 @@ class DebugController extends Controller
                 $query->where('status', '=', 1)->where('service_id', 3);
             })->get();
 
-            $meters = Meters::whereHas('services', function (Builder $query) {
-                $query->where('status', '=', 1)->where('service_id', 3);
-            })->get();
-
-
             foreach ($abonents as $single_abonent) {
                 $abonent = Abonent::find($single_abonent['id']);
                 $meters = $abonent->meter()->where('title', '!=', 'virtual')->where('archived', 0)->get();
                 foreach ($meters as $meter) {
                     $cost_existed = Cost::where('meter_id', $meter['id'])->where('service_id', 1)->whereMonth('created_at', '1')->first();
-                    if ($cost_existed) {
+                    if (!empty($cost_existed)) {
                         $cost = new Cost();
                         $cost->abonent_id = $abonent->id;
                         $cost->author_id = 2517;
