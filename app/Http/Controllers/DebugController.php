@@ -102,23 +102,30 @@ class DebugController extends Controller
 
         foreach ($streets as $street) {
 
-            $abonents = Abonent::where('address', 'LIKE', '%' . $street . '%')->get();
+            $abonents = Abonent::whereHas('balance', function (Builder $query) {
+                $query->where('status', '=', 1)->where('service_id', 3);
+            })->get();
+
+            $meters = Meters::whereHas('services', function (Builder $query) {
+                $query->where('status', '=', 1)->where('service_id', 3);
+            })->get();
+
 
             foreach ($abonents as $single_abonent) {
                 $abonent = Abonent::find($single_abonent['id']);
-                $meters = $abonent->meter()->where('title', '!=', 'virtual')->get();
+                $meters = $abonent->meter()->where('title', '!=', 'virtual')->where('archived', 0)->get();
                 foreach ($meters as $meter) {
                     $cost_existed = Cost::where('meter_id', $meter['id'])->where('service_id', 1)->whereMonth('created_at', '1')->first();
-
-                    $cost = new Cost();
-                    $cost->abonent_id = $abonent->id;
-                    $cost->author_id = 0;
-                    $cost->meter_id = $meter['id'];
-                    $cost->service_id = 3;
-                    $cost->title = 'Списання';
-                    $cost->value = ($cost_existed['value']/14)*11.20;
-                    $cost->save();
-                    dd();
+                    if ($cost_existed) {
+                        $cost = new Cost();
+                        $cost->abonent_id = $abonent->id;
+                        $cost->author_id = 2517;
+                        $cost->meter_id = $meter['id'];
+                        $cost->service_id = 3;
+                        $cost->title = 'Списання';
+                        $cost->value = ($cost_existed['value'] / 14) * 11.20;
+                        $cost->save();
+                    }
                 }
             }
         }
