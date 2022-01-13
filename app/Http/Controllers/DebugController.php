@@ -73,8 +73,7 @@ class DebugController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function balancesMigrate()
-    {
+    public function balancesMigrate() {
         $abonents = Abonent::all();
 
         foreach ($abonents as $single_abonent) {
@@ -88,6 +87,42 @@ class DebugController extends Controller
             }
 
         }
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function costGenerateByServiceId(Request $request) {
+
+        $streets = explode(',', $request->streets);
+
+        foreach ($streets as $street) {
+
+            $abonents = Abonent::where('address', 'LIKE', '%' . $street . '%')->get();
+
+            foreach ($abonents as $single_abonent) {
+                $abonent = Abonent::find($single_abonent['id']);
+                $meters = $abonent->meter()->where('title', '!=', 'virtual')->get();
+                foreach ($meters as $meter) {
+                    $cost_existed = Cost::where('meter_id', $meter['id'])->where('service_id', 1)->whereMonth('created_at', '1')->first();
+
+                    $cost = new Cost();
+                    $cost->abonent_id = $abonent->id;
+                    $cost->author_id = 0;
+                    $cost->meter_id = $meter['id'];
+                    $cost->service_id = 3;
+                    $cost->title = 'Списання';
+                    $cost->value = ($cost_existed['value']/14)*11.20;
+                    $cost->save();
+                    dd();
+                }
+            }
+        }
+
 
     }
 }
