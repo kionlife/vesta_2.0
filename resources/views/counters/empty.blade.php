@@ -15,12 +15,13 @@
             </div>
             <div class="stats-grid">
                 <div class="stats-head">
-                    <h4 class="title3">Абоненти без показників</h4>
+                    <h4 class="title3">Абоненти без показників ({{ $count }})</h4>
                 </div>
             </div>
             <div class="graph-visual tables-main">
-                <h3 class="inner-tittle two">Показники</h3>
-                <form action="/counters/empty/generate" class="graph">
+                @if(!empty($counters))
+                <form action="/counters/empty/generate" method="post" class="graph">
+                    @csrf
                     <div class="tables">
 
                         <table class="table table-hover">
@@ -31,25 +32,28 @@
                                 <th>Лічильник</th>
                                 <th>Останній показник</th>
                                 <th>Новий показник</th>
+                                <th>Кількість</th>
                                 <th>Буде списано коштів</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach ($counters as $counter)
-                                <input type="hidden" name="abonent[{{ $counter['abonent']['id'] }}][id]">
-                                <input type="hidden" name="abonent[{{ $counter['abonent']['id'] }}][service_id]">
-                                <input type="hidden" name="abonent[{{ $counter['abonent']['id'] }}][meter_id]">
+                                <input type="hidden" value="{{ $counter['meter_id'] }}" name="abonent[{{ $counter['abonent']['id'] }}][meter_id]">
+
                                 <tr>
                                     <td>
                                         <a href="/abonents/{{ $counter['abonent']['id'] }}">{{ $counter['abonent']['name'] }}</a>
                                     </td>
-                                    <td>{{ $counter['service'][0]['name']}}</td>
+                                    <td>
+                                        @foreach($counter['service_id'] as $service)
+                                            <p>{{ $service['name']}}</p>
+                                        @endforeach
+                                    </td>
                                     <td>{{ $counter['meter'][0]['title'] }}</td>
                                     <td>{{ $counter['last_value'] }}</td>
-                                    <td><input class="editableInput" type="text"
-                                               name="abonent[{{ $counter['abonent']['id'] }}][newCounter]"
-                                               value="{{ $counter['value'] }}"></td>
-                                    <td></td>
+                                    <td>{{ $counter['value'] }}</td>
+                                    <td>{{ $counter['used'] }}</td>
+                                    <td>@money($counter['to_pay']) грн.</td>
                                 </tr>
                             @endforeach
 
@@ -62,7 +66,7 @@
                     </div>
                     {{--                    {{ $counters->links('pagination::bootstrap-4') }}--}}
                 </form>
-
+@endif
 
             </div>
             <!--//graph-visual-->

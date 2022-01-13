@@ -64,9 +64,9 @@
                 <li><a href="/abonents"><i class="fa fa-users"></i> <span>Абоненти</span></a></li>
                 <li><a href="/receipts"><i class="fa fa-book"></i> <span>Квитанції</span></a></li>
                 <li><a class="disabled" href="#"><i class="fa fa-bookmark"></i> <span>Звітність</span></a></li>
-                @role('admin')
+                @can('make corrections')
                     <li><a href="/corrections"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
-                @endrole
+                @endcan
                 <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
 
             </ul>
