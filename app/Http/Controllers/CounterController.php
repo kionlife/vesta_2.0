@@ -6,6 +6,7 @@ use App\Http\Resources\AbonentsWithoutCountersResource;
 use App\Models\Balance;
 use App\Models\Cost;
 use App\Models\Tariff;
+use App\Models\TariffSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Counter;
@@ -229,19 +230,15 @@ class CounterController extends Controller
             $offset = 0;
         }
 
-        $meters_all = Meters::whereDoesntHave('counters', function (Builder $query) {
+        $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
             $query->whereMonth('added_at', Carbon::now()->format('m'));
-        })->orderBy('abonent_id', 'ASC')->get();
-
-        $meters = Meters::offset($offset)->limit($limit)->whereDoesntHave('counters', function (Builder $query) {
-            $query->whereMonth('added_at', Carbon::now()->format('m'));
-        })->orderBy('abonent_id', 'ASC')->get();
+        })->orderBy('abonent_id', 'ASC')->where('archived', 0)->get();
 
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
         $lastMonth = Carbon::now()->subMonth()->format('m');
         $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
-
+        $counters = array();
         foreach ($meters as $single_meter) {
             $services = array();
             $meter = $single_meter;
@@ -250,39 +247,56 @@ class CounterController extends Controller
             $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
 
             $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
+            $tariff_total = 0;
             if($current_counter['value'] == 0) {
                 foreach ($meter->services as $service) {
                     $services[] = $service['id'];
+                    $tariff_total += Tariff::where('service_id', $service['id'])->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->first()['value'];
+
                 }
 
 
                 if ($meter['title'] == 'virtual') {
-                    if (in_array(1, $services)) {
-                        $current_counter['value'] = $last_counter['value'] + 4 * $abonent->peoples;
-                    } else {
-                        $current_counter['value'] = $last_counter['value'] + $abonent->peoples;
-                    }
+
+                    $multiplier = TariffSetting::where('service_id', $services[0])->first();
+                    $current_counter['value'] = $last_counter['value'] + $multiplier['multiplier'] * $abonent->peoples;
+                    $used = $current_counter['value'] - $last_counter['value'];
+
                 } else {
                     $current_counter['value'] = $last_counter['value'];
+                    $used = $current_counter['value'] - $last_counter['value'];
                 }
 
 
                 $counter = new Counter();
                 $counter->abonent_id = $meter->abonent_id;
-                $counter->service_id = $services[0];
+                $counter->service_id = $meter->services;
                 $counter->meter_id = $meter->id;
-                $counter->author_id = 0;
+                $counter->author_id = $user->id;
                 $counter->archived = 0;
                 $counter->last_value = $last_counter['value'];
                 $counter->value = $current_counter['value'];
+                $counter->used = $used;
+                $counter->to_pay = $tariff_total * $used;
                 $counters[] = $counter;
             }
         }
 
 
+        return $counters;
+
+    }
+
+    public function getAbonentsWithoutCountersPreview(Request $request) {
+
+        $user = Auth::user();
+
+        $counters = $this->getAbonentsWithoutCounters($request);
+
+
         return view('counters/empty', [
             'user' => $user,
-            'meters' => $meters,
+            'count' => 0,
             'counters' => $counters
         ]);
 
@@ -300,56 +314,37 @@ class CounterController extends Controller
     }
 
     public function addCounters(Request $request) {
-        $meters = $request->meters;
+        $user = Auth::user();
+        $counters = $this->getAbonentsWithoutCounters($request);
 
-        $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
-            $query->whereMonth('added_at', Carbon::now()->format('m'));
-        })->where('archived', 0)->orderBy('abonent_id', 'ASC')->get();
-
-        dd($meters);
-
-        $currentMonth = Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
-        $lastMonth = Carbon::now()->subMonth()->format('m');
-        $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
-
-        foreach ($meters as $single_meter) {
-            $services = array();
-            $meter = $single_meter;
-
-            $abonent = Abonent::find($meter->abonent_id);
-            $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
-
-            $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
-            if($current_counter['value'] == 0) {
-                foreach ($meter->services as $service) {
-                    $services[] = $service['id'];
-                }
-
-
-                if ($meter['title'] == 'virtual') {
-                    if (in_array(1, $services)) {
-                        $current_counter['value'] = $last_counter['value'] + 4 * $abonent->peoples;
-                    } else {
-                        $current_counter['value'] = $last_counter['value'] + $abonent->peoples;
-                    }
-                } else {
-                    $current_counter['value'] = $last_counter['value'];
-                }
-
+        $n = 0;
+        foreach ($counters as $single_counter) {
+                $single_abonent = Abonent::find($single_counter['abonent_id']);
 
                 $counter = new Counter();
-                $counter->abonent_id = $meter->abonent_id;
-                $counter->service_id = $services[0];
-                $counter->meter_id = $meter->id;
-                $counter->author_id = 0;
+                $counter->abonent_id = $single_abonent->id;
+                $counter->service_id = $single_counter['service_id'][0]['id'];
+                $counter->meter_id = $single_counter['meter_id'];
+                $counter->author_id = $user->id;
                 $counter->archived = 0;
-                $counter->value = $current_counter['value'];
+                $counter->value = $single_counter['value'];
+
+                $cost = new Cost();
+                $cost->abonent_id = $single_abonent->id;
+                $cost->author_id = $user->id;
+                $cost->meter_id = $single_counter['meter_id'];
+                $cost->service_id = $single_counter['service_id'][0]['id'];
+                $cost->title = 'Списання';
+                $cost->value = $single_counter['to_pay'];
+                $cost->save();
                 $counter->save();
-            }
+
+                echo $single_abonent->name . '<br>';
+                $n++;
+
         }
 
-        return 'test';
+        return $n;
 
     }
 

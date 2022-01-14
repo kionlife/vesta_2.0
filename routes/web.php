@@ -48,7 +48,7 @@ Route::middleware('auth:web')->get('/abonents/{id}/services', [ServiceController
 Route::middleware('auth:web')->get('/abonents/{id}/meters', [MeterController::class, 'show']);     // лічильники абонента
 Route::middleware('auth:web')->get('/abonents/{id}/payments', [PaymentController::class, 'show']);     // платежі абонента
 Route::middleware('auth:web')->get('/abonents/{id}/balances', [AbonentController::class, 'getBalance']);     // баланс абонента
-Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
+Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCountersPreview']);
 
 
 /* Роути для квитанцій */
@@ -66,7 +66,7 @@ Route::middleware('auth:web')->get('/costs/generate', [CostController::class, 'g
 Route::middleware('auth:web')->get('/counters', [CounterController::class, 'index']);
 Route::middleware('auth:web')->post('/counters', [CounterController::class, 'store']);
 Route::middleware('auth:api')->get('/counters/empty', [CounterController::class, 'getAbonentsWithoutCounters']);
-Route::middleware('auth:web')->get('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
+Route::middleware('auth:web')->post('/counters/empty/generate', [CounterController::class, 'addCounters']);  //додаємо показники для абонентів, котрі не передали їх
 Route::middleware('auth:api')->get('/counters/meter/{id}', [CounterController::class, 'getCountersByMeter']);
 Route::middleware('auth:api')->get('/counters/meter/{id}/last', [CounterController::class, 'getLastCounterByMeter']);
 

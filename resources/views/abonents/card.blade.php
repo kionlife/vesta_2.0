@@ -64,7 +64,7 @@
 
                                         <select class="form-control1" name="city_id" id="">
                                             @foreach($cities as $city)
-                                                <option value="{{ $city['id'] }}">{{ $city['name'] }}</option>
+                                                <option @if ($abonent['city_id'] == $city['id']) selected @endif value="{{ $city['id'] }}">{{ $city['name'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>
