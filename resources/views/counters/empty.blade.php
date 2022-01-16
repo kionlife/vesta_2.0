@@ -45,9 +45,7 @@
                                         <a href="/abonents/{{ $counter['abonent']['id'] }}">{{ $counter['abonent']['name'] }}</a>
                                     </td>
                                     <td>
-                                        @foreach($counter['service_id'] as $service)
-                                            <p>{{ $service['name']}}</p>
-                                        @endforeach
+                                        {{ $counter['service_id'] }}
                                     </td>
                                     <td>{{ $counter['meter'][0]['title'] }}</td>
                                     <td>{{ $counter['last_value'] }}</td>

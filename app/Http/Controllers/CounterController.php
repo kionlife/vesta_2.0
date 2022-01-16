@@ -239,46 +239,54 @@ class CounterController extends Controller
         $lastMonth = Carbon::now()->subMonth()->format('m');
         $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
         $counters = array();
+        $meter_services_ids = array();
         foreach ($meters as $single_meter) {
             $services = array();
             $meter = $single_meter;
 
+            foreach ($meter->services as $serv_id) {
+                $meter_services_ids[] = $serv_id['id'];
+            }
+
             $abonent = Abonent::find($meter->abonent_id);
             $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
-
             $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
             $tariff_total = 0;
             if($current_counter['value'] == 0) {
-                foreach ($meter->services as $service) {
-                    $services[] = $service['id'];
-                    $tariff_total += Tariff::where('service_id', $service['id'])->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->first()['value'];
+                foreach ($abonent->service()->where('status', 1)->get() as $service) {
+
+
+
+                    if (in_array($service['service_id'], $meter_services_ids)) {
+
+                        $tariff = Tariff::where('service_id', $service['service_id'])->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->first();
+
+                        if ($meter['title'] == 'virtual') {
+
+                            $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
+                            $used = $current_counter['value'] - $last_counter['value'];
+
+                        } else {
+                            $current_counter['value'] = $last_counter['value'];
+                            $used = $current_counter['value'] - $last_counter['value'];
+                        }
+
+                        $counter = new Counter();
+                        $counter->abonent_id = $meter->abonent_id;
+                        $counter->service_id = $service['service_id'];
+                        $counter->meter_id = $meter->id;
+                        $counter->author_id = $user->id;
+                        $counter->archived = 0;
+                        $counter->last_value = $last_counter['value'];
+                        $counter->value = $current_counter['value'];
+                        $counter->used = $used;
+                        $counter->to_pay = $tariff_total * $used;
+                        $counters[] = $counter;
+                    }
 
                 }
 
 
-                if ($meter['title'] == 'virtual') {
-
-                    $multiplier = TariffSetting::where('service_id', $services[0])->first();
-                    $current_counter['value'] = $last_counter['value'] + $multiplier['multiplier'] * $abonent->peoples;
-                    $used = $current_counter['value'] - $last_counter['value'];
-
-                } else {
-                    $current_counter['value'] = $last_counter['value'];
-                    $used = $current_counter['value'] - $last_counter['value'];
-                }
-
-
-                $counter = new Counter();
-                $counter->abonent_id = $meter->abonent_id;
-                $counter->service_id = $meter->services;
-                $counter->meter_id = $meter->id;
-                $counter->author_id = $user->id;
-                $counter->archived = 0;
-                $counter->last_value = $last_counter['value'];
-                $counter->value = $current_counter['value'];
-                $counter->used = $used;
-                $counter->to_pay = $tariff_total * $used;
-                $counters[] = $counter;
             }
         }
 
@@ -323,7 +331,7 @@ class CounterController extends Controller
 
                 $counter = new Counter();
                 $counter->abonent_id = $single_abonent->id;
-                $counter->service_id = $single_counter['service_id'][0]['id'];
+                $counter->service_id = $single_counter['service_id'];
                 $counter->meter_id = $single_counter['meter_id'];
                 $counter->author_id = $user->id;
                 $counter->archived = 0;
@@ -333,7 +341,7 @@ class CounterController extends Controller
                 $cost->abonent_id = $single_abonent->id;
                 $cost->author_id = $user->id;
                 $cost->meter_id = $single_counter['meter_id'];
-                $cost->service_id = $single_counter['service_id'][0]['id'];
+                $cost->service_id = $single_counter['service_id'];
                 $cost->title = 'Списання';
                 $cost->value = $single_counter['to_pay'];
                 $cost->save();
