@@ -191,6 +191,7 @@
                                                                     <tr>
                                                                         <th>Дата</th>
                                                                         <th>Тип операції</th>
+                                                                        <th>Джерело надходження</th>
                                                                         <th>Сума</th>
                                                                         <th>Автор</th>
                                                                     </tr>
@@ -205,6 +206,7 @@
                                                                             <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
                                                                                 <td>@date($item['created_at'])</td>
                                                                                 <td>{{ $item['title'] }}</td>
+                                                                                <td>@if ($item['title'] == 'Списання' || $item['title'] == 'Корекція')  @else {{ $item['source']['name'] }} @endif</td>
                                                                                 <td>{{ $item['value'] }}</td>
                                                                                 <td>{{ $item->author['name'] }}</td>
                                                                             </tr>
@@ -227,6 +229,53 @@
 
                     </div>
 
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="row-flex">
+                    <div class="flex-child-50">
+                        <h2 class="inner-tittle">Прописані особи</h2>
+                    </div>
+                    <div class="flex-child-50 text-right">
+                        <button data-toggle="modal" data-target="#add_person" type="button" class="btn btn-primary">
+                            Додати особу
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-1">
+                    <div class="col-md-12">
+                        <div class="overflowBlock" id="family_list">
+                            <table class="table" id="family_content">
+                                <thead>
+                                <tr>
+                                    <th>Дата формування</th>
+                                    <th>Прізвище</th>
+                                    <th>Ім'я</th>
+                                    <th>По батькові</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($family as $person)
+                                    <tr>
+                                        <td>{{$person['created_at']}}</td>
+                                        <td>{{$person['last_name']}}</td>
+                                        <td>{{ $person['first_name'] }}</td>
+                                        <td>{{ $person['second_name'] }}</td>d>
+                                        <td><div class="col-md-1">
+                                                <button type="button"
+                                                        onclick="person.remove({{ $person['id'] }}, {{ $person['abonent_id'] }})"
+                                                        class="btn btn-danger"><i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </div></td>
+                                    </tr>
+                                @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
 
@@ -744,6 +793,72 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade modalCustom" id="add_person" tabindex="-1" role="dialog" aria-labelledby="add_people"
+         aria-hidden="true" style="display: none;">
+
+        <div class="modal-dialog">
+            <form class="modal-content" action="javascript:void(null);" onsubmit="person.add()" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Додавання особи</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Прізвище</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="last_name"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Прізвище"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Ім'я</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="first_name"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Ім'я"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">По батькові</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="second_name"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="По батькові"
+                                                value="">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="clearfix"></div>
                     </div>
