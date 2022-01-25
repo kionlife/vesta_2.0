@@ -98,9 +98,6 @@ class DebugController extends Controller
      */
     public function costGenerateByServiceId(Request $request) {
 
-        $streets = explode(',', $request->streets);
-
-        foreach ($streets as $street) {
 
             $abonents = Abonent::whereHas('balance', function (Builder $query) {
                 $query->where('status', '=', 1)->where('service_id', 3);
@@ -123,8 +120,6 @@ class DebugController extends Controller
                     }
                 }
             }
-        }
-
 
     }
 }

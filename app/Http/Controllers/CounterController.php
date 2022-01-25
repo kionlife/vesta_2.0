@@ -38,7 +38,7 @@ class CounterController extends Controller
 
         if ($request->page) {
             $page = $request->page;
-            $offset = $page*$limit;
+            $offset = $page * $limit;
         } else {
             $offset = 0;
         }
@@ -49,7 +49,6 @@ class CounterController extends Controller
         } else {
             $alert = '';
         }
-
 
 
         if ($user->hasAnyRole('admin', 'inspector')) {
@@ -75,7 +74,7 @@ class CounterController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -96,24 +95,22 @@ class CounterController extends Controller
         $validator = Validator::make($input, [
             'abonent_id' => 'required',
             'service_id' => 'required',
-            'author_id'  => 'required',
-            'meter_id'   => 'required',
-            'value'      => 'required',
+            'author_id' => 'required',
+            'meter_id' => 'required',
+            'value' => 'required',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
         $meter_services = Meters::find($input['meter_id'])->services;
 
 
-
-
-       /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
-//            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
-            $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
-        } else {*/
+        /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
+ //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
+             $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
+         } else {*/
         foreach ($meter_services as $service) {
 
 
@@ -143,7 +140,7 @@ class CounterController extends Controller
         }
         $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
         $counter = Counter::create($input);
-            $result = redirect('/counters')->with('alert', true);
+        $result = redirect('/counters')->with('alert', true);
 
 //        }
 
@@ -154,7 +151,7 @@ class CounterController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id, Request $request)
@@ -170,7 +167,7 @@ class CounterController extends Controller
 
         if ($request->page) {
             $page = $request->page;
-            $offset = $page*$limit;
+            $offset = $page * $limit;
         } else {
             $offset = 0;
         }
@@ -188,8 +185,8 @@ class CounterController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Abonent $abonent)
@@ -201,7 +198,7 @@ class CounterController extends Controller
             'detail' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
@@ -212,12 +209,13 @@ class CounterController extends Controller
         return $this->sendResponse(new AbonentResource($abonent), 'Abonent updated successfully.');
     }
 
-    public function getAbonentsWithoutCounters(Request $request) {
+    public function getAbonentsWithoutCounters(Request $request)
+    {
 
         $user = Auth::user();
 
 
-        if ($request->limit){
+        if ($request->limit) {
             $limit = $request->limit;
         } else {
             $limit = 1000;
@@ -225,7 +223,7 @@ class CounterController extends Controller
 
         if ($request->page) {
             $page = $request->page;
-            $offset = $page*$limit;
+            $offset = $page * $limit;
         } else {
             $offset = 0;
         }
@@ -239,38 +237,35 @@ class CounterController extends Controller
         $lastMonth = Carbon::now()->subMonth()->format('m');
         $lastYearOfMonth = Carbon::now()->subMonth()->format('Y');
         $counters = array();
+        $meter_services_ids = array();
         foreach ($meters as $single_meter) {
             $services = array();
             $meter = $single_meter;
 
+            foreach ($meter->services as $serv_id) {
+                $meter_services_ids[] = $serv_id['id'];
+            }
+
             $abonent = Abonent::find($meter->abonent_id);
             $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
-
             $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
             $tariff_total = 0;
-            if($current_counter['value'] == 0) {
-                foreach ($meter->services as $service) {
-                    $services[] = $service['id'];
-                    $tariff_total += Tariff::where('service_id', $service['id'])->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->first()['value'];
+            if ($current_counter['value'] == 0) {
 
-                }
-
+                $tariff = Tariff::whereIn('service_id', $meter_services_ids)->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->get();
+                $tariff_total = $tariff->sum('value');
 
                 if ($meter['title'] == 'virtual') {
-
-                    $multiplier = TariffSetting::where('service_id', $services[0])->first();
-                    $current_counter['value'] = $last_counter['value'] + $multiplier['multiplier'] * $abonent->peoples;
+                    $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
                     $used = $current_counter['value'] - $last_counter['value'];
-
                 } else {
                     $current_counter['value'] = $last_counter['value'];
                     $used = $current_counter['value'] - $last_counter['value'];
                 }
 
-
                 $counter = new Counter();
                 $counter->abonent_id = $meter->abonent_id;
-                $counter->service_id = $meter->services;
+                $counter->service_id = 0;
                 $counter->meter_id = $meter->id;
                 $counter->author_id = $user->id;
                 $counter->archived = 0;
@@ -279,15 +274,17 @@ class CounterController extends Controller
                 $counter->used = $used;
                 $counter->to_pay = $tariff_total * $used;
                 $counters[] = $counter;
+
+
             }
         }
-
 
         return $counters;
 
     }
 
-    public function getAbonentsWithoutCountersPreview(Request $request) {
+    public function getAbonentsWithoutCountersPreview(Request $request)
+    {
 
         $user = Auth::user();
 
@@ -302,7 +299,8 @@ class CounterController extends Controller
 
     }
 
-    public function getCounter($meter, $month, $yearOfMonth) {
+    public function getCounter($meter, $month, $yearOfMonth)
+    {
         $counter = Counter::where('meter_id', $meter)->whereMonth('added_at', $month)->whereYear('added_at', $yearOfMonth)->orderBy('added_at', 'DESC')->first();
 
         if (!$counter) {
@@ -313,34 +311,35 @@ class CounterController extends Controller
         return $counter;
     }
 
-    public function addCounters(Request $request) {
+    public function addCounters(Request $request)
+    {
         $user = Auth::user();
         $counters = $this->getAbonentsWithoutCounters($request);
 
         $n = 0;
         foreach ($counters as $single_counter) {
-                $single_abonent = Abonent::find($single_counter['abonent_id']);
+            $single_abonent = Abonent::find($single_counter['abonent_id']);
 
-                $counter = new Counter();
-                $counter->abonent_id = $single_abonent->id;
-                $counter->service_id = $single_counter['service_id'][0]['id'];
-                $counter->meter_id = $single_counter['meter_id'];
-                $counter->author_id = $user->id;
-                $counter->archived = 0;
-                $counter->value = $single_counter['value'];
+            $counter = new Counter();
+            $counter->abonent_id = $single_abonent->id;
+            $counter->service_id = $single_counter['service_id'];
+            $counter->meter_id = $single_counter['meter_id'];
+            $counter->author_id = $user->id;
+            $counter->archived = 0;
+            $counter->value = $single_counter['value'];
 
-                $cost = new Cost();
-                $cost->abonent_id = $single_abonent->id;
-                $cost->author_id = $user->id;
-                $cost->meter_id = $single_counter['meter_id'];
-                $cost->service_id = $single_counter['service_id'][0]['id'];
-                $cost->title = 'Списання';
-                $cost->value = $single_counter['to_pay'];
-                $cost->save();
-                $counter->save();
+            $cost = new Cost();
+            $cost->abonent_id = $single_abonent->id;
+            $cost->author_id = $user->id;
+            $cost->meter_id = $single_counter['meter_id'];
+            $cost->service_id = $single_counter['service_id'];
+            $cost->title = 'Списання';
+            $cost->value = $single_counter['to_pay'];
+            $cost->save();
+            $counter->save();
 
-                echo $single_abonent->name . '<br>';
-                $n++;
+            echo $single_abonent->name . '<br>';
+            $n++;
 
         }
 
@@ -348,13 +347,15 @@ class CounterController extends Controller
 
     }
 
-    public function getCountersByMeter($id) {
+    public function getCountersByMeter($id)
+    {
         $result = Counter::where('meter_id', $id)->get();
 
         return $result;
     }
 
-    public function getLastCounterByMeter($id) {
+    public function getLastCounterByMeter($id)
+    {
         $result = Counter::where('meter_id', $id)->orderBy('added_at', 'DESC')->first();
 
         if (!$result) {

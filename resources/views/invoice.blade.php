@@ -7,7 +7,7 @@
     <title>Document</title>
     <style>
         * {
-            font-size: 8.5px;
+            font-size: 11px;
         }
 
         p {
@@ -47,9 +47,6 @@
 <table style="margin-bottom: 15px">
     <tr>
         <td colspan="4"></td>
-        <td>Назва лічильника</td>
-        <td>Попередні показники</td>
-        <td>Поточні показники</td>
     </tr>
     @foreach ($receipt['services'] as $value)
         @foreach ($value as $item)
@@ -98,18 +95,18 @@
         <tr>
             <td colspan="7" style="text-align: center; font-weight: 700;">{{ $provider }} </td>
         </tr>
-        {{--
+@foreach($value as $serv)
                     <tr>
-        <td colspan="9">
-                            Адреса: {{ $value[0]['service_provider'][0]['address'] }} <br>
-                                ЄДРПОУ: {{ $value[0]['service_provider'][0]['edrpou'] }} <br>
-                                Розрахунковий рахунок: {{ $value[0]['service_provider'][0]['current_account'] }} <br>
+        <td colspan="7">
+                            Адреса: {{ $serv[0]['service_provider'][0]['address'] }} <br>
+                                ЄДРПОУ: {{ $serv[0]['service_provider'][0]['edrpou'] }} |
+                                Розрахунковий рахунок: {{ $serv[0]['service_provider'][0]['current_account'] }} <br>
                                 Призначення платежу: <span style="background: #c4c4c4; padding: 5px 15px;">Сплата за послуги {{ $receipt['abonent']['personal_account'] }} </span>
 
                         </td>
             </tr>
-                        --}}
-
+            @break
+        @endforeach
         @foreach ($value as $item)
 
             <tr>
@@ -138,11 +135,6 @@
 </table>
 
 
-<p><b>Шановні мешканці Миколаївської громади.</b> <br> З 01.12.21 року в громаді впроваджується єдина платіжка за
-    комунальні послуги. Ви матимете змогу контролювати витрати, оплачувати рахунки через банк, та матимете доступ до
-    особистого кабінету.
-    <br> <b>Передавати показники за водопостачання потрібно буде з 1 по 5 кожного місяця.</b></p>
 
 </body>
 </html>
-
