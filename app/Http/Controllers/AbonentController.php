@@ -182,6 +182,12 @@ class AbonentController extends Controller
             $abonent->save();
             $abonent->type()->attach(1);
 
+            for($i=0;$i<$input['peoples'];$i++) {
+                $person = new Family();
+                $person->abonent_id = $abonent->id;
+                $person->save();
+            }
+
             $balanceData['abonent_id'] = $abonent->id;
             $services = Service::all();
 
@@ -386,6 +392,11 @@ class AbonentController extends Controller
 
         foreach ($input['services'] as $service) {
             Balance::where('abonent_id', $id)->where('service_id', $service['id'])->update(['status' => $service['status']]);
+        }
+
+
+        foreach ($input['persons'] as $person) {
+            Family::where('abonent_id', $id)->where('id', $person['id'])->update(['first_name' => $person['first_name'],'second_name' => $person['second_name'],'last_name' => $person['last_name']]);
         }
 
 

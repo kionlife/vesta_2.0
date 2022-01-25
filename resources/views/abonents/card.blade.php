@@ -84,7 +84,7 @@
                                     <div class="col-sm-8">
                                         <input name="peoples" type="number" class="form-control"
                                                placeholder="Кількість прописаних осіб"
-                                               value="{{ $abonent['peoples'] }}">
+                                               value="{{ $abonent['peoples'] }}" readonly>
                                     </div>
                                 </div>
 
@@ -258,11 +258,29 @@
                                 </thead>
                                 <tbody>
                                 @foreach($family as $person)
+                                    <input type="hidden"
+                                           name="persons[{{ $person['id'] }}][id]"
+                                           value="{{ $person['id'] }}">
                                     <tr>
                                         <td>{{$person['created_at']}}</td>
-                                        <td>{{$person['last_name']}}</td>
-                                        <td>{{ $person['first_name'] }}</td>
-                                        <td>{{ $person['second_name'] }}</td>d>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][last_name]"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Прізвище"
+                                                value="{{$person['last_name']}}"></td>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][first_name]"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Ім'я"
+                                                value="{{$person['first_name']}}"></td>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][second_name]}}"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="По батькові"
+                                                value="{{$person['second_name']}}"></td>
                                         <td><div class="col-md-1">
                                                 <button type="button"
                                                         onclick="person.remove({{ $person['id'] }}, {{ $person['abonent_id'] }})"
@@ -589,21 +607,26 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <button class="btn btn-success" type="submit">Зберегти</button>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
-                        </div>
-                    </div>
+
 
                     <div class="clearfix"></div>
                 </div>
 
 
+
+
+        <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <button class="btn btn-success" type="submit">Зберегти</button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
+            </div>
+        </div>
+        </div>
             </form>
-            <!--//forms-->
+                <!--//forms-->
         </div>
     </div>
 
