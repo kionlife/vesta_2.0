@@ -51,5 +51,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TariffsTableSeeder::class);
         $this->call(TypeTableSeeder::class);
         $this->call(UsersTableSeeder::class);
+        $this->call(SourcesOfIncomeTableSeeder::class);
     }
 }

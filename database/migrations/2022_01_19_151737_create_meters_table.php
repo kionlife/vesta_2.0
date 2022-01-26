@@ -25,7 +25,7 @@ class CreateMetersTable extends Migration
             $table->date('last_check')->nullable();
             $table->date('next_check')->nullable();
             $table->integer('archived')->default(0);
-            $table->dateTime('added_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->dateTime('added_at')->default('current_timestamp()');
         });
     }
 

@@ -230,6 +230,50 @@ var meter = {
     }
 }
 
+var person = {
+    'add': function () {
+        let data = $('#add_person form').serialize();
+        let abon_id = $('#add_person form input[name=abonent_id]').val();
+        $.ajax({
+            url: '/abonents/family/add',
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: data,
+            complete: function () {
+
+            },
+            success: function () {
+                $('#family_list').load('/abonents/'+ abon_id +' #family_content');
+                $('#add_person').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    },
+    'remove': function (person_id, abon_id) {
+
+        $.ajax({
+            url: '/abonents/family/remove/' + person_id,
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            complete: function () {
+
+            },
+            success: function () {
+                $('#family_list').load('/abonents/'+ abon_id +' #family_content');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+}
+
 function tabShow(id) {
     $('#' + id).toggleClass('opened');
 }

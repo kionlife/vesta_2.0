@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvoicesTable extends Migration
+class CreatePasswordResetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateInvoicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
-            $table->integer('id')->unique('id');
-            $table->integer('abonent_id');
-            $table->integer('month');
-            $table->integer('year');
-            $table->longText('data')->nullable();
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->string('email', 191)->index('password_resets_email_index');
+            $table->string('token', 191);
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -29,6 +27,6 @@ class CreateInvoicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('password_resets');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHistoryTable extends Migration
+class CreateTypeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateHistoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('history', function (Blueprint $table) {
+        Schema::create('type', function (Blueprint $table) {
             $table->integer('id')->primary();
-            $table->integer('author_id');
-            $table->string('action');
-            $table->dateTime('date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->string('title', 128);
+            $table->dateTime('created_at')->default('current_timestamp()');
         });
     }
 
@@ -28,6 +27,6 @@ class CreateHistoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('history');
+        Schema::dropIfExists('type');
     }
 }

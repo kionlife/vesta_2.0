@@ -51,6 +51,10 @@ Route::middleware('auth:web')->get('/abonents/{id}/balances', [AbonentController
 Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCountersPreview']);
 
 
+Route::middleware('auth:web')->post('/abonents/family/add', [AbonentController::class, 'family_add']); // додавання в сім'ю
+Route::middleware('auth:web')->post('/abonents/family/remove/{id}', [AbonentController::class, 'family_remove']); // додавання в сім'ю
+
+
 /* Роути для квитанцій */
 Route::middleware('auth:web')->get('/receipts', [ReceiptController::class, 'index']);    //список квитанцій
 Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу

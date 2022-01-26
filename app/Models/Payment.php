@@ -15,7 +15,7 @@ class Payment extends Model
      * @var array
      */
     protected $fillable = [
-        'abonent_id', 'service_id', 'author_id', 'title', 'value'
+        'abonent_id', 'service_id', 'author_id', 'source_id', 'title', 'value'
     ];
 
 	public $timestamps = false;
@@ -26,6 +26,10 @@ class Payment extends Model
 
     public function service() {
         return $this->hasMany(Service::class, 'id', 'service_id');
+    }
+
+    public function source() {
+        return $this->hasOne(Source_of_income::class, 'id', 'source_id');
     }
 
     public function author() {
