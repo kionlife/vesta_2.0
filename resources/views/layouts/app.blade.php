@@ -24,6 +24,7 @@
     <script src="{{ asset('public/js/i18n/uk.js') }}"></script>
 
     <script src="{{ asset('public/js/main.js') }}"></script>
+    <script src="{{ asset('public/js/html2canvas.min.js') }}"></script>
 
 
     <!-- Fonts -->
@@ -68,6 +69,8 @@
                     <li><a href="/corrections"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
                 @endcan
                 <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
+
+                <button class="screenBtn"><i class="fa fa-camera"></i></button>
 
             </ul>
         </div>

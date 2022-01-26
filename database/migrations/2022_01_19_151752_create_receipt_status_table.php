@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArchiveTable extends Migration
+class CreateReceiptStatusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateArchiveTable extends Migration
      */
     public function up()
     {
-        Schema::create('archive', function (Blueprint $table) {
-            $table->integer('id')->primary();
-            $table->integer('abonent_id');
-            $table->string('title')->default('0');
-            $table->longText('data')->nullable();
+        Schema::create('receipt_status', function (Blueprint $table) {
+            $table->increments('id')->unique();
+            $table->string('title');
+            $table->timestamps()->default('0000-00-00 00:00:00');
         });
     }
 
@@ -28,6 +27,6 @@ class CreateArchiveTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('archive');
+        Schema::dropIfExists('receipt_status');
     }
 }

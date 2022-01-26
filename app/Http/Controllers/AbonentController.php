@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AbonentAddedResource;
 use App\Http\Resources\TypeResource;
+use App\Http\Resources\Payment as PaymentResource;
 use App\Models\City;
 use App\Models\Cost;
 use App\Models\Counter;
@@ -22,6 +23,7 @@ use App\Models\Service;
 use App\Models\Meters;
 use App\Models\Contract;
 use App\Models\Archive;
+use App\Models\Family;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Http\Resources\Abonent as AbonentResource;
@@ -180,6 +182,12 @@ class AbonentController extends Controller
             $abonent->save();
             $abonent->type()->attach(1);
 
+            for($i=0;$i<$input['peoples'];$i++) {
+                $person = new Family();
+                $person->abonent_id = $abonent->id;
+                $person->save();
+            }
+
             $balanceData['abonent_id'] = $abonent->id;
             $services = Service::all();
 
@@ -290,6 +298,13 @@ class AbonentController extends Controller
 
         }
 
+        $family=Family::where('abonent_id', $id)->where('archived', 0)->get();
+
+        $fam_count=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
+        $abonent['peoples'] = $fam_count;
+
+
+
         $abonent['meters'] = $metersNew;
         $abonent['services'] = $servicesNew;
         $abonent['tariffs'] = Tariff::whereIn('service_id', $abonent->service()->where('status', 1)->get('service_id'))->whereIn('service_id', $service_id)->get();
@@ -320,6 +335,7 @@ class AbonentController extends Controller
 
         return view('abonents/card', [
             'abonent'   => $abonent,
+            'family'    => $family,
             'alert'     => $alert,
             'user'      => $user,
             'cities'    => City::all(),
@@ -353,11 +369,12 @@ class AbonentController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $family=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
 
         $abonent->name = $input['name'];
         $abonent->address = $input['address'];
         $abonent->phone = $input['phone'];
-        $abonent->peoples = $input['peoples'];
+        $abonent->peoples = $family;
 
         if (isset($input['status'])) {
             $abonent->status = $input['status'];
@@ -375,6 +392,11 @@ class AbonentController extends Controller
 
         foreach ($input['services'] as $service) {
             Balance::where('abonent_id', $id)->where('service_id', $service['id'])->update(['status' => $service['status']]);
+        }
+
+
+        foreach ($input['persons'] as $person) {
+            Family::where('abonent_id', $id)->where('id', $person['id'])->update(['first_name' => $person['first_name'],'second_name' => $person['second_name'],'last_name' => $person['last_name']]);
         }
 
 
@@ -438,6 +460,44 @@ class AbonentController extends Controller
         })->where('name', 'LIKE', '%' . $request->keyword . '%')->orWhere('personal_account', 'LIKE', '%' . $request->keyword . '%')->where('archived', 0)->limit(30)->get();
 
         return response()->json($data);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    public function family_add(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->hasAnyRole('admin', 'inspector')) {
+            $input = $request->all();
+        }
+
+        $person = new Family();
+        $person->abonent_id = $input['abonent_id'];
+        $person->first_name = $input['first_name'];
+        $person->second_name = $input['second_name'];
+        $person->last_name = $input['last_name'];
+        $person->save();
+
+        return 'Запис додано успішно!';
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return string
+     */
+    public function family_remove($id)
+    {
+        $person = Family::find($id);
+        $person->archived = 1;
+        $person->save();
+
+        return $id;
     }
 
     public function archive(Request $request)

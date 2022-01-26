@@ -17,8 +17,7 @@ class CreatePermissionsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('guard_name');
-            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->timestamps();
             
             $table->unique(['name', 'guard_name'], 'permissions_name_guard_name_unique');
         });

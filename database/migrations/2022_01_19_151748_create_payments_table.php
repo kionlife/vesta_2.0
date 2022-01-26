@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBalancesTable extends Migration
+class CreatePaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateBalancesTable extends Migration
      */
     public function up()
     {
-        Schema::create('balances', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->integer('id')->primary();
             $table->integer('abonent_id');
             $table->integer('service_id');
-            $table->float('value');
-            $table->integer('status')->default(1);
-            $table->integer('archived')->default(0);
-            $table->date('last_update')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->integer('author_id')->default(0);
+            $table->string('title')->default('Оплата');
+            $table->integer('source_id')->index('source_id');
+            $table->decimal('value', 10, 2)->nullable();
+            $table->dateTime('created_at')->default('current_timestamp()');
         });
     }
 
@@ -31,6 +32,6 @@ class CreateBalancesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('balances');
+        Schema::dropIfExists('payments');
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DebugController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,10 @@ Route::middleware('auth:web')->get('/abonents/{id}/balances', [AbonentController
 Route::middleware('auth:web')->get('/abonents/counters/empty', [CounterController::class, 'getAbonentsWithoutCountersPreview']);
 
 
+Route::middleware('auth:web')->post('/abonents/family/add', [AbonentController::class, 'family_add']); // додавання в сім'ю
+Route::middleware('auth:web')->post('/abonents/family/remove/{id}', [AbonentController::class, 'family_remove']); // додавання в сім'ю
+
+
 /* Роути для квитанцій */
 Route::middleware('auth:web')->get('/receipts', [ReceiptController::class, 'index']);    //список квитанцій
 Route::middleware('auth:web')->get('/receipts/status/{id}', [ReceiptController::class, 'receiptByStatus']);    //список квитанцій по статусу
@@ -88,6 +93,9 @@ Route::middleware('auth:web')->get('/home/{date}', [HomeController::class, 'show
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);
 Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'store']);   //створення лічильника абонента
+
+/* Роути для саппорта */
+Route::middleware('auth:web')->post('/support/send-screen', [SupportController::class, 'sendScreen']);   //створення лічильника абонента
 
 /* Дебаг роути */
 

@@ -8557,3 +8557,14 @@ input.editableInput {
     background: rgba(153,153,153,0.57);
     border: 2px solid;
 }
+
+.screenBtn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #02bbca;
+    border: none;
+    padding: 15px;
+    font-size: 20px;
+    color: #fff;
+}

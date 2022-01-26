@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReceiptStatusTable extends Migration
+class CreateReceiptTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateReceiptStatusTable extends Migration
      */
     public function up()
     {
-        Schema::create('receipt_status', function (Blueprint $table) {
+        Schema::create('receipt', function (Blueprint $table) {
             $table->increments('id')->unique();
-            $table->string('title');
-            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->unsignedInteger('abonent_id');
+            $table->unsignedInteger('author_id')->default(0);
+            $table->unsignedInteger('status_id');
+            $table->integer('archived');
+            $table->timestamps()->default('0000-00-00 00:00:00');
         });
     }
 
@@ -28,6 +30,6 @@ class CreateReceiptStatusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receipt_status');
+        Schema::dropIfExists('receipt');
     }
 }
