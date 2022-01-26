@@ -37,7 +37,7 @@ class SupportController extends Controller
 
         $success = file_put_contents($path, base64_decode($image));
 
-        $this->sendMessage(url('/support/screens/' . $filename));
+        $this->sendMessage(url('/public/support/screens/' . $filename));
 
         return;
     }
