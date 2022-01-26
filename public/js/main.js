@@ -123,6 +123,24 @@ $(document).ready(function () {
         document.location.href = $(this).data('href');
     })
 
+    $('.screenBtn').on('click', function (){
+        html2canvas(document.body).then(function(canvas) {
+            console.log(canvas.toDataURL());
+            $.ajax({
+                type: "POST",
+                url: "/support/send-screen",
+                data: {
+                    imgBase64: canvas.toDataURL()
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            }).done(function(o) {
+                console.log('saved');
+            });
+        });
+    });
+
 
 
     $('#abonent_search').select2({

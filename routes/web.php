@@ -3,6 +3,7 @@
 use App\Http\Controllers\DebugController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -92,6 +93,9 @@ Route::middleware('auth:web')->get('/home/{date}', [HomeController::class, 'show
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);
 Route::middleware('auth:web')->post('/meters/add', [MeterController::class, 'store']);   //створення лічильника абонента
+
+/* Роути для саппорта */
+Route::middleware('auth:web')->post('/support/send-screen', [SupportController::class, 'sendScreen']);   //створення лічильника абонента
 
 /* Дебаг роути */
 
