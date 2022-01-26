@@ -389,18 +389,22 @@ class AbonentController extends Controller
 
         /* Лічильники збереження */
 
-        foreach ($input['meters'] as $single_meter) {
-            $meter = Meters::find($single_meter['meter_id']);
-            $meter->title = $single_meter['title'];
-            $meter->code = $single_meter['code'];
-            $meter->code_plomb = $single_meter['code_plomb'];
-            $meter->next_check = $single_meter['next_check'];
-            $meter->last_check = $single_meter['last_check'];
-            $meter->tariff_id = $single_meter['tariff_id'];
+        if (isset($input['meters'])) {
 
-            $meter->services()->sync($single_meter['services']);
+            foreach ($input['meters'] as $single_meter) {
+                $meter = Meters::find($single_meter['meter_id']);
+                $meter->title = $single_meter['title'];
+                $meter->code = $single_meter['code'];
+                $meter->code_plomb = $single_meter['code_plomb'];
+                $meter->next_check = $single_meter['next_check'];
+                $meter->last_check = $single_meter['last_check'];
+//                $meter->tariff_id = $single_meter['tariff_id'];
+                $meter->tariff_id = 1;
 
-            $meter->save();
+                $meter->services()->sync($single_meter['services']);
+
+                $meter->save();
+            }
         }
 
         //return $this->sendResponse(new AbonentResource($abonent), 'Дані абонента оновлено!');
