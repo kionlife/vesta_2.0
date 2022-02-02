@@ -74,7 +74,8 @@
                                     <div class="col-sm-8">
                                         <select class="form-control1" name="type_id" id="">
                                             @foreach($types as $type)
-                                                <option value="{{ $type['id'] }}">{{ $type['title'] }}</option>
+
+                                                <option @if ($abonent['type'][0]['id'] == $type['id']) selected @endif value="{{ $type['id'] }}">{{ $type['title'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>
