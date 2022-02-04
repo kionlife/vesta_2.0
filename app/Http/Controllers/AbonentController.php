@@ -342,7 +342,6 @@ class AbonentController extends Controller
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
         $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
 
-
         return view('abonents/card', [
             'abonent'   => $abonent,
             'family'    => $family,
@@ -350,7 +349,7 @@ class AbonentController extends Controller
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
-            'services'  => Service::all()
+            'services'  => collect($servicesNew)->where('status', 1)->get(),
         ]);
 
     }
