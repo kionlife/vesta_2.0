@@ -57,7 +57,7 @@
                                     </div>
                                     <div class="col-md-2 form-group1">
                                         <label class="control-label">Дата</label>
-                                        <input id="added_at" type="date" name="added_at" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required="">
+                                        <input id="created_at" type="date" name="created_at" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required="">
                                     </div>
                                 </div>
 
@@ -98,7 +98,7 @@
                                     <td>{{ $counter['value'] }}</td>
                                     <td>{{ $counter['author']['name'] }}</td>
                                     <td><a href="/abonents/{{ $counter['abonent']['id'] }}">{{ $counter['abonent']['name'] }}</a></td>
-                                    <td>{{ $counter['added_at'] }}</td>
+                                    <td>{{ $counter['created_at'] }}</td>
                                 </tr>
                             @endforeach
 

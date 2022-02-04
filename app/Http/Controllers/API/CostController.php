@@ -63,7 +63,7 @@ class CostController extends BaseController
     }
 
     public function getCounter($meter, $month, $yearOfMonth) {
-        $counter = Counter::where('meter_id', $meter)->whereMonth('added_at', $month)->whereYear('added_at', $yearOfMonth)->first();
+        $counter = Counter::where('meter_id', $meter)->whereMonth('created_at', $month)->whereYear('created_at', $yearOfMonth)->first();
 
         if (!$counter) {
             $counter['id'] = 0;
@@ -109,8 +109,8 @@ class CostController extends BaseController
 //                        $last_counter = $this->getCounter($meter['id'], 8, $lastYearOfMonth);
 //                        $current_counter = $this->getCounter($meter['id'], 9, $currentYearOfMonth);
 
-                        $last_counter = Counter::where('meter_id', $meter['id'])->orderBy('added_at', 'DESC')->first();
-                        $current_counter = Counter::where('meter_id', $meter['id'])->orderBy('added_at', 'ASC')->first();
+                        $last_counter = Counter::where('meter_id', $meter['id'])->orderBy('created_at', 'DESC')->first();
+                        $current_counter = Counter::where('meter_id', $meter['id'])->orderBy('created_at', 'ASC')->first();
 
                         if (!$last_counter) {
                             $last_counter['id'] = 0;

@@ -20,7 +20,7 @@ class CreateBalancesTable extends Migration
             $table->float('value');
             $table->integer('status')->default(1);
             $table->integer('archived')->default(0);
-            $table->date('last_update')->default('current_timestamp()');
+            $table->date('updated_at')->default('current_timestamp()');
             
             $table->foreign('service_id', 'balances_ibfk_2')->references('id')->on('services');
         });

@@ -28,7 +28,7 @@ class ReceiptController extends Controller
 {
 
     public function getCounter($meter, $month, $yearOfMonth) {
-        $counter = Counter::where('meter_id', $meter)->whereMonth('added_at', $month)->whereYear('added_at', $yearOfMonth)->first();
+        $counter = Counter::where('meter_id', $meter)->whereMonth('created_at', $month)->whereYear('created_at', $yearOfMonth)->first();
 
         if (!$counter) {
             $counter['id'] = 0;

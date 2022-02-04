@@ -291,7 +291,7 @@ class AbonentController extends Controller
                     'current'    => $meter->tariff,
                     'available'  => Tariff::whereIn('provider_id', $meter->services()->where('status', 1)->first()->provider[0])->get()
                 ),
-                'counters' => Counter::where('meter_id', $meter->id)->orderBy('added_at', 'DESC')->with('author')->get()
+                'counters' => Counter::where('meter_id', $meter->id)->orderBy('created_at', 'DESC')->with('author')->get()
             );
 
             array_push($metersNew, $meter0);

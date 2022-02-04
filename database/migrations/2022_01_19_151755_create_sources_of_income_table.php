@@ -17,7 +17,7 @@ class CreateSourcesOfIncomeTable extends Migration
             $table->integer('id')->primary();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            $table->dateTime('added_at')->default('current_timestamp()');
+            $table->dateTime('created_at')->default('current_timestamp()');
         });
     }
 
