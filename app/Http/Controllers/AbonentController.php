@@ -255,6 +255,8 @@ class AbonentController extends Controller
             $balance = $abonent->balanceCalc($service['id']);
             $service['balance'] = $balance['value'];
             $service['status'] = $balance['status'];
+            $service['tariff'] = Tariff::where('id', Balance::where('abonent_id', $id)->where('service_id', $service['id'])->first()['tariff_id'])->first();
+            $service['available_tariffs'] = Tariff::where('service_id', $service['id'])->get();
 
             array_push($servicesNew, $service);
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
@@ -325,8 +327,16 @@ class AbonentController extends Controller
         $abonent['contracts'] = array_map("unserialize", array_unique(array_map("serialize", $contractsNew)));
         $abonent['type'] = Abonent::with('type')->findOrFail($id)->type;
 
-        $costs = Cost::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
-        $payments = Payment::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
+        $costs = Cost::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get();
+        $payments = Payment::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get()->transform(function($item) {
+            $payment = $item;
+            $payment['allow_cancel'] = 0;
+            if (strtotime($item['created_at']) > (time() - (60*60*24))) {
+                $payment['allow_cancel'] = 1;
+            }
+            return $item;
+        });
+
 
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');

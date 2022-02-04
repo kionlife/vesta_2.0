@@ -387,6 +387,42 @@ a:hover.tooltips span {
   margin-left: -56px;
   z-index: 999;
 }
+button.tooltips {
+  position: relative;
+  display: inline;
+    border: none;
+    background: transparent;
+}
+button.tooltips span {
+    position: absolute;
+    width: 110px;
+    color: #FFFFFF;
+    background: #09367D;
+    height:28px;
+    line-height: 30px;
+    text-align: center;
+    visibility: hidden;
+    font-size: 0.8em;
+}
+button.tooltips span:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-bottom: 8px solid #09367D;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+button:hover.tooltips span {
+  visibility: visible;
+  opacity: 0.8;
+  top: 30px;
+  left: 50%;
+  margin-left: -56px;
+  z-index: 999;
+}
 /*--//down--*/
 /*--/top_header--*/
 span#logo h1 {
@@ -8560,11 +8596,23 @@ input.editableInput {
 
 .screenBtn {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background: #02bbca;
+    bottom: 20px;
+    left: 100px;
+    background: rgb(13, 139, 205);
     border: none;
-    padding: 15px;
     font-size: 20px;
     color: #fff;
+    z-index: 99;
+    height: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+}
+
+.screenBtn .fa {
+    margin: 0 !important;
+    display: block;
+    width: 100% !important;
 }

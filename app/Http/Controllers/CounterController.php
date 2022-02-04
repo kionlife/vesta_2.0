@@ -218,7 +218,7 @@ class CounterController extends Controller
         if ($request->limit) {
             $limit = $request->limit;
         } else {
-            $limit = 1000;
+            $limit = 50;
         }
 
         if ($request->page) {
@@ -230,7 +230,7 @@ class CounterController extends Controller
 
         $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
             $query->whereMonth('added_at', Carbon::now()->format('m'));
-        })->orderBy('abonent_id', 'ASC')->where('archived', 0)->get();
+        })->orderBy('abonent_id', 'ASC')->where('archived', 0)->limit($limit)->offset($offset)->get();
 
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
@@ -242,9 +242,6 @@ class CounterController extends Controller
             $services = array();
             $meter = $single_meter;
 
-            foreach ($meter->services as $serv_id) {
-                $meter_services_ids[] = $serv_id['id'];
-            }
 
             $abonent = Abonent::find($meter->abonent_id);
             $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
@@ -252,28 +249,38 @@ class CounterController extends Controller
             $tariff_total = 0;
             if ($current_counter['value'] == 0) {
 
-                $tariff = Tariff::whereIn('service_id', $meter_services_ids)->where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->get();
-                $tariff_total = $tariff->sum('value');
+                $abonent_services = $abonent->service()->where('status', 1)->with('tariff')->get();
 
-                if ($meter['title'] == 'virtual') {
-                    $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
-                    $used = $current_counter['value'] - $last_counter['value'];
-                } else {
-                    $current_counter['value'] = $last_counter['value'];
-                    $used = $current_counter['value'] - $last_counter['value'];
+                $s = $abonent_services->map(function ($serv) {
+                    return $serv['service_id'];
+                })->toArray();
+
+                foreach ($meter->services as $service) {
+
+                    if (in_array($service['id'], $s)) {
+                        $tariff = $abonent_services->where('service_id', $service['id'])->first()->tariff;
+                        $tariff_total += $tariff['value'];
+                        if ($meter['title'] == 'virtual') {
+                            $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
+                            $used = $current_counter['value'] - $last_counter['value'];
+                        } else {
+                            $current_counter['value'] = $last_counter['value'];
+                            $used = $current_counter['value'] - $last_counter['value'];
+                        }
+
+                        $counter = new Counter();
+                        $counter->abonent_id = $meter->abonent_id;
+                        $counter->service_id = 0;
+                        $counter->meter_id = $meter->id;
+                        $counter->author_id = $user->id;
+                        $counter->archived = 0;
+                        $counter->last_value = $last_counter['value'];
+                        $counter->value = $current_counter['value'];
+                        $counter->used = $used;
+                        $counter->to_pay = $tariff_total * $used;
+                        $counters[] = $counter;
+                    }
                 }
-
-                $counter = new Counter();
-                $counter->abonent_id = $meter->abonent_id;
-                $counter->service_id = 0;
-                $counter->meter_id = $meter->id;
-                $counter->author_id = $user->id;
-                $counter->archived = 0;
-                $counter->last_value = $last_counter['value'];
-                $counter->value = $current_counter['value'];
-                $counter->used = $used;
-                $counter->to_pay = $tariff_total * $used;
-                $counters[] = $counter;
 
 
             }

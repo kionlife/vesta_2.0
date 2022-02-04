@@ -152,8 +152,14 @@
                                                 <div id="tab-{{ $service['id'] }}" class="content">
                                                     <div class="row">
 
-                                                        <div class="col-md-10">
+                                                        <div class="col-md-6">
+                                                            <select class="form-control1" name="" id="">
+                                                                @foreach ($service['available_tariffs'] as $av_tariff)
+                                                                    <option @if ($av_tariff['id'] == $service['tariff']['id']) selected @endif value="">{{ $av_tariff['name'] }}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
+                                                        <div class="col-md-4"></div>
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
                                                                 <div class="onoffswitch">
@@ -182,6 +188,8 @@
 
 
                                                     </div>
+
+
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <h2 class="tableTitle">Історія</h2>
@@ -194,6 +202,7 @@
                                                                         <th>Джерело надходження</th>
                                                                         <th>Сума</th>
                                                                         <th>Автор</th>
+                                                                        <th>Операції</th>
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -203,12 +212,17 @@
                                                                     @if($abonent['history']->isNotEmpty())
                                                                     @isset($abonent['history'][$service['id']])
                                                                         @foreach($abonent['history'][$service['id']] as $item)
-                                                                            <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
+                                                                            <tr id="payment_{{ $item['id'] }}" class="@if ($item['title'] == 'Списання') outcome @else income @endif">
                                                                                 <td>@date($item['created_at'])</td>
                                                                                 <td>{{ $item['title'] }}</td>
                                                                                 <td>@if ($item['title'] == 'Списання' || $item['title'] == 'Корекція')  @else {{ $item['source']['name'] }} @endif</td>
                                                                                 <td>{{ $item['value'] }}</td>
                                                                                 <td>{{ $item->author['name'] }}</td>
+                                                                                <td>
+                                                                                    @isset($item['allow_cancel'])
+                                                                                        <button type="button" onclick="payment.delete({{ $item['id'] }})" class="tooltips @if ($item['allow_cancel'] === 0) disabled @endif" href="#"><span>Скасувати платіж</span><i class="lnr lnr-undo"></i></button>
+                                                                                    @endisset
+                                                                                </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     @endisset
@@ -632,8 +646,7 @@
 
 
 
-    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent"
-         aria-hidden="true" style="display: none;">
+    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent" aria-hidden="true" style="display: none;">
 
         <div class="modal-dialog">
             <form class="modal-content" action="/abonents/delete/{{ $abonent['id'] }}" method="post">
