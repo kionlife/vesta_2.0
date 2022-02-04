@@ -381,13 +381,15 @@ class AbonentController extends Controller
 
         $family=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
 
+        $abonent->personal_account = $input['personal_account'];
         $abonent->name = $input['name'];
         $abonent->address = $input['address'];
         $abonent->phone = $input['phone'];
         $abonent->peoples = $family;
 
+
         if (isset($input['status'])) {
-            $abonent->status = $input['status'];
+            $abonent->status = 1;
         } else {
             $abonent->status = 0;
         }
