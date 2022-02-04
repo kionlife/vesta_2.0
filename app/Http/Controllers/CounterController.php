@@ -59,7 +59,7 @@ class CounterController extends Controller
         } else {
             $abonent_id = Abonent::where('user_id', $user->id)->first();
 
-            $counters = Counter::where('abonent_id', $abonent_id->id)->orderBy('added_at', 'desc')->offset($offset)->limit($limit)->get();
+            $counters = Counter::where('abonent_id', $abonent_id->id)->orderBy('created_at', 'desc')->offset($offset)->limit($limit)->get();
             $total_count = Counter::where('abonent_id', $abonent_id->id)->get()->count();
 
             $result = CounterResource::collection($counters)->additional(['total_count' => $total_count, 'success' => true]);
@@ -107,7 +107,7 @@ class CounterController extends Controller
         $meter_services = Meters::find($input['meter_id'])->services;
 
 
-        /* if (Counter::whereMonth('added_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
+        /* if (Counter::whereMonth('created_at', Carbon::now()->month)->where('meter_id', $input['meter_id'])->exists()) {
  //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
              $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
          } else {*/
@@ -115,7 +115,7 @@ class CounterController extends Controller
 
 
             $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
-            $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('added_at', 'DESC')->first();
+            $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('created_at', 'DESC')->first();
             if (!$last_counter) {
                 $last_counter = 0;
             } else {
@@ -133,7 +133,7 @@ class CounterController extends Controller
 
             $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
             $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
-            $current_balance->last_update = date('Y-m-d');
+            $current_balance->updated_at = date('Y-m-d');
             $current_balance->save();
 
 
@@ -177,7 +177,7 @@ class CounterController extends Controller
         $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
         $total_count = Counter::where('abonent_id', $id)->whereIn('service_id', $service_id)->count();
 
-        $result = CounterResource::collection(Counter::offset($offset)->limit($limit)->where('abonent_id', $id)->whereIn('service_id', $service_id)->orderBy('added_at', 'DESC')->get())->additional(['total_count' => $total_count, 'success' => true]);
+        $result = CounterResource::collection(Counter::offset($offset)->limit($limit)->where('abonent_id', $id)->whereIn('service_id', $service_id)->orderBy('created_at', 'DESC')->get())->additional(['total_count' => $total_count, 'success' => true]);
 
         return $result;
     }
@@ -218,7 +218,7 @@ class CounterController extends Controller
         if ($request->limit) {
             $limit = $request->limit;
         } else {
-            $limit = 50;
+            $limit = 1000;
         }
 
         if ($request->page) {
@@ -229,8 +229,8 @@ class CounterController extends Controller
         }
 
         $meters = Meters::whereDoesntHave('counters', function (Builder $query) {
-            $query->whereMonth('added_at', Carbon::now()->format('m'));
-        })->orderBy('abonent_id', 'ASC')->where('archived', 0)->limit($limit)->offset($offset)->get();
+            $query->whereMonth('created_at', Carbon::now()->format('m'));
+        })->orderBy('abonent_id', 'ASC')->where('archived', 0)->get();
 
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
@@ -308,7 +308,7 @@ class CounterController extends Controller
 
     public function getCounter($meter, $month, $yearOfMonth)
     {
-        $counter = Counter::where('meter_id', $meter)->whereMonth('added_at', $month)->whereYear('added_at', $yearOfMonth)->orderBy('added_at', 'DESC')->first();
+        $counter = Counter::where('meter_id', $meter)->whereMonth('created_at', $month)->whereYear('created_at', $yearOfMonth)->orderBy('created_at', 'DESC')->first();
 
         if (!$counter) {
             $counter['id'] = 0;
@@ -363,7 +363,7 @@ class CounterController extends Controller
 
     public function getLastCounterByMeter($id)
     {
-        $result = Counter::where('meter_id', $id)->orderBy('added_at', 'DESC')->first();
+        $result = Counter::where('meter_id', $id)->orderBy('created_at', 'DESC')->first();
 
         if (!$result) {
             $result['value'] = 0;

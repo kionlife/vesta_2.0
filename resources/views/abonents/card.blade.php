@@ -560,7 +560,7 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                            <td>@date($counter['added_at'])</td>
+                                                                            <td>@date($counter['created_at'])</td>
                                                                             <td>{{ $counter['value'] }}</td>
                                                                             <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>

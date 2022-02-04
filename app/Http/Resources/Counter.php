@@ -34,7 +34,7 @@ class Counter extends JsonResource
             'meter' => $meter['title'],
             'author' => $author,
             'value' => $this->value,
-            'added_at' => $this->added_at,
+            'created_at' => $this->created_at,
         ];
 
     }

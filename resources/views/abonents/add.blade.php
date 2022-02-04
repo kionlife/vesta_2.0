@@ -407,7 +407,7 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                            <td>{{ $counter['added_at'] }}</td>
+                                                                            <td>{{ $counter['created_at'] }}</td>
                                                                             <td>{{ $counter['value'] }}</td>
                                                                             <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>

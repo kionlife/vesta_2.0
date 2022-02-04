@@ -100,7 +100,7 @@ class CorrectionController extends Controller
 
             $current_balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->first();
             $current_balance->value = $current_balance->value + $input['value'];
-            $current_balance->last_update = date('Y-m-d');
+            $current_balance->updated_at = date('Y-m-d');
             $current_balance->save();
 
         } else {
@@ -108,7 +108,7 @@ class CorrectionController extends Controller
             $operation = Cost::create($input);
             $current_balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->first();
             $current_balance->value = $current_balance->value - $input['value'];
-            $current_balance->last_update = date('Y-m-d');
+            $current_balance->updated_at = date('Y-m-d');
             $current_balance->save();
         }
         $result = redirect('/corrections')->with('alert', true);

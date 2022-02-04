@@ -19,7 +19,7 @@ class Source_of_income extends Model
     protected $table = 'sources_of_income';
 
     protected $fillable = [
-        'name', 'description', 'added_at'
+        'name', 'description', 'created_at'
     ];
 
     public $timestamps = false;

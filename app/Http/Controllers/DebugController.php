@@ -50,14 +50,14 @@ class DebugController extends Controller
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
-            $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('added_at', [$start, $end])->count();
+            $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->count();
             $t_payments = Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
 
         } else {
             //$abonent_id = Abonent::where('user_id', $user->id)->first();
             $abonent_id = Abonent::where('user_id', $user->id)->first();
 
-            $t_counters = Counter::where('abonent_id', $abonent_id->id)->whereBetween('added_at', [$start, $end])->get()->count();
+            $t_counters = Counter::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->count();
             $t_payments = Counter::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->count()->sum('value');
 
         }
