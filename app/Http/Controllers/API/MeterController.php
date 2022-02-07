@@ -113,7 +113,7 @@ class MeterController extends BaseController
         $meters = Meters::where('abonent_id', $id)->where('archived', 0)->whereHas('services', function ($query) use ($request) {
             $query->where('services.id', $request->service_id)->where('archived', 0);
         })->with(array('counters' => function($query) {
-            $query->orderBy('added_at', 'DESC')->limit(1);
+            $query->orderBy('created_at', 'DESC')->limit(1);
         }))->get();
 
         return $meters;

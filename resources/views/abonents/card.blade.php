@@ -74,7 +74,8 @@
                                     <div class="col-sm-8">
                                         <select class="form-control1" name="type_id" id="">
                                             @foreach($types as $type)
-                                                <option value="{{ $type['id'] }}">{{ $type['title'] }}</option>
+
+                                                <option @if ($abonent['type'][0]['id'] == $type['id']) selected @endif value="{{ $type['id'] }}">{{ $type['title'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -84,7 +85,7 @@
                                     <div class="col-sm-8">
                                         <input name="peoples" type="number" class="form-control"
                                                placeholder="Кількість прописаних осіб"
-                                               value="{{ $abonent['peoples'] }}">
+                                               value="{{ $abonent['peoples'] }}" readonly>
                                     </div>
                                 </div>
 
@@ -152,8 +153,14 @@
                                                 <div id="tab-{{ $service['id'] }}" class="content">
                                                     <div class="row">
 
-                                                        <div class="col-md-10">
+                                                        <div class="col-md-6">
+                                                            <select class="form-control1" name="" id="">
+                                                                @foreach ($service['available_tariffs'] as $av_tariff)
+                                                                    <option @if ($av_tariff['id'] == $service['tariff']['id']) selected @endif value="">{{ $av_tariff['name'] }}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
+                                                        <div class="col-md-4"></div>
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
                                                                 <div class="onoffswitch">
@@ -182,6 +189,8 @@
 
 
                                                     </div>
+
+
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <h2 class="tableTitle">Історія</h2>
@@ -191,8 +200,10 @@
                                                                     <tr>
                                                                         <th>Дата</th>
                                                                         <th>Тип операції</th>
+                                                                        <th>Джерело надходження</th>
                                                                         <th>Сума</th>
                                                                         <th>Автор</th>
+                                                                        <th>Операції</th>
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -202,11 +213,17 @@
                                                                     @if($abonent['history']->isNotEmpty())
                                                                     @isset($abonent['history'][$service['id']])
                                                                         @foreach($abonent['history'][$service['id']] as $item)
-                                                                            <tr class="@if ($item['title'] == 'Списання') outcome @else income @endif">
+                                                                            <tr id="payment_{{ $item['id'] }}" class="@if ($item['title'] == 'Списання') outcome @else income @endif">
                                                                                 <td>@date($item['created_at'])</td>
                                                                                 <td>{{ $item['title'] }}</td>
+                                                                                <td>@if ($item['title'] == 'Списання' || $item['title'] == 'Корекція')  @else {{ $item['source']['name'] }} @endif</td>
                                                                                 <td>{{ $item['value'] }}</td>
                                                                                 <td>{{ $item->author['name'] }}</td>
+                                                                                <td>
+                                                                                    @isset($item['allow_cancel'])
+                                                                                        <button type="button" onclick="payment.delete({{ $item['id'] }})" class="tooltips @if ($item['allow_cancel'] === 0) disabled @endif" href="#"><span>Скасувати платіж</span><i class="lnr lnr-undo"></i></button>
+                                                                                    @endisset
+                                                                                </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     @endisset
@@ -227,6 +244,71 @@
 
                     </div>
 
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="row-flex">
+                    <div class="flex-child-50">
+                        <h2 class="inner-tittle">Прописані особи</h2>
+                    </div>
+                    <div class="flex-child-50 text-right">
+                        <button data-toggle="modal" data-target="#add_person" type="button" class="btn btn-primary">
+                            Додати особу
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-1">
+                    <div class="col-md-12">
+                        <div class="overflowBlock" id="family_list">
+                            <table class="table" id="family_content">
+                                <thead>
+                                <tr>
+                                    <th>Дата формування</th>
+                                    <th>Прізвище</th>
+                                    <th>Ім'я</th>
+                                    <th>По батькові</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($family as $person)
+                                    <input type="hidden"
+                                           name="persons[{{ $person['id'] }}][id]"
+                                           value="{{ $person['id'] }}">
+                                    <tr>
+                                        <td>{{$person['created_at']}}</td>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][last_name]"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Прізвище"
+                                                value="{{$person['last_name']}}"></td>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][first_name]"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Ім'я"
+                                                value="{{$person['first_name']}}"></td>
+                                        <td><input
+                                                name="persons[{{ $person['id'] }}][second_name]}}"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="По батькові"
+                                                value="{{$person['second_name']}}"></td>
+                                        <td><div class="col-md-1">
+                                                <button type="button"
+                                                        onclick="person.remove({{ $person['id'] }}, {{ $person['abonent_id'] }})"
+                                                        class="btn btn-danger"><i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </div></td>
+                                    </tr>
+                                @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
 
@@ -478,7 +560,7 @@
                                                                     <tbody>
                                                                     @foreach($meter['counters'] as $counter)
                                                                         <tr>
-                                                                            <td>@date($counter['added_at'])</td>
+                                                                            <td>@date($counter['created_at'])</td>
                                                                             <td>{{ $counter['value'] }}</td>
                                                                             <td>{{ $counter['author']['name'] }}</td>
                                                                         </tr>
@@ -540,28 +622,32 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <button class="btn btn-success" type="submit">Зберегти</button>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
-                        </div>
-                    </div>
+
 
                     <div class="clearfix"></div>
                 </div>
 
 
+
+
+        <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <button class="btn btn-success" type="submit">Зберегти</button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button data-toggle="modal" data-target="#delete_abonent" class="btn btn-danger" type="button">Перемістити у архів</button>
+            </div>
+        </div>
+        </div>
             </form>
-            <!--//forms-->
+                <!--//forms-->
         </div>
     </div>
 
 
 
-    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent"
-         aria-hidden="true" style="display: none;">
+    <div class="modal fade modalCustom" id="delete_abonent" tabindex="-1" role="dialog" aria-labelledby="delete_abonent" aria-hidden="true" style="display: none;">
 
         <div class="modal-dialog">
             <form class="modal-content" action="/abonents/delete/{{ $abonent['id'] }}" method="post">
@@ -744,6 +830,72 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade modalCustom" id="add_person" tabindex="-1" role="dialog" aria-labelledby="add_people"
+         aria-hidden="true" style="display: none;">
+
+        <div class="modal-dialog">
+            <form class="modal-content" action="javascript:void(null);" onsubmit="person.add()" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Додавання особи</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Прізвище</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="last_name"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Прізвище"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Ім'я</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="first_name"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Ім'я"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">По батькові</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="second_name"
+                                                type="tel"
+                                                class="form-control"
+                                                placeholder="По батькові"
+                                                value="">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="clearfix"></div>
                     </div>

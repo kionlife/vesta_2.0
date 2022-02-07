@@ -62,7 +62,7 @@ class MeterController extends Controller
         $meter->counter = $input['counter'];
         $meter->next_check = $input['next_check'];
         $meter->last_check = $input['last_check'];
-        $meter->tariff_id = $input['tariff_id'];
+        $meter->tariff_id = 1;
         $meter->save();
 
         $meter->services()->attach($input['services']);

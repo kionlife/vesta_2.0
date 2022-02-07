@@ -29,6 +29,14 @@
                                     <select class="form-control1" name="service_id" id="abonent_services">
                                     </select>
                                 </div>
+                                <div class="col-sm-2 form-group1">
+                                    <label class="control-label">Джерело надходження</label>
+                                    <select class="form-control1" name="source_id" id="">
+                                        @foreach($sources as $source)
+                                            <option selected value="{{ $source['id'] }}">{{ $source['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col-md-1 form-group1">
                                     <label class="control-label">Сума</label>
                                     <input type="text" name="value" placeholder="" required="">
@@ -59,22 +67,28 @@
                                 <th>ID</th>
                                 <th>Надавач послуг</th>
                                 <th>Тип</th>
+                                <th>Джерело надходження</th>
                                 <th>Сума</th>
                                 <th>Автор</th>
                                 <th>Абонент</th>
                                 <th>Дата, час</th>
+                                <th>Операції</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach ($payments as $payment)
-                                <tr>
+                                <tr id="payment_{{ $payment['id'] }}">
                                     <td>{{ $payment['id'] }}</td>
                                     <td>{{ $payment['service'][0]['name']}}</td>
                                     <td>{{ $payment['title'] }}</td>
+                                    <td>{{ $payment['source']['name'] }}</td>
                                     <td>{{ $payment['value'] }}</td>
                                     <td>{{ $payment['author']['name'] }}</td>
                                     <td><a href="/abonents/{{ $payment['abonent']['id'] }}">{{ $payment['abonent']['name']}}</td>
                                     <td>{{ $payment['created_at'] }}</td>
+                                    <td>
+                                        <button onclick="payment.delete({{ $payment['id'] }})" class="tooltips @if ($payment['allow_cancel'] === 0) disabled @endif" href="#"><span>Скасувати платіж</span><i class="lnr lnr-undo"></i></button>
+                                    </td>
                                 </tr>
                             @endforeach
 

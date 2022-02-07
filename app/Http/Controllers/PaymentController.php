@@ -13,6 +13,7 @@ use App\Models\Abonent;
 use App\Models\Service;
 use App\Models\Payment;
 use App\Models\Balance;
+use App\Models\Source_of_income;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Http\Resources\Counter as CounterResource;
@@ -65,6 +66,15 @@ class PaymentController extends Controller
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
             $payments = Payment::orderBy('created_at', 'DESC')->paginate($limit);
 
+            $payments->getCollection()->transform(function($item) {
+                $payment = $item;
+                $payment['allow_cancel'] = 0;
+                if (strtotime($item['created_at']) > (time() - (60*60*24))) {
+                    $payment['allow_cancel'] = 1;
+                }
+                return $item;
+            });
+
 		} else {
 			$abonent_id = Abonent::where('user_id', $user->id)->first();
 
@@ -72,11 +82,13 @@ class PaymentController extends Controller
 			$total_count = Payment::where('abonent_id', $abonent_id->id)->get()->count();
 
 			$result = PaymentResource::collection($payments)->additional(['total_count' => $total_count, 'success' => true, 'pay_allow' => $this->pay_allow]);
+
 		}
+
 
         return view('payments/payments', [
         'alert' => $alert
-        ])->with('payments', $payments)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get());
+        ])->with('payments', $payments)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get())->with('sources', Source_of_income::orderBy('name', 'DESC')->get());
 	}
 
     /**
@@ -95,6 +107,7 @@ class PaymentController extends Controller
 			$input['abonent_id'] = Abonent::where('user_id', $user->id)->first()->id;
 			$input['service_id'] = $request->service_id;
 			$input['author_id'] = $user->id;
+			$input['source_id'] = $request->source_id;
 			$input['value'] = $request->value;
 		}
 
@@ -187,11 +200,19 @@ class PaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Abonent $abonent)
+    public function destroy($id)
     {
-        $abonent->delete();
+        $payment = Payment::find($id);
 
-        return $this->sendResponse([], 'Abonent deleted successfully.');
+        if (strtotime($payment['created_at']) > (time() - (60*60*24))) {
+            Payment::where('id', $id)->update([
+                'archived' => 1
+            ]);
+        }
+
+
+
+        return '';
     }
 
     public function getShift(Request $request)

@@ -24,7 +24,21 @@
     <script src="{{ asset('public/js/i18n/uk.js') }}"></script>
 
     <script src="{{ asset('public/js/main.js') }}"></script>
-
+    <script src="{{ asset('public/js/html2canvas.min.js') }}"></script>
+    <!-- Chatra {literal} -->
+    <script>
+        (function(d, w, c) {
+            w.ChatraID = 'xbAYW8gimQWxboeQj';
+            var s = d.createElement('script');
+            w[c] = w[c] || function() {
+                (w[c].q = w[c].q || []).push(arguments);
+            };
+            s.async = true;
+            s.src = 'https://call.chatra.io/chatra.js';
+            if (d.head) d.head.appendChild(s);
+        })(document, window, 'Chatra');
+    </script>
+    <!-- /Chatra {/literal} -->
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -68,6 +82,8 @@
                     <li><a href="/corrections"><i class="fa fa-edit"></i> <span>Коригування балансів</span></a></li>
                 @endcan
                 <li><a href="/payments"><i class="fa fa-usd"></i> <span>Платежі</span></a></li>
+
+                <button class="screenBtn"><i class="fa fa-camera"></i></button>
 
             </ul>
         </div>

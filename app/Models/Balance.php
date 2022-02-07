@@ -33,4 +33,9 @@ class Balance extends Model
         return $this->belongsTo(Service::class, 'service_id', 'id');
     }
 
+	public function tariff()
+    {
+        return $this->hasOne(Tariff::class, 'id', 'tariff_id');
+    }
+
 }

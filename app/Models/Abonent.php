@@ -40,8 +40,8 @@ class Abonent extends Model
 
 	public function balanceCalc($service_id)
     {
-        $payment = $this->hasMany(Payment::class)->where('service_id', $service_id)->sum('value');
-        $cost = $this->hasMany(Cost::class)->where('service_id', $service_id)->sum('value');
+        $payment = $this->hasMany(Payment::class)->where('service_id', $service_id)->where('archived', 0)->sum('value');
+        $cost = $this->hasMany(Cost::class)->where('service_id', $service_id)->where('archived', 0)->sum('value');
         $status = $this->hasMany(Balance::class)->where('service_id', $service_id)->first('status')['status'];
         $val = $payment - $cost;
         return [

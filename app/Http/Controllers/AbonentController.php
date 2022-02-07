@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AbonentAddedResource;
 use App\Http\Resources\TypeResource;
+use App\Http\Resources\Payment as PaymentResource;
 use App\Models\City;
 use App\Models\Cost;
 use App\Models\Counter;
@@ -22,6 +23,7 @@ use App\Models\Service;
 use App\Models\Meters;
 use App\Models\Contract;
 use App\Models\Archive;
+use App\Models\Family;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Http\Resources\Abonent as AbonentResource;
@@ -180,6 +182,12 @@ class AbonentController extends Controller
             $abonent->save();
             $abonent->type()->attach(1);
 
+            for($i=0;$i<$input['peoples'];$i++) {
+                $person = new Family();
+                $person->abonent_id = $abonent->id;
+                $person->save();
+            }
+
             $balanceData['abonent_id'] = $abonent->id;
             $services = Service::all();
 
@@ -247,6 +255,8 @@ class AbonentController extends Controller
             $balance = $abonent->balanceCalc($service['id']);
             $service['balance'] = $balance['value'];
             $service['status'] = $balance['status'];
+            $service['tariff'] = Tariff::where('id', Balance::where('abonent_id', $id)->where('service_id', $service['id'])->first()['tariff_id'])->first();
+            $service['available_tariffs'] = Tariff::where('service_id', $service['id'])->get();
 
             array_push($servicesNew, $service);
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
@@ -283,12 +293,19 @@ class AbonentController extends Controller
                     'current'    => $meter->tariff,
                     'available'  => Tariff::whereIn('provider_id', $meter->services()->where('status', 1)->first()->provider[0])->get()
                 ),
-                'counters' => Counter::where('meter_id', $meter->id)->orderBy('added_at', 'DESC')->with('author')->get()
+                'counters' => Counter::where('meter_id', $meter->id)->orderBy('created_at', 'DESC')->with('author')->get()
             );
 
             array_push($metersNew, $meter0);
 
         }
+
+        $family=Family::where('abonent_id', $id)->where('archived', 0)->get();
+
+        $fam_count=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
+        $abonent['peoples'] = $fam_count;
+
+
 
         $abonent['meters'] = $metersNew;
         $abonent['services'] = $servicesNew;
@@ -310,21 +327,29 @@ class AbonentController extends Controller
         $abonent['contracts'] = array_map("unserialize", array_unique(array_map("serialize", $contractsNew)));
         $abonent['type'] = Abonent::with('type')->findOrFail($id)->type;
 
-        $costs = Cost::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
-        $payments = Payment::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
+        $costs = Cost::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get();
+        $payments = Payment::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get()->transform(function($item) {
+            $payment = $item;
+            $payment['allow_cancel'] = 0;
+            if (strtotime($item['created_at']) > (time() - (60*60*24))) {
+                $payment['allow_cancel'] = 1;
+            }
+            return $item;
+        });
+
 
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
         $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
 
-
         return view('abonents/card', [
             'abonent'   => $abonent,
+            'family'    => $family,
             'alert'     => $alert,
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
-            'services'  => Service::all()
+            'services'  => collect($servicesNew)->where('status', 1),
         ]);
 
     }
@@ -353,14 +378,17 @@ class AbonentController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $family=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
 
+        $abonent->personal_account = $input['personal_account'];
         $abonent->name = $input['name'];
         $abonent->address = $input['address'];
         $abonent->phone = $input['phone'];
-        $abonent->peoples = $input['peoples'];
+        $abonent->peoples = $family;
+
 
         if (isset($input['status'])) {
-            $abonent->status = $input['status'];
+            $abonent->status = 1;
         } else {
             $abonent->status = 0;
         }
@@ -378,6 +406,11 @@ class AbonentController extends Controller
         }
 
 
+        foreach ($input['persons'] as $person) {
+            Family::where('abonent_id', $id)->where('id', $person['id'])->update(['first_name' => $person['first_name'],'second_name' => $person['second_name'],'last_name' => $person['last_name']]);
+        }
+
+
         foreach ($input['contracts'] as $contract) {
             Contract::where('abonent_id', $id)->where('provider_id', $contract['provider_id'])->update([
                 'title' => $contract['title'],
@@ -389,18 +422,22 @@ class AbonentController extends Controller
 
         /* Лічильники збереження */
 
-        foreach ($input['meters'] as $single_meter) {
-            $meter = Meters::find($single_meter['meter_id']);
-            $meter->title = $single_meter['title'];
-            $meter->code = $single_meter['code'];
-            $meter->code_plomb = $single_meter['code_plomb'];
-            $meter->next_check = $single_meter['next_check'];
-            $meter->last_check = $single_meter['last_check'];
-            $meter->tariff_id = $single_meter['tariff_id'];
+        if (isset($input['meters'])) {
 
-            $meter->services()->sync($single_meter['services']);
+            foreach ($input['meters'] as $single_meter) {
+                $meter = Meters::find($single_meter['meter_id']);
+                $meter->title = $single_meter['title'];
+                $meter->code = $single_meter['code'];
+                $meter->code_plomb = $single_meter['code_plomb'];
+                $meter->next_check = $single_meter['next_check'];
+                $meter->last_check = $single_meter['last_check'];
+//                $meter->tariff_id = $single_meter['tariff_id'];
+                $meter->tariff_id = 1;
 
-            $meter->save();
+                $meter->services()->sync($single_meter['services']);
+
+                $meter->save();
+            }
         }
 
         //return $this->sendResponse(new AbonentResource($abonent), 'Дані абонента оновлено!');
@@ -434,6 +471,44 @@ class AbonentController extends Controller
         })->where('name', 'LIKE', '%' . $request->keyword . '%')->orWhere('personal_account', 'LIKE', '%' . $request->keyword . '%')->where('archived', 0)->limit(30)->get();
 
         return response()->json($data);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    public function family_add(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->hasAnyRole('admin', 'inspector')) {
+            $input = $request->all();
+        }
+
+        $person = new Family();
+        $person->abonent_id = $input['abonent_id'];
+        $person->first_name = $input['first_name'];
+        $person->second_name = $input['second_name'];
+        $person->last_name = $input['last_name'];
+        $person->save();
+
+        return 'Запис додано успішно!';
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return string
+     */
+    public function family_remove($id)
+    {
+        $person = Family::find($id);
+        $person->archived = 1;
+        $person->save();
+
+        return $id;
     }
 
     public function archive(Request $request)

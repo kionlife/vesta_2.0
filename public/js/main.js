@@ -123,6 +123,24 @@ $(document).ready(function () {
         document.location.href = $(this).data('href');
     })
 
+    $('.screenBtn').on('click', function (){
+        html2canvas(document.body).then(function(canvas) {
+            console.log(canvas.toDataURL());
+            $.ajax({
+                type: "POST",
+                url: "/support/send-screen",
+                data: {
+                    imgBase64: canvas.toDataURL()
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            }).done(function(o) {
+                console.log('saved');
+            });
+        });
+    });
+
 
 
     $('#abonent_search').select2({
@@ -222,6 +240,73 @@ var meter = {
             },
             success: function () {
                 $('#card_meters').load('/abonents/' + abon_id + ' #meters_content');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+}
+
+var person = {
+    'add': function () {
+        let data = $('#add_person form').serialize();
+        let abon_id = $('#add_person form input[name=abonent_id]').val();
+        $.ajax({
+            url: '/abonents/family/add',
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: data,
+            complete: function () {
+
+            },
+            success: function () {
+                $('#family_list').load('/abonents/'+ abon_id +' #family_content');
+                $('#add_person').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    },
+    'remove': function (person_id, abon_id) {
+
+        $.ajax({
+            url: '/abonents/family/remove/' + person_id,
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            complete: function () {
+
+            },
+            success: function () {
+                $('#family_list').load('/abonents/'+ abon_id +' #family_content');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+}
+
+var payment = {
+    'delete': function (id) {
+        console.log('delete ' + id);
+        $.ajax({
+            url: '/payments/delete/' + id,
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: id,
+            complete: function () {
+
+            },
+            success: function (data) {
+                $('#payment_' + id).fadeOut();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

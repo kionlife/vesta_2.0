@@ -182,13 +182,13 @@ class InvoiceController extends BaseController
             $invoice_data['meters'] = Meters::where('abonent_id', $abonent_id)->get();
 
             //Отримуємо показник за минулий місяць
-            $invoice_data['counters']['current_counter'] = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', Carbon::now()->subMonth()->month)->first();
+            $invoice_data['counters']['current_counter'] = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', Carbon::now()->subMonth()->month)->first();
 
             //Отримуємо показники за позаминулий місяць
-            $invoice_data['counters']['counter_2m_ago'] = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', Carbon::now()->subMonth(2)->month)->first();
+            $invoice_data['counters']['counter_2m_ago'] = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', Carbon::now()->subMonth(2)->month)->first();
 
             //Отримуємо показники за позапозаминулий місяць
-            $invoice_data['counters']['counter_3m_ago'] = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', Carbon::now()->subMonth(3)->month)->first();
+            $invoice_data['counters']['counter_3m_ago'] = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', Carbon::now()->subMonth(3)->month)->first();
 
 
             $invoice_data['date']['month'] = '08';
@@ -227,11 +227,11 @@ class InvoiceController extends BaseController
 			foreach ($services as $service) {
 				if (Service::where('id', $service['service_id'])->first('counters')->counters === '1') {
 					if (Meters::where('service_id', $service['service_id'])->where('abonent_id', $abonent_id)->get()->count() > 0) {
-						$countersCheck = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', '=', $lastMonth)->first('value');
+						$countersCheck = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', '=', $lastMonth)->first('value');
 
-						$lastCounters = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', '=', $beforeLastMonth)->first('value')->value;
+						$lastCounters = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', '=', $beforeLastMonth)->first('value')->value;
 
-						$beforeLastCounters = Counter::where('abonent_id', $abonent_id)->whereMonth('added_at', '=', $beforeBeforeLastMonth)->first('value')->value;
+						$beforeLastCounters = Counter::where('abonent_id', $abonent_id)->whereMonth('created_at', '=', $beforeBeforeLastMonth)->first('value')->value;
 
 						if ($countersCheck) {
 							$currentCounters = $countersCheck->value;
@@ -245,8 +245,8 @@ class InvoiceController extends BaseController
 
 						$newBalance = Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('value')->value - $total;
 
-						if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('last_update')->last_update)) < date('m')) {
-							Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'last_update' => date('Y-m-d')]);
+						if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('updated_at')->updated_at)) < date('m')) {
+							Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'updated_at' => date('Y-m-d')]);
 						}
 					} else {
 						$peoples = Abonent::where('id', $abonent_id)->first('peoples')->peoples;
@@ -254,15 +254,15 @@ class InvoiceController extends BaseController
 						$total = $peoples * 4 * Tariff::where('name', 'tariff')->where('service_id', $service['service_id'])->first('value')->value;
 
 						$newBalance = Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('value')->value - $total;
-						if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('last_update')->last_update)) < date('m')) {
-							Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'last_update' => date('Y-m-d')]);
+						if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('updated_at')->updated_at)) < date('m')) {
+							Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'updated_at' => date('Y-m-d')]);
 						}
 					}
 				} else {
 					$newBalance = Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('value')->value - (float)Tariff::where('name', 'tariff')->where('service_id', $service['service_id'])->first('value')->value;
 
-					if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('last_update')->last_update)) < date('m')) {
-						Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'last_update' => date('Y-m-d')]);
+					if (date('m', strtotime(Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->first('updated_at')->updated_at)) < date('m')) {
+						Balance::where('abonent_id', $abonent_id)->where('service_id', $service['service_id'])->update(['value' => $newBalance, 'updated_at' => date('Y-m-d')]);
 					}
 				}
 			}
@@ -282,7 +282,7 @@ class InvoiceController extends BaseController
 				if ($service['counters'] == 1) {
 					$meters = Meters::where('service_id', $service['id'])->where('abonent_id', $abonent_id)->get();
 
-					$service['last_counters'] = Counter::where('abonent_id', $abonent_id)->where('service_id', $service['id'])->whereMonth('added_at', '=', $beforeLastMonth)->first('value')->value;
+					$service['last_counters'] = Counter::where('abonent_id', $abonent_id)->where('service_id', $service['id'])->whereMonth('created_at', '=', $beforeLastMonth)->first('value')->value;
 
 					$service['meters'] = $meters;
 				}
