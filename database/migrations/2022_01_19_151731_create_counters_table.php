@@ -21,7 +21,7 @@ class CreateCountersTable extends Migration
             $table->integer('author_id');
             $table->integer('archived')->default(0);
             $table->integer('value');
-            $table->dateTime('added_at')->default('current_timestamp()');
+            $table->dateTime('created_at')->default('current_timestamp()');
         });
     }
 

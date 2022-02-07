@@ -21,7 +21,7 @@ class Meter extends JsonResource
 	public function toArray($request)
     {
 
-        $last_counter = Meters::find($this->id)->counters()->orderBy('added_at', 'DESC')->first();
+        $last_counter = Meters::find($this->id)->counters()->orderBy('created_at', 'DESC')->first();
 
 
         if (!$last_counter) {

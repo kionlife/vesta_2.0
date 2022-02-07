@@ -255,6 +255,8 @@ class AbonentController extends Controller
             $balance = $abonent->balanceCalc($service['id']);
             $service['balance'] = $balance['value'];
             $service['status'] = $balance['status'];
+            $service['tariff'] = Tariff::where('id', Balance::where('abonent_id', $id)->where('service_id', $service['id'])->first()['tariff_id'])->first();
+            $service['available_tariffs'] = Tariff::where('service_id', $service['id'])->get();
 
             array_push($servicesNew, $service);
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
@@ -291,7 +293,7 @@ class AbonentController extends Controller
                     'current'    => $meter->tariff,
                     'available'  => Tariff::whereIn('provider_id', $meter->services()->where('status', 1)->first()->provider[0])->get()
                 ),
-                'counters' => Counter::where('meter_id', $meter->id)->orderBy('added_at', 'DESC')->with('author')->get()
+                'counters' => Counter::where('meter_id', $meter->id)->orderBy('created_at', 'DESC')->with('author')->get()
             );
 
             array_push($metersNew, $meter0);
@@ -325,13 +327,20 @@ class AbonentController extends Controller
         $abonent['contracts'] = array_map("unserialize", array_unique(array_map("serialize", $contractsNew)));
         $abonent['type'] = Abonent::with('type')->findOrFail($id)->type;
 
-        $costs = Cost::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
-        $payments = Payment::where('abonent_id', $id)->orderBy('created_at', 'DESC')->get();
+        $costs = Cost::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get();
+        $payments = Payment::where('abonent_id', $id)->where('archived', 0)->orderBy('created_at', 'DESC')->get()->transform(function($item) {
+            $payment = $item;
+            $payment['allow_cancel'] = 0;
+            if (strtotime($item['created_at']) > (time() - (60*60*24))) {
+                $payment['allow_cancel'] = 1;
+            }
+            return $item;
+        });
+
 
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
         $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
-
 
         return view('abonents/card', [
             'abonent'   => $abonent,
@@ -340,7 +349,7 @@ class AbonentController extends Controller
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
-            'services'  => Service::all()
+            'services'  => collect($servicesNew)->where('status', 1),
         ]);
 
     }
@@ -371,13 +380,15 @@ class AbonentController extends Controller
 
         $family=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
 
+        $abonent->personal_account = $input['personal_account'];
         $abonent->name = $input['name'];
         $abonent->address = $input['address'];
         $abonent->phone = $input['phone'];
         $abonent->peoples = $family;
 
+
         if (isset($input['status'])) {
-            $abonent->status = $input['status'];
+            $abonent->status = 1;
         } else {
             $abonent->status = 0;
         }

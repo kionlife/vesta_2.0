@@ -292,6 +292,29 @@ var person = {
     }
 }
 
+var payment = {
+    'delete': function (id) {
+        console.log('delete ' + id);
+        $.ajax({
+            url: '/payments/delete/' + id,
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: id,
+            complete: function () {
+
+            },
+            success: function (data) {
+                $('#payment_' + id).fadeOut();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+}
+
 function tabShow(id) {
     $('#' + id).toggleClass('opened');
 }

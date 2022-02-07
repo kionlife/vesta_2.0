@@ -39,7 +39,7 @@ class AbonentsImport implements ToArray, WithHeadingRow
                             '',
                             'author_id' => 1,
                             'value'     => $row[10],
-                            'added_at'  => '15.01.2021'
+                            'created_at'  => '15.01.2021'
                         ),
                         'february' => array(),
                         'march'    => array(),

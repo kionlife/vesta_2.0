@@ -82,6 +82,7 @@ Route::middleware('auth:web')->post('/corrections', [CorrectionController::class
 /* Роути для платежів */
 Route::middleware('auth:web')->get('/payments', [PaymentController::class, 'index']);
 Route::middleware('auth:web')->post('/payments', [PaymentController::class, 'store']);
+Route::middleware('auth:web')->post('/payments/delete/{id}', [PaymentController::class, 'destroy']);
 
 
 /* Роути для чекбокса */

@@ -59,7 +59,7 @@ class HomeController extends Controller
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
-            $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('added_at', [$start, $end])->count();
+            $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->count();
             $t_payments = Payment::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
             $date = [
                 'day' => Payment::whereIn('service_id', $service_id)->where('title', '!=', 'Корекція')->whereBetween('created_at', [$start, $end] )->sum('value'),
@@ -71,7 +71,7 @@ class HomeController extends Controller
             //$abonent_id = Abonent::where('user_id', $user->id)->first();
             $abonent_id = Abonent::where('user_id', $user->id)->first();
 
-            $t_counters = Counter::where('abonent_id', $abonent_id->id)->whereBetween('added_at', [$start, $end])->get()->count();
+            $t_counters = Counter::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->count();
             $t_payments = Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->get()->sum('value');
             $date = [
                 'day' => Payment::where('abonent_id', $abonent_id->id)->whereBetween('created_at', [$start, $end])->sum('value'),
