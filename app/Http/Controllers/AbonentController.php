@@ -349,7 +349,7 @@ class AbonentController extends Controller
             'user'      => $user,
             'cities'    => City::all(),
             'types'     => Type::all(),
-            'services'  => collect($servicesNew)->where('status', 1)->get(),
+            'services'  => collect($servicesNew)->where('status', 1),
         ]);
 
     }
