@@ -75,7 +75,7 @@ class CounterController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
@@ -111,37 +111,44 @@ class CounterController extends Controller
  //            $result = $this->sendResponse('', 'Показники абонента в поточному місяці для цього лічильника вже були передані');
              $result = $this->sendError('Показники абонента в поточному місяці для цього лічильника вже були передані',$input['meter_id'] . ' error', 200);
          } else {*/
-        foreach ($meter_services as $service) {
 
-
-            $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
-            $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('created_at', 'DESC')->first();
-            if (!$last_counter) {
-                $last_counter = 0;
-            } else {
-                $last_counter = $last_counter['value'];
-            }
-
-
-            $cost = new Cost();
-            $cost->abonent_id = $abonent->id;
-            $cost->service_id = $service['id'];
-            $cost->meter_id = $input['meter_id'];
-            $cost->author_id = $input['author_id'];
-            $cost->value = ($input['value'] - $last_counter) * $tariff;
-            $cost->save();
-
-            $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
-            $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
-            $current_balance->updated_at = date('Y-m-d');
-            $current_balance->save();
-
-
+        $last_counter = Counter::where('meter_id', $input['meter_id'])->orderBy('created_at', 'DESC')->first();
+        if (!$last_counter) {
+            $last_counter = 0;
+        } else {
+            $last_counter = $last_counter['value'];
         }
-        $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
-        $counter = Counter::create($input);
-        $result = redirect('/counters')->with('alert', true);
 
+        if ($last_counter <= $input['value']) {
+
+            foreach ($meter_services as $service) {
+
+
+                $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
+
+
+                $cost = new Cost();
+                $cost->abonent_id = $abonent->id;
+                $cost->service_id = $service['id'];
+                $cost->meter_id = $input['meter_id'];
+                $cost->author_id = $input['author_id'];
+                $cost->value = ($input['value'] - $last_counter) * $tariff;
+                $cost->save();
+
+                $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
+                $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
+                $current_balance->updated_at = date('Y-m-d');
+                $current_balance->save();
+
+
+            }
+            $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
+            $counter = Counter::create($input);
+            $result = redirect('/counters')->with('alert', true);
+
+        } else {
+            $result = redirect('/counters')->with('alert', false);
+        }
 //        }
 
 
