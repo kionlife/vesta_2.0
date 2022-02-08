@@ -176,6 +176,11 @@ $(document).ready(function () {
     $('#current_counter').on('keyup', function (e) {
         let used = $(this).val() - $('#last_counter').val();
        $('#used_counter').val(used);
+       if (used >= 0) {
+           $('button[type=submit]').removeAttr('disabled');
+       } else {
+           $('button[type=submit]').attr('disabled', 'disabled');
+       }
     });
 
 });
@@ -317,6 +322,7 @@ var payment = {
 
 function tabShow(id) {
     $('#' + id).toggleClass('opened');
+    $('#' + id).parent().find('.cross').toggleClass('clicked')
 }
 
 function checkAll(id) {

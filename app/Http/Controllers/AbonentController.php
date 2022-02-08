@@ -256,7 +256,7 @@ class AbonentController extends Controller
             $service['balance'] = $balance['value'];
             $service['status'] = $balance['status'];
             $service['tariff'] = Tariff::where('id', Balance::where('abonent_id', $id)->where('service_id', $service['id'])->first()['tariff_id'])->first();
-            $service['available_tariffs'] = Tariff::where('service_id', $service['id'])->get();
+            $service['available_tariffs'] = Tariff::where('service_id', $service['id'])->where('city_id', $abonent['city_id'])->get();
 
             array_push($servicesNew, $service);
             $contract = Contract::where('abonent_id', $id)->where('provider_id', $service['provider_id'])->first();
@@ -300,9 +300,9 @@ class AbonentController extends Controller
 
         }
 
-        $family=Family::where('abonent_id', $id)->where('archived', 0)->get();
+        $family = Family::where('abonent_id', $id)->where('archived', 0)->get();
 
-        $fam_count=Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
+        $fam_count = Family::where('abonent_id', $id)->where('archived', 0)->get()->count();
         $abonent['peoples'] = $fam_count;
 
 
@@ -406,8 +406,10 @@ class AbonentController extends Controller
         }
 
 
-        foreach ($input['persons'] as $person) {
-            Family::where('abonent_id', $id)->where('id', $person['id'])->update(['first_name' => $person['first_name'],'second_name' => $person['second_name'],'last_name' => $person['last_name']]);
+        if (isset($input['persons'])) {
+            foreach ($input['persons'] as $person) {
+                Family::where('abonent_id', $id)->where('id', $person['id'])->update(['first_name' => $person['first_name'], 'second_name' => $person['second_name'], 'last_name' => $person['last_name']]);
+            }
         }
 
 

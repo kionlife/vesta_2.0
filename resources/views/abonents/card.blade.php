@@ -152,15 +152,19 @@
 
                                                 <div id="tab-{{ $service['id'] }}" class="content">
                                                     <div class="row">
-
+                                                        <div class="col-md-1">
+                                                            <label class="control-label">Тариф</label>
+                                                        </div>
                                                         <div class="col-md-6">
-                                                            <select class="form-control1" name="" id="">
+                                                            <select disabled="" class="form-control1" name="" id="">
                                                                 @foreach ($service['available_tariffs'] as $av_tariff)
-                                                                    <option @if ($av_tariff['id'] == $service['tariff']['id']) selected @endif value="">{{ $av_tariff['name'] }}</option>
+                                                                    <option @if ($av_tariff['id'] == $service['tariff']['id']) selected @endif value="{{ $av_tariff['id'] }}">
+                                                                        (@money($av_tariff['value'])) {{ $av_tariff['name'] }}
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-4"></div>
+                                                        <div class="col-md-3"></div>
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
                                                                 <div class="onoffswitch">
@@ -506,30 +510,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="form-group">
-                                                                        <label
-                                                                            class="col-sm-4 control-label">Тариф
-                                                                            лічильника</label>
-                                                                        <div class="col-sm-8">
-                                                                            <div class="meter_service">
-                                                                                <select class="form-control1"
-                                                                                        name="meters[{{ $meter['meter_id'] }}][tariff_id]"
-                                                                                        id="">
-                                                                                    <option selected
-                                                                                            value="{{ $meter['tariff']['current']['id'] }}">
-                                                                                        ({{ $meter['tariff']['current']['value'] }}
-                                                                                        ) {{ $meter['tariff']['current']['name'] }}</option>
 
-                                                                                    @foreach($meter['tariff']['available'] as $tariff)
-                                                                                        <option
-                                                                                            value="{{ $tariff['id'] }}">
-                                                                                            ({{ $tariff['value'] }}
-                                                                                            ) {{ $tariff['name'] }}</option>
-                                                                                    @endforeach
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -812,21 +793,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label
-                                            class="col-sm-4 control-label">Тариф лічильника</label>
-                                        <div class="col-sm-8">
-                                            <div class="meter_service">
-                                                <select class="form-control1"
-                                                        name="tariff_id" id="">
-                                                    @foreach($abonent['tariffs'] as $tariff)
-                                                        <option value="{{ $tariff['id'] }}">({{ $tariff['value'] }}
-                                                            ) {{ $tariff['name'] }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

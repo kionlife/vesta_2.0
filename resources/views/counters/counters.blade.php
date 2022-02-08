@@ -47,7 +47,7 @@
                                         <label class="control-label">Попередній</label>
                                         <input id="last_counter" type="text" disabled required="">
                                     </div>
-                                    <div class="col-md-3 form-group1">
+                                    <div class="col-md-2 form-group1">
                                         <label class="control-label">Поточний</label>
                                         <input id="current_counter" type="text" name="value" placeholder="" required="">
                                     </div>
@@ -55,15 +55,15 @@
                                         <label class="control-label">Використано м³</label>
                                         <input id="used_counter" type="text" disabled required="">
                                     </div>
-                                    <div class="col-md-2 form-group1">
+                                    <div class="col-md-3 form-group1">
                                         <label class="control-label">Дата</label>
-                                        <input id="created_at" type="date" name="created_at" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required="">
+                                        <input id="created_at" type="datetime-local" name="created_at" max="{{ date('Y-m-d H:i:s') }}" value="{{ date('Y-m-d\TH:i') }}" required="">
                                     </div>
                                 </div>
 
                                 <div class="row margin-top">
                                     <div class="col-md-12 text-center">
-                                        <button class="btn btn-primary" type="submit" value="+">Додати показник</button>
+                                        <button class="btn btn-primary" disabled type="submit" value="+">Додати показник</button>
                                     </div>
                                 </div>
 

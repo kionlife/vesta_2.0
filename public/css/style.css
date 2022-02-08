@@ -43,6 +43,11 @@ a:hover { transition: all 200ms ease-in-out; }
     outline:none;
 }
 
+.btn-primary.disabled, .btn-primary.disabled.active, .btn-primary.disabled.focus, .btn-primary.disabled:active, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled], .btn-primary[disabled].active, .btn-primary[disabled].focus, .btn-primary[disabled]:active, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary, fieldset[disabled] .btn-primary.active, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:active, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {
+    background-color: #303c52;
+    border-color: #2e6da4;
+}
+
 .page-container {
   min-width: 1260px;
   position: relative;
@@ -2606,7 +2611,7 @@ button.btn.btn-default {
 .forms-main {
     margin-bottom: 2em;
 }
-.form-group1 input[type="text"], .form-group1 textarea, .form-group1 input[type="password"], .form-group1 input[type="date"] {
+.form-group1 input[type="text"], .form-group1 textarea, .form-group1 input[type="password"], .form-group1 input[type="date"], .form-group1 input[type="datetime-local"] {
     border: 1px solid #E9E9E9;
     font-size: 0.9em;
     width: 100%;
@@ -2614,6 +2619,7 @@ button.btn.btn-default {
         padding: 0.7em 1em;
     color: #999;
         font-family: 'Roboto', sans-serif;
+    line-height: initial;
 }
 button, input, select, textarea {
     font-family: inherit;
@@ -8302,6 +8308,10 @@ footer  p a:hover ,.footer p a:hover{
     margin-top: -2px;
 }
 
+.clicked.cross:after {
+    transform: rotate(0deg);
+}
+
 .content {
     font-size: 0.9em;
     max-height: 0px;
@@ -8615,4 +8625,10 @@ input.editableInput {
     margin: 0 !important;
     display: block;
     width: 100% !important;
+}
+
+#living {
+    height: 20px;
+    width: 20px;
+    margin-top: 10px;
 }
