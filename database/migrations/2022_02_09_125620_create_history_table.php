@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateHistoryTable extends Migration
@@ -17,7 +18,8 @@ class CreateHistoryTable extends Migration
             $table->integer('id')->primary();
             $table->integer('author_id');
             $table->string('action');
-            $table->dateTime('date')->default('current_timestamp()');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 

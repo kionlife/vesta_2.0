@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateBalancesTable extends Migration
@@ -21,8 +22,9 @@ class CreateBalancesTable extends Migration
             $table->integer('status')->default(1);
             $table->integer('tariff_id')->default(0);
             $table->integer('archived')->default(0);
-            $table->dateTime('updated_at')->default('current_timestamp()');
-            
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+
             $table->foreign('service_id', 'balances_ibfk_2')->references('id')->on('services');
         });
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateMetersTable extends Migration
@@ -23,7 +24,8 @@ class CreateMetersTable extends Migration
             $table->date('last_check')->nullable();
             $table->date('next_check')->nullable();
             $table->integer('archived')->default(0);
-            $table->timestamps()->default('current_timestamp()');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 
