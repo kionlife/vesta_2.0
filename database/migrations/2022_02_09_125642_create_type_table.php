@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTypeTable extends Migration
@@ -16,7 +17,8 @@ class CreateTypeTable extends Migration
         Schema::create('type', function (Blueprint $table) {
             $table->integer('id')->primary();
             $table->string('title', 128);
-            $table->dateTime('created_at')->default('current_timestamp()');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 

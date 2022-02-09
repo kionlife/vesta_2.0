@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateCountersTable extends Migration
@@ -21,7 +22,8 @@ class CreateCountersTable extends Migration
             $table->integer('author_id');
             $table->integer('archived')->default(0);
             $table->integer('value');
-            $table->dateTime('created_at')->default('current_timestamp()');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 
