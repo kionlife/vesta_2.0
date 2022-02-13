@@ -434,7 +434,6 @@ class AbonentController extends Controller
                 $meter->next_check = $single_meter['next_check'];
                 $meter->last_check = $single_meter['last_check'];
 //                $meter->tariff_id = $single_meter['tariff_id'];
-                $meter->tariff_id = 1;
 
                 $meter->services()->sync($single_meter['services']);
 
