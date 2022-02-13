@@ -412,7 +412,6 @@ class AbonentController extends Controller
             }
         }
 
-
         foreach ($input['contracts'] as $contract) {
             Contract::where('abonent_id', $id)->where('provider_id', $contract['provider_id'])->update([
                 'title' => $contract['title'],

@@ -282,7 +282,7 @@ class CounterController extends Controller
 
                             $counter = new Counter();
                             $counter->abonent_id = $meter->abonent_id;
-                            $counter->service_id = 0;
+                            $counter->service_id = $service['id'];
                             $counter->meter_id = $meter->id;
                             $counter->author_id = $user->id;
                             $counter->archived = 0;
