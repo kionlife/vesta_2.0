@@ -103,6 +103,10 @@ Route::middleware('auth:web')->post('/support/send-screen', [SupportController::
 Route::middleware('auth:web')->get('/debug/balances', [DebugController::class, 'balancesMigrate']);
 Route::middleware('auth:web')->get('/generate', [InvoiceController::class, 'generate']);
 Route::middleware('auth:web')->get('/cost/repair', [DebugController::class, 'costGenerateByServiceId']);
+Route::middleware('auth:web')->get('/debug/cost/generate', [DebugController::class, 'generateCosts']);
+Route::middleware('auth:web')->get('/debug/counters/empty', [DebugController::class, 'getAbonentsWithoutCountersPreview']);  //додаємо показники для абонентів, котрі не передали їх
+Route::middleware('auth:web')->get('/debug/balance/nullable', [DebugController::class, 'makeBallanceNullable']);  //додаємо показники для абонентів, котрі не передали їх
+
 
 
 

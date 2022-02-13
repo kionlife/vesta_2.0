@@ -123,7 +123,11 @@ class CounterController extends Controller
 
             foreach ($meter_services as $service) {
 
+                $s = $abonent->service()->where('status', 1)->get()->map(function ($serv) {
+                    return $serv['service_id'];
+                })->toArray();
 
+                if (in_array($service['id'], $s)) {
                 $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
 
 
@@ -139,7 +143,7 @@ class CounterController extends Controller
                 $current_balance->value = $abonent->balanceCalc($service['id'])['value'];
                 $current_balance->updated_at = date('Y-m-d');
                 $current_balance->save();
-
+            }
 
             }
             $meter = Meters::where('abonent_id', $input['abonent_id'])->where('id', $input['meter_id'])->update(['counter' => $input['value']]);
@@ -239,6 +243,8 @@ class CounterController extends Controller
             $query->whereMonth('created_at', Carbon::now()->format('m'));
         })->orderBy('abonent_id', 'ASC')->where('archived', 0)->get();
 
+//        $meters = Meters::whereIn('id', [4836,4837])->get();
+
         $currentMonth = Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
         $lastMonth = Carbon::now()->subMonth()->format('m');
@@ -251,48 +257,47 @@ class CounterController extends Controller
 
 
             $abonent = Abonent::find($meter->abonent_id);
-            $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
-            $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
-            $tariff_total = 0;
-            if ($current_counter['value'] == 0) {
+            if ($abonent['archived'] == 0) {
+                $current_counter = $this->getCounter($meter->id, $currentMonth, $currentYear);
+                $last_counter = $this->getCounter($meter->id, $lastMonth, $lastYearOfMonth);
+                $tariff_total = 0;
+                if ($current_counter['value'] == 0) {
+                    $abonent_services = $abonent->service()->where('status', 1)->with('tariff')->get();
 
-                $abonent_services = $abonent->service()->where('status', 1)->with('tariff')->get();
+                    $s = $abonent_services->map(function ($serv) {
+                        return $serv['service_id'];
+                    })->toArray();
+                    foreach ($meter->services()->where('status', 1)->get() as $service) {
 
-                $s = $abonent_services->map(function ($serv) {
-                    return $serv['service_id'];
-                })->toArray();
+                        if (in_array($service['id'], $s)) {
+                            $tariff = $abonent_services->where('service_id', $service['id'])->first()->tariff;
+                            $tariff_total += $tariff['value'];
+                            if ($meter['title'] == 'virtual') {
+                                $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
+                                $used = $current_counter['value'] - $last_counter['value'];
+                            } else {
+                                $current_counter['value'] = $last_counter['value'];
+                                $used = $current_counter['value'] - $last_counter['value'];
+                            }
 
-                foreach ($meter->services as $service) {
-
-                    if (in_array($service['id'], $s)) {
-                        $tariff = $abonent_services->where('service_id', $service['id'])->first()->tariff;
-                        $tariff_total += $tariff['value'];
-                        if ($meter['title'] == 'virtual') {
-                            $current_counter['value'] = $last_counter['value'] + $tariff['multiplier'] * $abonent->peoples;
-                            $used = $current_counter['value'] - $last_counter['value'];
-                        } else {
-                            $current_counter['value'] = $last_counter['value'];
-                            $used = $current_counter['value'] - $last_counter['value'];
+                            $counter = new Counter();
+                            $counter->abonent_id = $meter->abonent_id;
+                            $counter->service_id = 0;
+                            $counter->meter_id = $meter->id;
+                            $counter->author_id = $user->id;
+                            $counter->archived = 0;
+                            $counter->last_value = $last_counter['value'];
+                            $counter->value = $current_counter['value'];
+                            $counter->used = $used;
+                            $counter->to_pay = $tariff_total * $used;
+                            $counters[] = $counter;
                         }
-
-                        $counter = new Counter();
-                        $counter->abonent_id = $meter->abonent_id;
-                        $counter->service_id = 0;
-                        $counter->meter_id = $meter->id;
-                        $counter->author_id = $user->id;
-                        $counter->archived = 0;
-                        $counter->last_value = $last_counter['value'];
-                        $counter->value = $current_counter['value'];
-                        $counter->used = $used;
-                        $counter->to_pay = $tariff_total * $used;
-                        $counters[] = $counter;
                     }
+
+
                 }
-
-
             }
         }
-
         return $counters;
 
     }
