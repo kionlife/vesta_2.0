@@ -156,7 +156,7 @@
                                                             <label class="control-label">Тариф</label>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            @isset ($service['tariff']['id'] != 0)
+                                                            @isset ($service['tariff']['id'])
                                                             <select disabled="" class="form-control1" name="" id="">
                                                                 @foreach ($service['available_tariffs'] as $av_tariff)
                                                                     <option @if ($av_tariff['id'] == $service['tariff']['id']) selected @endif value="{{ $av_tariff['id'] }}">
