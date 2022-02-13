@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateCostsTable extends Migration
@@ -21,7 +22,9 @@ class CreateCostsTable extends Migration
             $table->integer('service_id');
             $table->string('title')->default('Списання');
             $table->decimal('value', 10, 2)->nullable();
-            $table->dateTime('created_at')->default('current_timestamp()');
+            $table->integer('archived')->default(0);
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 

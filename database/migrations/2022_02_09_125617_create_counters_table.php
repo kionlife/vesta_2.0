@@ -2,9 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBalancesTable extends Migration
+class CreateCountersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +14,16 @@ class CreateBalancesTable extends Migration
      */
     public function up()
     {
-        Schema::create('balances', function (Blueprint $table) {
+        Schema::create('counters', function (Blueprint $table) {
             $table->integer('id')->primary();
             $table->integer('abonent_id');
             $table->integer('service_id');
-            $table->float('value');
-            $table->integer('status')->default(1);
+            $table->integer('meter_id')->default(0);
+            $table->integer('author_id');
             $table->integer('archived')->default(0);
-            $table->date('updated_at')->default('current_timestamp()');
-            
-            $table->foreign('service_id', 'balances_ibfk_2')->references('id')->on('services');
+            $table->integer('value');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 
@@ -33,6 +34,6 @@ class CreateBalancesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('balances');
+        Schema::dropIfExists('counters');
     }
 }

@@ -15,8 +15,8 @@ class CreateServicesTable extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->integer('id')->index()->primary();
-            $table->string('name', 128)->index('name');
-            $table->string('type', 32)->default('default');
+            $table->string('name', 128)->nullable()->index('name');
+            $table->string('type', 32)->nullable();
             $table->boolean('counters')->default(1);
             $table->integer('city_id')->nullable();
             $table->integer('provider_id')->default(0);

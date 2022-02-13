@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateReceiptDataTable extends Migration
@@ -21,7 +22,8 @@ class CreateReceiptDataTable extends Migration
             $table->integer('current_counters_id');
             $table->decimal('balance', 10, 2);
             $table->decimal('to_pay', 10, 2);
-            $table->timestamps()->default('0000-00-00 00:00:00');
+            $table->datetime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->datetime('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 
