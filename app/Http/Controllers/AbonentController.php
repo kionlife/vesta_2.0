@@ -168,7 +168,6 @@ class AbonentController extends Controller
         $userReg->password = bcrypt($input['personal_account']);
         $userReg->name = $input['name'];
 
-        try {
             $userReg->save();
             $input['user_id'] = $userReg->id;
 
@@ -198,7 +197,7 @@ class AbonentController extends Controller
                     'abonent_id' => $balanceData['abonent_id'],
                     'provider_id' => Service::where('id', $item['id'])->first('provider_id')['provider_id'],
                     'title' => '',
-                    'date' => ''
+                    'date' => date('Y-m-d')
                 );
                 Balance::create($balanceData);
             }
@@ -208,11 +207,7 @@ class AbonentController extends Controller
                 Contract::create($contract);
             }
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            $message['status'] = false;
-            $message['text'] = 'Помилка ' . $e->errorInfo[1] . ': ' . $e->errorInfo[2];
 
-        }
 
 
         return $abonent->id;
@@ -412,11 +407,16 @@ class AbonentController extends Controller
             }
         }
 
-        foreach ($input['contracts'] as $contract) {
-            Contract::where('abonent_id', $id)->where('provider_id', $contract['provider_id'])->update([
-                'title' => $contract['title'],
-                'date' => date("Y-m-d", strtotime($contract['date']))
-            ]);
+        if (isset($input['contracts'])) {
+            foreach ($input['contracts'] as $contract) {
+                if (!$contract['title']) {
+                    $contract['title'] = '';
+                }
+                Contract::where('abonent_id', $id)->where('provider_id', $contract['provider_id'])->update([
+                    'title' => $contract['title'],
+                    'date' => date("Y-m-d", strtotime($contract['date']))
+                ]);
+            }
         }
 
 //        $balance->value = $input['balance'];
