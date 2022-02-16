@@ -3,6 +3,7 @@
 use App\Http\Controllers\DebugController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SupportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,6 +91,10 @@ Route::get('/shifts', [PaymentController::class, 'getShift']);
 
 /* Роути для звіту */
 Route::middleware('auth:web')->get('/home/{date}', [HomeController::class, 'show']);
+
+/* Роути для налаштувань */
+Route::middleware('auth:web')->get('/settings', [SettingsController::class, 'index']);
+Route::middleware('auth:web')->get('/settings/abonents', [SettingsController::class, 'abonents']);
 
 /* Роути для лічильників */
 Route::middleware('auth:web')->post('/meters/remove/{id}', [MeterController::class, 'destroy']);

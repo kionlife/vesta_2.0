@@ -8632,3 +8632,17 @@ input.editableInput {
     width: 20px;
     margin-top: 10px;
 }
+
+.settingsBtn {
+    background: #303c52;
+    color: #fff;
+    padding: 20px;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.settingsBtn:hover {
+    background: #273042;
+    color: #fff;
+}
