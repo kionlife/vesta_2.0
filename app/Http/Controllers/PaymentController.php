@@ -64,7 +64,7 @@ class PaymentController extends Controller
 
 		if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
-            $payments = Payment::orderBy('created_at', 'DESC')->paginate($limit);
+            $payments = Payment::orderBy('created_at', 'DESC')->where('archived', 0)->paginate($limit);
 
             $payments->getCollection()->transform(function($item) {
                 $payment = $item;
@@ -74,14 +74,6 @@ class PaymentController extends Controller
                 }
                 return $item;
             });
-
-		} else {
-			$abonent_id = Abonent::where('user_id', $user->id)->first();
-
-			$payments = Payment::where('abonent_id', $abonent_id->id)->offset($offset)->limit($limit)->get();
-			$total_count = Payment::where('abonent_id', $abonent_id->id)->get()->count();
-
-			$result = PaymentResource::collection($payments)->additional(['total_count' => $total_count, 'success' => true, 'pay_allow' => $this->pay_allow]);
 
 		}
 
