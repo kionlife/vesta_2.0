@@ -98,7 +98,7 @@
     </script>
     <div class="modal fade modalCustom" id="add_abonent" tabindex="-1" role="dialog" aria-labelledby="add_abonent" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
-            <form class="modal-content" action="javascript:void(null);" onsubmit="abonent.add()" method="post">
+            <form class="modal-content" action="/abonents" method="post">
                 @csrf
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

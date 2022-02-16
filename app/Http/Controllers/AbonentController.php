@@ -161,9 +161,25 @@ class AbonentController extends Controller
         Додати перевірку на наявність абонента, користувача
         Додати перевірку помилок
         */
+
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
+            'personal_account' => 'required|min:4|max:6|unique:abonents,personal_account',
+        ]);
+
+        if ($validator->fails()) {
+            //dd($validator);
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+
         $userReg = User::firstOrNew(array(
             'email' => $input['personal_account'],
         ));
+        
         $abonent = new Abonent();
         $userReg->password = bcrypt($input['personal_account']);
         $userReg->name = $input['name'];
@@ -367,6 +383,7 @@ class AbonentController extends Controller
             'phone' => 'required',
             'peoples' => 'required',
             'city_id' => 'required',
+            'personal-account' => 'required|min:4|max:6|unique:abonents,personal_account'
         ]);
 
         if ($validator->fails()) {
