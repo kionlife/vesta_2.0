@@ -298,8 +298,35 @@ var person = {
 }
 
 var payment = {
+    'add': function () {
+        $.ajax({
+            url: '/payments',
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: $('#paymentAddForm').serialize(),
+            complete: function () {
+
+            },
+            success: function (data) {
+                if (data.success === true) {
+                    $('input[name=value]').val('');
+                    alert(data.message);
+                    location.reload();
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr);
+                $('.errorInput').remove();
+                $('input[name=' + Object.keys(xhr.responseJSON.data) + ']')
+                    .css('border', '1px solid red')
+                    .after('<p class="errorInput">' + xhr.responseJSON.data[Object.keys(xhr.responseJSON.data)[0]] + '</p>');
+            }
+        });
+
+    },
     'delete': function (id) {
-        console.log('delete ' + id);
         $.ajax({
             url: '/payments/delete/' + id,
             type: 'post',
@@ -318,6 +345,15 @@ var payment = {
             }
         });
     }
+}
+
+var modal = {
+    'payment': function (service) {
+
+    $('#add_payment').modal();
+    $('#add_payment #service_id').val(service['id']);
+    $('#add_payment #service_name').val(service['name']);
+}
 }
 
 function tabShow(id) {

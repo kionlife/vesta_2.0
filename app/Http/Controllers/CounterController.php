@@ -104,6 +104,7 @@ class CounterController extends Controller
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+        $meter = Meters::find($input['meter_id']);
         $meter_services = Meters::find($input['meter_id'])->services;
 
 
@@ -121,14 +122,19 @@ class CounterController extends Controller
 
         if ($last_counter <= $input['value']) {
 
-            foreach ($meter_services as $service) {
+            $abonent_services = $abonent->service()->where('status', 1)->with('tariff')->get();
 
-                $s = $abonent->service()->where('status', 1)->get()->map(function ($serv) {
-                    return $serv['service_id'];
-                })->toArray();
+            $s = $abonent_services->map(function ($serv) {
+                return $serv['service_id'];
+            })->toArray();
+
+
+            foreach ($meter->services()->where('status', 1)->get() as $service) {
+
 
                 if (in_array($service['id'], $s)) {
                 $tariff = Tariff::where('abonent_type', $abonent->type[0]->id)->where('city_id', $abonent->city_id)->where('service_id', $service['id'])->first()['value'];
+                    $tariff = $abonent_services->where('service_id', $service['id'])->first()->tariff;
 
 
                 $cost = new Cost();
@@ -136,7 +142,7 @@ class CounterController extends Controller
                 $cost->service_id = $service['id'];
                 $cost->meter_id = $input['meter_id'];
                 $cost->author_id = $input['author_id'];
-                $cost->value = ($input['value'] - $last_counter) * $tariff;
+                $cost->value = ($input['value'] - $last_counter) * $tariff['value'];
                 $cost->save();
 
                 $current_balance = Balance::where('abonent_id', $abonent->id)->where('service_id', $service['id'])->first();
