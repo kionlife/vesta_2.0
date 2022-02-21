@@ -97,9 +97,8 @@ Route::middleware('auth:api')->group( function () {
 	Route::resource('meters', MeterController::class);
 });
 
-Route::middleware('auth:api')->group( function () {
-	Route::resource('payments', PaymentController::class);
-});
+Route::middleware('auth:api')->get('/payments/getSources', [PaymentController::class, 'getSources']);
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
 	$userData = $request->user();

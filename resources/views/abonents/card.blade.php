@@ -106,7 +106,7 @@
                 </div>
 
                 <h2 class="inner-tittle">Послуги</h2>
-                <div class="grid-1">
+                <div id="card_services" class="grid-1">
                     <div class="col-md-12">
                         <div class="form-body">
                             <div class="form-horizontal">
@@ -144,8 +144,9 @@
                                                 <label onclick="tabShow('tab-{{ $service['id'] }}')"
                                                        class="serv @if ( $service['status'] != 1) notActive @endif"
                                                        for="tab-{{ $service['id'] }}">
-                                                    <div>{{ $service['name'] }} <span
-                                                            class="balance">Баланс: {{ $service['balance'] }}</span>
+                                                    <div>
+                                                        <p>{{ $service['name'] }}</p>
+                                                        <span class="balance">Баланс: {{ $service['balance'] }}</span>
                                                     </div>
                                                     <div class="cross"></div>
                                                 </label>
@@ -166,7 +167,9 @@
                                                             </select>
                                                             @endisset
                                                         </div>
-                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-3">
+                                                            <button type="button" class="btn btn-primary" onclick="modal.payment({{ $service }})"><i class="fa fa-dollar"></i> <span>Внести оплату</span></button>
+                                                        </div>
                                                         <div class="col-md-2">
                                                             <div class="switch-main">
                                                                 <div class="onoffswitch">
@@ -875,5 +878,97 @@
             </form>
         </div>
     </div>
+
+
+
+
+    <div class="modal fade modalCustom" id="add_payment" tabindex="-1" role="dialog" aria-labelledby="add_payment"
+         aria-hidden="true" style="display: none;">
+
+        <div class="modal-dialog">
+            <form id="paymentAddForm" class="modal-content" action="javascript:void(null);" onsubmit="payment.add()" method="post">
+                @csrf
+                <input type="hidden" value="{{ $abonent['id'] }}" name="abonent_id">
+                <input type="hidden" value="{{ $user['id'] }}" name="author_id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Оплата</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-body">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+
+                                        <label class="col-sm-4 control-label">Послуга</label>
+                                        <div class="col-sm-8">
+                                            <input id="service_name"
+                                                name="service_name"
+                                                type="text"
+                                                class="form-control"
+                                                disabled="disabled"
+                                                value="">
+                                            <input id="service_id"
+                                                name="service_id"
+                                                type="hidden"
+                                                class="form-control"
+                                                value="">
+                                        </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                        <label class="col-sm-4 control-label">Джерело надходження</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control1" name="source_id" id="">
+                                                @foreach($sources as $source)
+                                                    <option selected value="{{ $source['id'] }}">{{ $source['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                        <div class="form-group">
+
+                                        <label class="col-sm-4 control-label">Сума</label>
+                                        <div class="col-sm-8">
+                                            <input
+                                                name="value"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Сума платежу"
+                                                value="">
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @endsection

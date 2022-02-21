@@ -55,12 +55,6 @@ class PaymentController extends Controller
 			$offset = 0;
 		}
 
-        if (session('alert') == true) {
-            $alert = $this->sendResponseMessage('Платіж додано.');
-            $request->session()->forget('alert');
-        } else {
-            $alert = '';
-        }
 
 		if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
@@ -78,16 +72,14 @@ class PaymentController extends Controller
 		}
 
 
-        return view('payments/payments', [
-        'alert' => $alert
-        ])->with('payments', $payments)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get())->with('sources', Source_of_income::orderBy('name', 'DESC')->get());
+        return view('payments/payments')->with('payments', $payments)->with('user', $user)->with('services', Service::whereIn('id', $service_id)->get())->with('sources', Source_of_income::orderBy('name', 'DESC')->get());
 	}
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -103,15 +95,18 @@ class PaymentController extends Controller
 			$input['value'] = $request->value;
 		}
 
+
         $validator = Validator::make($input, [
-            'abonent_id' => 'required',
-            'service_id' => 'required',
-            'author_id'  => 'required',
-            'value'      => 'required',
+            'abonent_id' => 'required|numeric',
+            'service_id' => 'required|numeric',
+            'author_id'  => 'required|numeric',
+            'value'      => 'required|numeric|min:0',
         ]);
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+
+
+        if($validator->fails()) {
+            return $this->sendErrorMessage('Помилка', $validator->errors());
         }
 
 		$payment = Payment::create($input);
@@ -121,8 +116,8 @@ class PaymentController extends Controller
 
 		$balance = Balance::where('abonent_id', $input['abonent_id'])->where('service_id', $input['service_id'])->update(['value' => $newBalance]);
 
-		$result = redirect('/payments')->with('alert', true);
-        return $result;
+		return $this->sendResponseMessage('Платіж внесено');
+
     }
 
     /**

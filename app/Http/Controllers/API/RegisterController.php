@@ -55,7 +55,7 @@ class RegisterController extends BaseController
             // $success['permissions'] = $user->getAllPermissions();
             $success['abonent_id'] = $abonent;
 
-            return 'User login successfully.';
+            return $success;
         }
         else{
             return 'Unauthorised.';

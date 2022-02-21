@@ -4,18 +4,20 @@
 
     <div class="inner-content">
         <div class="outter-wp">
-            @if(!empty($alert))
-                @include('elements/notify', ['response' => $alert])
-            @endif
+                @if(session()->has('alert'))
+                    <div class="alert alert-success">
+                        {{ session()->get('alert') }}
+                    </div>
+                @endif
             <div class="sub-heard-part">
                 <ol class="breadcrumb m-b-0">
-                    <li><a href="/home">Головна</a></li>
+                    <li><a href="/">Головна</a></li>
                     <li class="active">Платежі</li>
                 </ol>
             </div>
             <div class="stats-info graph">
                 <div class="stats">
-                    <form method="post" action="/payments">
+                    <form id="paymentAddForm" method="post" action="javascript:void(null);" onsubmit="payment.add()">
                         @csrf
                         <div class="vali-form payment_form">
                             <div class="row">
