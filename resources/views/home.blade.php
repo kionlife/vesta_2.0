@@ -39,10 +39,36 @@
                     <div class="row">
 
 
-                        <div class="col-md-8">
-                        <div class="chrt-two">
-                            <div id="chart1"></div>
+                        <div class="col-md-7">
+                            <div class="chrt-two">
+                                <div id="chart1"></div>
+                            </div>
                         </div>
+                        <div class="col-md-5">
+                            <div class="set-1">
+                                <div class="row">
+                                    <div class="col-md-9 ">
+                                        <h3 class="sub-tittle">Надходження до каси</h3>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <select class="stats" name="service_id" id="payments_date">
+                                            <option selected="selected" value="@money($date['day']) грн">День</option>
+                                            <option value="@money($date['month']) грн">Місяць</option>
+                                            <option value="@money($date['year']) грн">Рік</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="degree">
+                                    <span id="payments"></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="paymentsUser">
+                                        <p>Платежів за день користувача {{ $user->name }}: <b>@money($payments_user)
+                                            грн</b></p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -51,26 +77,9 @@
             </div>
         </div>
 
-<div class="set-1">
-        <div class="row">
-            <div class="col-md-3 ">
-                <h3 class="sub-tittle">Надходження до каси</h3>
-            </div>
-            <div class="col-md-3 ">
-                <select class="stats-right" name="service_id" id="payments_date">
-                    <option selected="selected" value="@money($date['day']) грн">День</option>
-                    <option value="@money($date['month']) грн">Місяць</option>
-                    <option value="@money($date['year']) грн">Рік</option>
-                </select>
-            </div>
-        </div>
-            <div class="degree">
-                <span id="payments"></span>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    <!--//bottom-grids-->
-</div>
+
+        <!--//bottom-grids-->
+    </div>
 
     <script>
         $(document).ready(function () {
@@ -95,12 +104,10 @@
     </script>
 
     <script>
-        $(".stats-right").ready(function ()
-        {
-            $("#payments").text($(".stats-right :selected").val());
-        }).change(function ()
-        {
-            $("#payments").text($(".stats-right :selected").val());
+        $("#payments_date").ready(function () {
+            $("#payments").text($("#payments_date :selected").val());
+        }).change(function () {
+            $("#payments").text($("#payments_date :selected").val());
         });
     </script>
 

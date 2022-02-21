@@ -29,12 +29,13 @@ class Controller extends BaseController
      *
      * @return array
      */
-    public function sendResponseMessage($message, $code = 200)
+    public function sendResponseMessage($message = '', $code = 200, $success = false)
     {
         switch ($code) {
             case 200:
                 $status = 'Операція успішна';
                 $class = 'success';
+                $success = true;
                 break;
             default:
                 $status = 'Невідома помилка';
@@ -46,6 +47,7 @@ class Controller extends BaseController
             'status'  => $status,
             'class'   => $class,
             'message' => $message,
+            'success' => $success
         ];
 
         return $response;
@@ -73,5 +75,26 @@ class Controller extends BaseController
             'response' => $response,
             'code' => $code
         ]), $code);
+    }
+
+    /**
+     * return error response.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     */
+    public function sendErrorMessage($error, $errorMessages = [], $code = 422)
+    {
+        $response = [
+            'success' => false,
+            'message' => $error,
+        ];
+
+
+        if(!empty($errorMessages)){
+            $response['data'] = $errorMessages;
+        }
+
+
+        return response($response, $code);
     }
 }

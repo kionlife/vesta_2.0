@@ -11,6 +11,7 @@ use App\Models\Counter;
 use App\Models\Payment;
 use App\Models\Provider;
 use App\Models\Service2Meter;
+use App\Models\Source_of_income;
 use App\Models\Tariff;
 use App\Models\Type;
 use Illuminate\Http\Request;
@@ -288,7 +289,7 @@ class AbonentController extends Controller
                     'current'    => $meter->tariff,
                     'available'  => Tariff::whereIn('provider_id', $meter->services()->where('status', 1)->first()->provider[0])->get()
                 ),
-                'counters' => Counter::where('meter_id', $meter->id)->orderBy('created_at', 'DESC')->with('author')->get()
+                'counters' => Counter::where('meter_id', $meter->id)->orderBy('created_at', 'DESC')->with('author')->get(),
             );
 
             array_push($metersNew, $meter0);
@@ -336,6 +337,7 @@ class AbonentController extends Controller
 
         $abonent['history'] = $costs->merge($payments)->groupBy('service_id');
         $abonent['receipts'] = $abonent->receipt()->with('author', 'status')->get();
+        $sources = Source_of_income::all();
 
         return view('abonents/card', [
             'abonent'   => $abonent,
@@ -345,6 +347,8 @@ class AbonentController extends Controller
             'cities'    => City::all(),
             'types'     => Type::all(),
             'services'  => collect($servicesNew)->where('status', 1),
+            'sources' => $sources
+
         ]);
 
     }

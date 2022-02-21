@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 
+use App\Models\Source_of_income;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Counter;
@@ -181,6 +182,12 @@ class PaymentController extends BaseController
         $abonent->delete();
 
         return $this->sendResponse([], 'Abonent deleted successfully.');
+    }
+
+    public function getSources() {
+        $sources = Source_of_income::all();
+
+        return $this->sendResponse($sources);
     }
 
     public function getShift(Request $request)

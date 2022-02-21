@@ -1228,7 +1228,7 @@ ul.dropdown {
 }
 .stats-left {
        float: left;
-    width: 70%;
+    width: 60%;
     background-color: #303c52;
     text-align: center;
     padding: 0.58em;
@@ -1264,7 +1264,7 @@ ul.dropdown {
 }
 .stats-right {
        float: right;
-    width: 30%;
+    width: 40%;
     text-align: center;
     padding: 1.54em 1em;
     background-color: #eee;
@@ -8283,6 +8283,7 @@ footer  p a:hover ,.footer p a:hover{
     line-height: 45px;
     margin-left: 10px;
     font-size: 1.2em;
+    display: flex;
 }
 
 .servicesTabs label div {
@@ -8645,4 +8646,37 @@ input.editableInput {
 .settingsBtn:hover {
     background: #273042;
     color: #fff;
+}
+
+.errorInput {
+    color: red;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.stats {
+    width: 100%;
+    text-align: center;
+    padding: 1.54em 1em;
+    background-color: #eee;
+    border: none;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -o-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
+
+.paymentsUser {
+    padding: 15px;
+    background: #303c52;
+    color: #fff;
+}
+
+.paymentsUser p {
+    padding: 0;
+    margin: 0;
+}
+
+.paymentsUser p b {
+    font-size: 20px;
 }
