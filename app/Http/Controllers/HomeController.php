@@ -28,15 +28,6 @@ use App\Models\Balance;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
@@ -59,15 +50,15 @@ class HomeController extends Controller
         if ($user->hasAnyRole('admin', 'inspector')) {
             $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
-            $t_counters = Counter::whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->count();
-            $t_payments = Payment::where('title', 'Оплата')->whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
+            $t_counters = Counter::whereIn('service_id', $service_id)->where('archived', 0)->whereBetween('created_at', [$start, $end])->count();
+            $t_payments = Payment::where('title', 'Оплата')->where('archived', 0)->whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
             $date = [
-                'day' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->whereBetween('created_at', [$start, $end])->sum('value'),
-                'month' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->whereMonth('created_at', Carbon::today()->month)->get()->sum('value'),
-                'year' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->whereYear('created_at', Carbon::today()->year)->get()->sum('value'),
+                'day' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->where('archived', 0)->whereBetween('created_at', [$start, $end])->sum('value'),
+                'month' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->where('archived', 0)->whereMonth('created_at', Carbon::today()->month)->get()->sum('value'),
+                'year' => Payment::whereIn('service_id', $service_id)->where('title', 'Оплата')->where('archived', 0)->whereYear('created_at', Carbon::today()->year)->get()->sum('value'),
             ];
 
-            $payments_user = Payment::where('title', 'Оплата')->where('author_id', $user->id)->whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
+            $payments_user = Payment::where('title', 'Оплата')->where('archived', 0)->where('author_id', $user->id)->whereIn('service_id', $service_id)->whereBetween('created_at', [$start, $end])->sum('value');
         }
 
         return view('home', [
@@ -102,7 +93,7 @@ class HomeController extends Controller
             ];
         })->toArray();
 
-        $service_id = Inspector2Service::where('user_id', 5)->get('service_id');
+        $service_id = Inspector2Service::where('user_id', $this->user->id)->get('service_id');
 
         $services = Service::whereIn('id', $service_id)->get();
 
@@ -110,7 +101,7 @@ class HomeController extends Controller
 
                 $arr[] = array(
                     'monthName' => $month['name'],
-                    'total_sum' => Payment::where('title', 'Оплата')->whereMonth('created_at', $month['month'])->whereYear('created_at', Carbon::now()->year)->sum('value'),
+                    'total_sum' => Payment::where('title', 'Оплата')->where('archived', 0)->whereMonth('created_at', $month['month'])->whereYear('created_at', Carbon::now()->year)->sum('value'),
                 );
         }
 
