@@ -79,6 +79,9 @@ class HomeController extends Controller
     public function showmonth()
     {
 
+        $user = Auth::user();
+
+
         $start = Carbon::now()->subMonths(5);
         $start->startOfMonth();
         $end = Carbon::today();
@@ -93,7 +96,8 @@ class HomeController extends Controller
             ];
         })->toArray();
 
-        $service_id = Inspector2Service::where('user_id', $this->user->id)->get('service_id');
+
+        $service_id = Inspector2Service::where('user_id', $user->id)->get('service_id');
 
         $services = Service::whereIn('id', $service_id)->get();
 
