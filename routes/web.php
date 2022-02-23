@@ -146,4 +146,6 @@ Route::get('/logout', function (){
 });
 
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::middleware('auth:web')->get('/', [HomeController::class, 'index']);
+
